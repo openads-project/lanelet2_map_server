@@ -3,7 +3,7 @@
 LL2MapServer::LL2MapServer() : Node("ll2_map_server")
 {
   // Initialize service to change the map-parameters
-  change_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ChangeMapParams>("change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
+  change_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
 
   //provide_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ProvideMapParams>("provide_map_parameters", std::bind(&LL2MapServer::provide_params, this));
   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready!");
