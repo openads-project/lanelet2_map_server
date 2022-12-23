@@ -1,0 +1,5 @@
+---
+string map_filename
+string map_frame_id
+float64 origin_lat
+float64 origin_lon
