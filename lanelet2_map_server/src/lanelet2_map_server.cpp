@@ -4,8 +4,6 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server")
 {
   // Initialize service to change the map-parameters
   change_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
-
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready!");
 }
 
 void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Response> response)
@@ -39,10 +37,7 @@ void LL2MapServer::provide_params(const std::shared_ptr<lanelet2_map_manager_srv
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Init!");
   rclcpp::spin(std::make_shared<LL2MapServer>());
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Spinning!");
   rclcpp::shutdown();
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Shutdown!");
   return 0;
 }
