@@ -13,10 +13,10 @@ class LL2MapServer : public rclcpp::Node
     //private:
 
         void change_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Response> response);
-        //void provide_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Response> response);
+        void provide_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Response> response);
 
         rclcpp::Service<lanelet2_map_manager_srvs::srv::ChangeMapParams>::SharedPtr change_map_srv_;
-        //rclcpp::Service<lanelet2_map_manager_srvs::srv::ProvideMapParams>::SharedPtr provide_map_srv_;
+        rclcpp::Service<lanelet2_map_manager_srvs::srv::ProvideMapParams>::SharedPtr provide_map_srv_;
 
         std::string map_filename_, map_frame_id_;
         double origin_lat_, origin_lon_;
