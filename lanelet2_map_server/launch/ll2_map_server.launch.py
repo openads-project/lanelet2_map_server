@@ -17,7 +17,7 @@ def generate_launch_description():
 
     ll2_map_filename_launch_arg = DeclareLaunchArgument(
         'll2_map_filename',
-        default_value='../Frankenberg.osm'
+        default_value='/home/lutix/ws/src/mbs/Frankenberg.osm'
     )
 
     ll2_map_server_node = Node(
@@ -27,7 +27,7 @@ def generate_launch_description():
         )
     
     #To-Do: Substitute the service values with LaunchConfiguration arguments
-    service_call = '"{map_filename: ../Frankenberg.osm, map_frame_id: map, origin_lat: 50.76838121996561, origin_lon: 6.102233877820072}"'
+    service_call = '"{map_filename: /home/lutix/ws/src/mbs/Frankenberg.osm, map_frame_id: map, origin_lat: 50.76838121996561, origin_lon: 6.102233877820072}"'
 
     configure_map = ExecuteProcess(
         cmd=[[

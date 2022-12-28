@@ -50,6 +50,7 @@ void LL2MapInterface::mapChangeCallback(const lanelet2_map_manager_msgs::msg::Ma
 
 void LL2MapInterface::loadMap()
 {
+    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "loadMap");
     // Get parameters
     auto request = std::make_shared<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request>();
     while (!parameter_client_->wait_for_service(0.1s)) {
@@ -59,13 +60,19 @@ void LL2MapInterface::loadMap()
         }
         RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Service "+ map_server_name_ +"/provide_map_parameters is not available, waiting...");
     }
+    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Sending request!");
     auto result = parameter_client_->async_send_request(request);
     // Wait for the result.
     if (rclcpp::spin_until_future_complete(parent_node_, result) == rclcpp::FutureReturnCode::SUCCESS)
     {
-        utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({result.get()->origin_lat, result.get()->origin_lon}));
-        mapPtr_ = lanelet::load(result.get()->map_filename, *utmProjectorPtr_);
-        map_loaded_=true;
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Received request!");
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Map: " << result.get()->map_filename);
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Origin Lat: " << result.get()->origin_lat);
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Origin Lon: " << result.get()->origin_lon);
+        //utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({result.get()->origin_lat, result.get()->origin_lon}));
+        //mapPtr_ = lanelet::load(result.get()->map_filename, *utmProjectorPtr_);
+        //map_loaded_=true;
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Loaded Map!");
     }
     else
     {
