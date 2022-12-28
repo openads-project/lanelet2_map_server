@@ -4,6 +4,10 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server")
 {
   // Initialize service to change the map-parameters
   change_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
+  
+  // Initialize publisher to indicate a change of the map to different nodes
+  map_change_pub_ = this->create_publisher<lanelet2_map_manager_msgs::msg::MapChange>("~/map_changed", 1);
+
 }
 
 void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Response> response)
@@ -15,13 +19,20 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_srvs
 
   // To-Do: Maybe add sanity check of map here, before creating service --> e.g. check if map is available etc.
 
-  RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Set lanelet2-map to " << map_filename_ << "\n Origin Lat: " << origin_lat_ << "\n Origin Lon: " << origin_lon_);
+  RCLCPP_INFO_STREAM(this->get_logger(), "Set lanelet2-map to " << map_filename_ << "\n Origin Lat: " << origin_lat_ << "\n Origin Lon: " << origin_lon_);
   if(!params_set_)
   {
     params_set_ = true;
     provide_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ProvideMapParams>("~/provide_map_parameters", std::bind(&LL2MapServer::provide_params, this, std::placeholders::_1, std::placeholders::_2));
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Setting up service to provide the lanelet2 parameters!");
-
+    RCLCPP_INFO(this->get_logger(), "Setting up service to provide the lanelet2 parameters!");
+  }
+  else
+  {
+    // Publish message to notify all nodes that the map has changed
+    auto msg = lanelet2_map_manager_msgs::msg::MapChange();
+    msg.stamp = this->now();
+    msg.map_changed = true;
+    map_change_pub_->publish(msg);
   }
   response->success = params_set_;
 }
