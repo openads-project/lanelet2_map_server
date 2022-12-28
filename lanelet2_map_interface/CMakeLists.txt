@@ -27,6 +27,9 @@ target_include_directories(lanelet2_map_interface PUBLIC
 ament_export_targets(lanelet2_map_interfaceTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(lanelet2_map_manager_srvs)
 ament_export_dependencies(lanelet2_map_manager_msgs)
+ament_export_dependencies(lanelet2_core)
+ament_export_dependencies(lanelet2_io)
+ament_export_dependencies(lanelet2_projection)
 
 install(
   DIRECTORY include/
