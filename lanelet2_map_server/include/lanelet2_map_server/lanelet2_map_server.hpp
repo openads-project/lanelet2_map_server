@@ -7,6 +7,12 @@
 
 #include "lanelet2_map_manager_msgs/msg/map_change.hpp"
 
+#include <lanelet2_core/LaneletMap.h>
+#include <lanelet2_io/Projection.h>
+#include <lanelet2_io/Io.h>
+#include <lanelet2_io/Exceptions.h>
+#include <lanelet2_projection/UTM.h>
+
 class LL2MapServer : public rclcpp::Node
 {
     public:
@@ -16,6 +22,8 @@ class LL2MapServer : public rclcpp::Node
 
         void change_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Response> response);
         void provide_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Response> response);
+
+        bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon);
 
         rclcpp::Service<lanelet2_map_manager_srvs::srv::ChangeMapParams>::SharedPtr change_map_srv_;
         rclcpp::Service<lanelet2_map_manager_srvs::srv::ProvideMapParams>::SharedPtr provide_map_srv_;

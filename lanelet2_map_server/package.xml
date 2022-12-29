@@ -10,6 +10,9 @@
   <depend>rclcpp</depend>
   <depend>lanelet2_map_manager_srvs</depend>
   <depend>lanelet2_map_manager_msgs</depend>
+  <depend>lanelet2_core</depend>
+  <depend>lanelet2_io</depend>
+  <depend>lanelet2_projection</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
