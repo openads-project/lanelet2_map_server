@@ -11,22 +11,20 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(lanelet2_map_manager_srvs REQUIRED)
-find_package(lanelet2_map_manager_msgs REQUIRED)
+find_package(lanelet2_map_manager_ifs REQUIRED)
 find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
 find_package(lanelet2_projection REQUIRED)
 
 add_library(lanelet2_map_interface src/lanelet2_map_interface.cpp)
-ament_target_dependencies(lanelet2_map_interface rclcpp lanelet2_map_manager_srvs lanelet2_map_manager_msgs lanelet2_core lanelet2_io lanelet2_projection)
+ament_target_dependencies(lanelet2_map_interface rclcpp lanelet2_map_manager_ifs lanelet2_core lanelet2_io lanelet2_projection)
 
 target_include_directories(lanelet2_map_interface PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 
 ament_export_targets(lanelet2_map_interfaceTargets HAS_LIBRARY_TARGET)
-ament_export_dependencies(lanelet2_map_manager_srvs)
-ament_export_dependencies(lanelet2_map_manager_msgs)
+ament_export_dependencies(lanelet2_map_manager_ifs)
 ament_export_dependencies(lanelet2_core)
 ament_export_dependencies(lanelet2_io)
 ament_export_dependencies(lanelet2_projection)

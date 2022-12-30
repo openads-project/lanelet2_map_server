@@ -3,14 +3,14 @@
 LL2MapServer::LL2MapServer() : Node("ll2_map_server")
 {
   // Initialize service to change the map-parameters
-  change_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
+  change_map_srv_ = this->create_service<lanelet2_map_manager_ifs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
   
   // Initialize publisher to indicate a change of the map to different nodes
-  map_change_pub_ = this->create_publisher<lanelet2_map_manager_msgs::msg::MapChange>("~/map_changed", 1);
+  map_change_pub_ = this->create_publisher<lanelet2_map_manager_ifs::msg::MapChange>("~/map_changed", 1);
 
 }
 
-void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ChangeMapParams::Response> response)
+void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_ifs::srv::ChangeMapParams::Response> response)
 {
   // Perform sanity check of map, before changing parameters and creating service --> e.g. check if map is available etc.
   if(map_sanity_check(request->map_filename, request->origin_lat, request->origin_lon))
@@ -23,13 +23,13 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_manager_srvs
     if(!params_set_)
     {
       params_set_ = true;
-      provide_map_srv_ = this->create_service<lanelet2_map_manager_srvs::srv::ProvideMapParams>("~/provide_map_parameters", std::bind(&LL2MapServer::provide_params, this, std::placeholders::_1, std::placeholders::_2));
+      provide_map_srv_ = this->create_service<lanelet2_map_manager_ifs::srv::ProvideMapParams>("~/provide_map_parameters", std::bind(&LL2MapServer::provide_params, this, std::placeholders::_1, std::placeholders::_2));
       RCLCPP_INFO(this->get_logger(), "Setting up service to provide the lanelet2 parameters!");
     }
     else
     {
       // Publish message to notify all nodes that the map has changed
-      auto msg = lanelet2_map_manager_msgs::msg::MapChange();
+      auto msg = lanelet2_map_manager_ifs::msg::MapChange();
       msg.stamp = this->now();
       msg.map_changed = true;
       map_change_pub_->publish(msg);
@@ -65,7 +65,7 @@ bool LL2MapServer::map_sanity_check(std::string map_filename, double origin_lat,
   }
 }
 
-void LL2MapServer::provide_params(const std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_srvs::srv::ProvideMapParams::Response> response)
+void LL2MapServer::provide_params(const std::shared_ptr<lanelet2_map_manager_ifs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_ifs::srv::ProvideMapParams::Response> response)
 {
   response->map_filename = map_filename_;
   response->map_frame_id = map_frame_id_;

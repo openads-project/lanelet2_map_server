@@ -8,8 +8,8 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::strin
     // We need a callback group here since the service is called within a callback
     // https://docs.ros.org/en/foxy/How-To-Guides/Using-callback-groups.html#examples
     client_callback_group_ = parent_node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    parameter_client_ = parent_node_->create_client<lanelet2_map_manager_srvs::srv::ProvideMapParams>(map_server_name_+"/provide_map_parameters", rmw_qos_profile_services_default, client_callback_group_);
-    reload_sub_ = parent_node_->create_subscription<lanelet2_map_manager_msgs::msg::MapChange>(map_server_name_+"/map_changed", 1, std::bind(&LL2MapInterface::mapChangeCallback, this, std::placeholders::_1));
+    parameter_client_ = parent_node_->create_client<lanelet2_map_manager_ifs::srv::ProvideMapParams>(map_server_name_+"/provide_map_parameters", rmw_qos_profile_services_default, client_callback_group_);
+    reload_sub_ = parent_node_->create_subscription<lanelet2_map_manager_ifs::msg::MapChange>(map_server_name_+"/map_changed", 1, std::bind(&LL2MapInterface::mapChangeCallback, this, std::placeholders::_1));
     startup_timer_ = parent_node_->create_wall_timer(0.1s, std::bind(&LL2MapInterface::startupTimerCallback, this));
 }
 
@@ -55,7 +55,7 @@ void LL2MapInterface::startupTimerCallback()
     }
 }
 
-void LL2MapInterface::mapChangeCallback(const lanelet2_map_manager_msgs::msg::MapChange::SharedPtr msg)
+void LL2MapInterface::mapChangeCallback(const lanelet2_map_manager_ifs::msg::MapChange::SharedPtr msg)
 {
     RCLCPP_INFO(parent_node_->get_logger(), "Lanelet2-Map has changed, reloading!");
     if(!loadMap())
@@ -67,7 +67,7 @@ void LL2MapInterface::mapChangeCallback(const lanelet2_map_manager_msgs::msg::Ma
 bool LL2MapInterface::loadMap()
 {
     // Get parameters
-    auto request = std::make_shared<lanelet2_map_manager_srvs::srv::ProvideMapParams::Request>();
+    auto request = std::make_shared<lanelet2_map_manager_ifs::srv::ProvideMapParams::Request>();
     while (!parameter_client_->wait_for_service(0.1s)) {
         if (!rclcpp::ok()) {
             RCLCPP_ERROR(parent_node_->get_logger(), "Interrupted while waiting for the service. Exiting.");
@@ -80,7 +80,7 @@ bool LL2MapInterface::loadMap()
     // Wait for the result.
     if (status == std::future_status::ready)
     {
-        lanelet2_map_manager_srvs::srv::ProvideMapParams::Response res = *result.get();
+        lanelet2_map_manager_ifs::srv::ProvideMapParams::Response res = *result.get();
         utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({res.origin_lat, res.origin_lon}));
         mapPtr_ = lanelet::load(res.map_filename, *utmProjectorPtr_);
         map_loaded_=true;
