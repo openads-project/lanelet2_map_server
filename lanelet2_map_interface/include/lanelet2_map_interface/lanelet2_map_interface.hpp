@@ -22,7 +22,9 @@ class LL2MapInterface
     private:
         rclcpp::Node::SharedPtr parent_node_;
         rclcpp::Client<lanelet2_map_manager_srvs::srv::ProvideMapParams>::SharedPtr parameter_client_;
+        rclcpp::CallbackGroup::SharedPtr client_callback_group_;
         rclcpp::Subscription<lanelet2_map_manager_msgs::msg::MapChange>::SharedPtr reload_sub_;
+        rclcpp::TimerBase::SharedPtr startup_timer_;
 
         lanelet::LaneletMapPtr mapPtr_;
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
@@ -31,5 +33,6 @@ class LL2MapInterface
         std::string map_server_name_;
 
         void mapChangeCallback(const lanelet2_map_manager_msgs::msg::MapChange::SharedPtr msg);
-        void loadMap();
+        void startupTimerCallback();
+        bool loadMap();
 };
