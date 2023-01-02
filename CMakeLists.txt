@@ -10,8 +10,12 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(lanelet2 REQUIRED)
+find_package(ika_utilities REQUIRED)
 
 add_library(${PROJECT_NAME} INTERFACE)
+
+ament_target_dependencies(${PROJECT_NAME} lanelet2)
 
 target_include_directories(${PROJECT_NAME} INTERFACE
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -20,6 +24,8 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 
 ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
 #ament_export_dependencies(...)
+ament_export_dependencies(lanelet2)
+ament_export_dependencies(ika_utilities)
 
 install(
   DIRECTORY include/

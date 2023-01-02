@@ -1,11 +1,13 @@
 #pragma once
 
-// #include <math.h>
+#include <math.h>
 // #include <boost/numeric/ublas/matrix.hpp>
 // #include <boost/numeric/ublas/lu.hpp>
 #include <vector>
 // #include <visualization_msgs/Marker.h>
 // #include <visualization_msgs/MarkerArray.h>
+
+#include "ika_utilities/ika_utils.hpp"
 
 // #include <definitions/IkaObject.h>
 // #include <definitions/utility/object_definitions.h>
@@ -30,8 +32,8 @@
 //#include <lanelet2_core/geometry/Area.h>
 // #include <lanelet2_core/geometry/Point.h>
 // #include <lanelet2_core/geometry/BoundingBox.h>
-// #include <lanelet2_core/geometry/Lanelet.h>
-//#include <lanelet2_core/geometry/LaneletMap.h>
+#include <lanelet2_core/geometry/Lanelet.h>
+// #include <lanelet2_core/geometry/LaneletMap.h>
 //#include <lanelet2_core/geometry/Polygon.h>
 //#include <lanelet2_core/primitives/LaneletOrArea.h>
 //#include <lanelet2_core/primitives/LaneletSequence.h>
@@ -83,17 +85,17 @@ public:
    * @param length, length at which to look at - double 
    * @return double, angle of Lanelet Line relative to UTM in rad 
    */
-/*   static double getLaneletLineHeading(const ConstLineString3d &laneletLine, const double &length)
+  static double getLaneletLineHeading(const ConstLineString3d &laneletLine, const double &length)
   {
     return getLaneletLineHeading(utils::to2D(laneletLine).basicLineString(), length);
-  } */
+  }
 
-/*   static double getLaneletLineHeading(const ConstLineString2d &laneletLine, const double &length)
+  static double getLaneletLineHeading(const ConstLineString2d &laneletLine, const double &length)
   {
     return getLaneletLineHeading(laneletLine.basicLineString(), length);
   }
- */
-/*   static double getLaneletLineHeading(const BasicLineString2d &laneletLine, const double &length)
+
+  static double getLaneletLineHeading(const BasicLineString2d &laneletLine, const double &length)
   {
     double total_length = 0;
     BasicPoint2d point_x_y_before = fromArcCoordinates_fast(laneletLine, std::max(0.0, length - 0.25), 0., total_length);
@@ -107,7 +109,7 @@ public:
     IkaUtilities::limitTo2PI(lanelet_heading);
 
     return lanelet_heading;
-  } */
+  }
 
   /**
   * @brief sorts a vector of lanelets according to their probability for being the correct matched lanelet
@@ -861,14 +863,14 @@ public:
     return 4 * area / product;
   } */
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const double &length, const double &distance, boost::optional<double&> line_length = {})
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const double &length, const double &distance, boost::optional<double&> line_length = {})
   {
     if (line.size() == 1)
     {
-      ROS_WARN_DELAYED_THROTTLE(0.5, "fromArcCoordinates_fast: line size == 1");
+      //ROS_WARN_DELAYED_THROTTLE(0.5, "fromArcCoordinates_fast: line size == 1");
       return line.at(0);
     }
-    ROS_ASSERT(line.size() > 0);
+    //ROS_ASSERT(line.size() > 0);
 
     double cur_len = 0.0;
     double cur_cum_len = 0.0;
@@ -918,32 +920,32 @@ public:
     const double p_y = line.at(start_idx).y() - dy * remaining_dis;
 
     return BasicPoint2d(p_x + dy * distance, p_y - dx * distance);
-  } */
+  }
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const double &length, const double &distance)
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const double &length, const double &distance)
   {
     return fromArcCoordinates_fast(line.basicLineString(), length, distance);
-  } */
+  }
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const double &length, const double &distance)
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const double &length, const double &distance)
   {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), length, distance);
-  } */
+  }
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const ArcCoordinates &arc)
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const ArcCoordinates &arc)
   {
     return fromArcCoordinates_fast(line, arc.length, arc.distance);
-  } */
+  }
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const ArcCoordinates &arc)
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const ArcCoordinates &arc)
   {
     return fromArcCoordinates_fast(line.basicLineString(), arc.length, arc.distance);
-  } */
+  }
 
-/*   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const ArcCoordinates &arc)
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const ArcCoordinates &arc)
   {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), arc.length, arc.distance);
-  } */
+  }
 
 /*   static uint startOffsetDetection(const BasicLineString2d &line,
                                    const ArcCoordinates &current_arc)
