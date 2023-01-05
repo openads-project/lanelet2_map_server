@@ -4,8 +4,8 @@
 // #include <boost/numeric/ublas/matrix.hpp>
 // #include <boost/numeric/ublas/lu.hpp>
 #include <vector>
-// #include <visualization_msgs/Marker.h>
-// #include <visualization_msgs/MarkerArray.h>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 #include "ika_utilities/ika_utils.hpp"
 
@@ -44,10 +44,10 @@
 
 //#include <lanelet2_projection/UTM.h>
 
-//#include <lanelet2_routing/Route.h>
-// #include <lanelet2_routing/RoutingCost.h>
-// #include <lanelet2_routing/RoutingGraph.h>
-// #include <lanelet2_routing/RoutingGraphContainer.h>
+#include <lanelet2_routing/Route.h>
+#include <lanelet2_routing/RoutingCost.h>
+#include <lanelet2_routing/RoutingGraph.h>
+#include <lanelet2_routing/RoutingGraphContainer.h>
 // #include <lanelet2_routing/RouteElement.h>
 // #include <lanelet2_routing/LaneletPath.h>
 // #include <lanelet2_routing/Forward.h>
@@ -431,23 +431,24 @@ public:
 
   // converts lanelet::LineString3d to a visualization_msgs::Marker linestrip for visualization
   // output is visualization_msgs::Marker line_strip
-/*   static void convertLaneletLine2VisuLineStrip(const LineString3d &line_to_visu,
-                                               visualization_msgs::Marker &line_strip,
+  static void convertLaneletLine2VisuLineStrip(const LineString3d &line_to_visu,
+                                               visualization_msgs::msg::Marker &line_strip,
                                                const std::string &frame,
+                                               const builtin_interfaces::msg::Time &stamp,
                                                const std::string &name_space,
                                                const std::vector<float> &colors,
                                                const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::Marker::LINE_STRIP)
+                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
   {
-    geometry_msgs::Point point;
+    geometry_msgs::msg::Point point;
     line_strip.points.clear();
     line_strip.points.reserve(line_to_visu.size());
 
     line_strip.header.frame_id = frame;
-    line_strip.header.stamp = ros::Time::now();
+    line_strip.header.stamp = stamp;
     line_strip.ns = name_space;
     line_strip.type = marker_type;
-    line_strip.action = visualization_msgs::Marker::ADD;
+    line_strip.action = visualization_msgs::msg::Marker::ADD;
 
     line_strip.scale.x = scale;
     line_strip.scale.y = scale;
@@ -472,26 +473,27 @@ public:
       point.z = p.z();
       line_strip.points.push_back(point);
     }
-  } */
+  }
 
   // converts lanelet::LineString3d to a visualization_msgs::Marker linestrip for visualization
   // output is visualization_msgs::Marker line_strip
-/*   static void convertLaneletLine2VisuLineStrip(const BasicLineString3d &line_to_visu,
-                                               visualization_msgs::Marker &line_strip,
+  static void convertLaneletLine2VisuLineStrip(const BasicLineString3d &line_to_visu,
+                                               visualization_msgs::msg::Marker &line_strip,
                                                const std::string &frame,
+                                               const builtin_interfaces::msg::Time &stamp,
                                                const std::string &name_space_id,
                                                const std::vector<float> &colors,
                                                const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::Marker::LINE_STRIP)
+                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
   {
-    geometry_msgs::Point point;
+    geometry_msgs::msg::Point point;
     line_strip.points.clear();
 
     line_strip.header.frame_id = frame;
-    line_strip.header.stamp = ros::Time::now();
+    line_strip.header.stamp = stamp;
     line_strip.ns = name_space_id;
     line_strip.type = marker_type;
-    line_strip.action = visualization_msgs::Marker::ADD;
+    line_strip.action = visualization_msgs::msg::Marker::ADD;
 
     line_strip.scale.x = scale;
     line_strip.scale.y = scale;
@@ -516,26 +518,27 @@ public:
       point.z = p.z();
       line_strip.points.push_back(point);
     }
-  } */
+  }
 
   // converts lanelet::BasicLineString2d to a visualization_msgs::Marker linestrip for visualization
   // output is visualization_msgs::Marker line_strip
-/*   static void convertLaneletLine2VisuLineStrip(const BasicLineString2d &line_to_visu,
-                                               visualization_msgs::Marker &line_strip,
+  static void convertLaneletLine2VisuLineStrip(const BasicLineString2d &line_to_visu,
+                                               visualization_msgs::msg::Marker &line_strip,
                                                const std::string &frame,
+                                               const builtin_interfaces::msg::Time &stamp,
                                                const std::string &name_space_id,
                                                const std::vector<float> &colors,
                                                const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::Marker::LINE_STRIP)
+                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
   {
-    geometry_msgs::Point point;
+    geometry_msgs::msg::Point point;
     line_strip.points.clear();
 
     line_strip.header.frame_id = frame;
-    line_strip.header.stamp = ros::Time::now();
+    line_strip.header.stamp = stamp;
     line_strip.ns = name_space_id;
     line_strip.type = marker_type;
-    line_strip.action = visualization_msgs::Marker::ADD;
+    line_strip.action = visualization_msgs::msg::Marker::ADD;
 
     line_strip.scale.x = scale;
     line_strip.scale.y = scale;
@@ -561,7 +564,7 @@ public:
       point.z = 0.0;
       line_strip.points.push_back(point);
     }
-  } */
+  }
 
   // converts lanelet::BasicPolygon2d to a visualization_msgs::Marker linestrip for visualization
   // output is visualization_msgs::Marker line_strip
@@ -665,21 +668,22 @@ public:
 
   // converts lanelet::LineString3d to a visualization_msgs::Marker spheres for visualization
   // output is visualization_msgs::Marker marker
-  /* static void convertLaneletLine2VisuSphere(const LineString3d &line_to_visu,
-                                            visualization_msgs::Marker &marker,
+  static void convertLaneletLine2VisuSphere(const LineString3d &line_to_visu,
+                                            visualization_msgs::msg::Marker &marker,
                                             const std::string &frame,
+                                            const builtin_interfaces::msg::Time &stamp, 
                                             const std::string &name_space_id,
                                             const std::vector<float> &colors)
   {
-    geometry_msgs::Point point;
+    geometry_msgs::msg::Point point;
     marker.points.clear();
 
     marker.header.frame_id = frame;
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = stamp;
     marker.ns = name_space_id;
     marker.id = 0;
-    marker.type = visualization_msgs::Marker::SPHERE_LIST;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::SPHERE_LIST;
+    marker.action = visualization_msgs::msg::Marker::ADD;
 
     marker.scale.x = 0.3;
     marker.scale.y = 0.3;
@@ -705,25 +709,26 @@ public:
 
       marker.points.push_back(point);
     }
-  } */
+  }
 
   // converts lanelet::LineString3d to a visualization_msgs::Marker spheres for visualization
   // output is visualization_msgs::Marker marker
-  /* static void convertLaneletLine2VisuSphere(const BasicLineString2d &line_to_visu,
-                                            visualization_msgs::Marker &marker,
+  static void convertLaneletLine2VisuSphere(const BasicLineString2d &line_to_visu,
+                                            visualization_msgs::msg::Marker &marker,
                                             const std::string &frame,
+                                            const builtin_interfaces::msg::Time &stamp,
                                             const std::string &name_space_id,
                                             const std::vector<float> &colors)
   {
-    geometry_msgs::Point point;
+    geometry_msgs::msg::Point point;
     marker.points.clear();
 
     marker.header.frame_id = frame;
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = stamp;
     marker.ns = name_space_id;
     marker.id = 0;
-    marker.type = visualization_msgs::Marker::SPHERE_LIST;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::SPHERE_LIST;
+    marker.action = visualization_msgs::msg::Marker::ADD;
 
     marker.scale.x = 0.3;
     marker.scale.y = 0.3;
@@ -750,7 +755,7 @@ public:
       marker.points.push_back(point);
     }
   }
- */
+
   // transform a lanelet::ConstLineString3d according to the given transform
   // output is lanelet::LineString3d line_out
 /*   static void transformLaneletLine2Frame(const ConstLineString3d &line_to_transform,
@@ -1103,7 +1108,7 @@ public:
     return path_line;
   } */
 
-/*   static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d>& boundaries, const std::pair<BasicLineString2d, BasicLineString2d>& segments, const BasicLineString2d& centerline)
+  static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d>& boundaries, const std::pair<BasicLineString2d, BasicLineString2d>& segments, const BasicLineString2d& centerline)
   {
     // Left
     {
@@ -1120,9 +1125,9 @@ public:
       splitLinestring(segments.second, boundaryEnd, line1, line2);
       boundaries.second.insert(boundaries.second.end(), line1.begin(), line1.end());
     }
-  } */
+  }
 
-/*   static void delFromBoundarySegment(BasicLineString2d& left_segment, BasicLineString2d& right_segment, const BasicLineString2d& centerline)
+  static void delFromBoundarySegment(BasicLineString2d& left_segment, BasicLineString2d& right_segment, const BasicLineString2d& centerline)
   {
     // Left
     {
@@ -1139,10 +1144,10 @@ public:
       splitLinestring(right_segment, boundaryEnd, line1, line2);
       right_segment = line2;
     }
-  } */
+  }
 
 
-/*   static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d& boundary_segment, const BasicLineString2d& centerline, const double& max_distance)
+  static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d& boundary_segment, const BasicLineString2d& centerline, const double& max_distance)
   {
     const BasicPoint2d test_p = geometry::internal::lateralShiftPointAtIndex(centerline, centerline.size()-1, max_distance);
     const BasicLineString2d test_line({centerline.back(), test_p});
@@ -1161,9 +1166,9 @@ public:
               });
 
     return interpoints.size() ? all_interpoints.front().second : BasicPoint2d(boundary_segment.back());
-  } */
+  }
 
-/*   static void splitLinestring(const BasicLineString2d& ls, const BasicPoint2d& pt, BasicLineString2d& line1, BasicLineString2d& line2)
+  static void splitLinestring(const BasicLineString2d& ls, const BasicPoint2d& pt, BasicLineString2d& line1, BasicLineString2d& line2)
   {
     const ArcCoordinates arc_pt = geometry::toArcCoordinates(ls, pt);
     BasicPoint2d nearestPoint = geometry::nearestPointAtDistance(ls, arc_pt.length);
@@ -1178,10 +1183,10 @@ public:
     line2.clear();
     line2.push_back(pt);
     line2.insert(line2.begin() + 1, idx + 1, ls.end());
-  } */
+  }
 
   // Creates a linestring from a lanelet path, sampled by distane with step size ds, accounting for lane changes with a sine function
-/*   static BasicLineString2d convertLLPath2LineString2dSBased(
+  static BasicLineString2d convertLLPath2LineString2dSBased(
       const ConstLanelets &ll_path,
       const BasicPoint2d &cur_pos,
       const double &vel,
@@ -1407,7 +1412,7 @@ public:
     }
 
     return path_line;
-  } */
+  }
 
 /*   static Eigen::Spline<double, 3> fitEigenSpline2Line(const BasicLineString2d &line, const std::vector<double> &ratios, double degree)
   {
@@ -1466,7 +1471,7 @@ public:
     return line_segment;
   } */
 
-/*   static BasicLineString2d smoothByQuadraticBezierCurve(const BasicLineString2d &input_line, uint smooth_factor)
+  static BasicLineString2d smoothByQuadraticBezierCurve(const BasicLineString2d &input_line, uint smooth_factor)
   {
     BasicLineString2d output_line;
     output_line.push_back(input_line.at(0));
@@ -1518,7 +1523,7 @@ public:
       // output_line.push_back(BasicPoint2d((x2 - x1) * t + x1, (y2 - y1) * t + y1));
     }
     return output_line;
-  } */
+  }
 
   // http://docs.ros.org/hydro/api/dt_local_planner/html/polyfit_8hpp_source.html
   // Finds the coefficients of a polynomial p(x) of degree n that fits the data,
