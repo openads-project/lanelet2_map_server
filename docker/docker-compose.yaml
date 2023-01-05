@@ -1,0 +1,25 @@
+x-args: &args
+  BASE_IMAGE: gitlab.ika.rwth-aachen.de:5050/automated-driving/docker/ros2:rolling
+  PACKAGE_NAME: ""
+  COMMAND: "ros2 launch lanelet2_map_server ll2_map_server.launch.py"
+
+x-dockerfile: &dockerfile ./docker/docker-ros/Dockerfile
+x-context: &context ../
+
+services:
+  run:
+    image: gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/run:latest
+    build:
+      dockerfile: *dockerfile
+      context: *context
+      target: run
+      args:
+        <<: *args
+  devel:
+    image: gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/devel:latest
+    build:
+      dockerfile: *dockerfile
+      context: *context
+      target: development
+      args:
+        <<: *args
