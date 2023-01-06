@@ -1608,20 +1608,20 @@ public:
     return line;
   } */
 
-/*   static definitions::IkaLaneletIdVec convertLLRoute2IkaLLIdVec(const ConstLanelets &ll_route)
+  static std::vector<std::pair<int64_t, bool>> convertLLRoute2IdVec(const ConstLanelets &ll_route)
   {
-    definitions::IkaLaneletIdVec ll_id_vec;
-    ll_id_vec.ll_ids.reserve(ll_route.size());
-    ll_id_vec.inverted.reserve(ll_route.size());
+    std::vector<std::pair<int64_t, bool>> ll_id_vec;
+    ll_id_vec.reserve(ll_route.size());
 
     for (const auto &ll_id : ll_route)
     {
-      ll_id_vec.ll_ids.push_back(ll_id.id());
-      ll_id_vec.inverted.push_back(ll_id.inverted());
+      std::pair<int64_t, bool> p;
+      p.first=ll_id.id();
+      p.second=ll_id.inverted();
+      ll_id_vec.push_back(p);
     }
-
     return ll_id_vec;
-  } */
+  }
 
 /*   static ConstLanelets convertIkaLLIdVec2LLRoute(const definitions::IkaLaneletIdVec &ll_id_vec, const LaneletMapConstPtr &ll_map)
   {
