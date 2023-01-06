@@ -19,6 +19,7 @@ class LL2MapInterface
         lanelet::LaneletMapPtr getNonConstMapPtr();
         std::shared_ptr<lanelet::Projector> getProjectorPtr();
         bool map_loaded_=false;
+        std::string map_frame_id_;
         
     private:
         rclcpp::Node::SharedPtr parent_node_;

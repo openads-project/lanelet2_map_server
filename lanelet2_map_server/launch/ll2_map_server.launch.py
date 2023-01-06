@@ -9,6 +9,9 @@ from launch.substitutions import LaunchConfiguration, FindExecutable
 def generate_launch_description():
     node_name = LaunchConfiguration('node_name')
     ll2_map_filename = LaunchConfiguration('ll2_map_filename')
+    map_frame_id = LaunchConfiguration('map_frame_id')
+    origin_lat = LaunchConfiguration('origin_lat')
+    origin_lon = LaunchConfiguration('origin_lon')
 
     node_name_launch_arg = DeclareLaunchArgument(
         'node_name',
@@ -20,15 +23,27 @@ def generate_launch_description():
         default_value='/home/lutix/ws/src/mbs/Frankenberg.osm'
     )
 
+    map_frame_id_launch_arg = DeclareLaunchArgument(
+        'map_frame_id',
+        default_value='map'
+    )
+
+    origin_lat_launch_arg = DeclareLaunchArgument(
+        'origin_lat',
+        default_value='50.76838121996561'
+    )
+
+    origin_lon_launch_arg = DeclareLaunchArgument(
+        'origin_lon',
+        default_value='6.102233877820072'
+    )
+
     ll2_map_server_node = Node(
             package='lanelet2_map_server',
             executable='lanelet2_map_server',
             name=node_name
-        )
+    )
     
-    #To-Do: Substitute the service values with LaunchConfiguration arguments
-    service_call = '"{map_filename: /home/lutix/ws/src/mbs/Frankenberg.osm, map_frame_id: map, origin_lat: 50.76838121996561, origin_lon: 6.102233877820072}"'
-
     configure_map = ExecuteProcess(
         cmd=[[
             FindExecutable(name='ros2'),
@@ -36,7 +51,15 @@ def generate_launch_description():
             node_name,
             '/change_map_parameters ',
             'lanelet2_map_manager_ifs/srv/ChangeMapParams ',
-            service_call
+            '"{map_filename: "',
+            ll2_map_filename,
+            '", map_frame_id: "',
+            map_frame_id,
+            '", origin_lat: "',
+            origin_lat,
+            '", origin_lon: "',
+            origin_lon,
+            '"}"'
         ]],
         shell=True
     )
@@ -44,6 +67,9 @@ def generate_launch_description():
     return LaunchDescription([
         node_name_launch_arg,
         ll2_map_filename_launch_arg,
+        map_frame_id_launch_arg,
+        origin_lat_launch_arg,
+        origin_lon_launch_arg,
         ll2_map_server_node,
         RegisterEventHandler(
             OnProcessStart(

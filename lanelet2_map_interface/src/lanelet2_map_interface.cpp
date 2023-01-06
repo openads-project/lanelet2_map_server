@@ -83,6 +83,7 @@ bool LL2MapInterface::loadMap()
         lanelet2_map_manager_ifs::srv::ProvideMapParams::Response res = *result.get();
         utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({res.origin_lat, res.origin_lon}));
         mapPtr_ = lanelet::load(res.map_filename, *utmProjectorPtr_);
+        map_frame_id_ = res.map_frame_id;
         map_loaded_=true;
         RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Loaded "+ res.map_filename +" succesfully!");
         return true;
