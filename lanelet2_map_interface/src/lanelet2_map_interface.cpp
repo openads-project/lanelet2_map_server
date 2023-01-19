@@ -10,7 +10,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::strin
     client_callback_group_ = parent_node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     parameter_client_ = parent_node_->create_client<lanelet2_map_manager_ifs::srv::ProvideMapParams>(map_server_name_+"/provide_map_parameters", rmw_qos_profile_services_default, client_callback_group_);
     reload_sub_ = parent_node_->create_subscription<lanelet2_map_manager_ifs::msg::MapChange>(map_server_name_+"/map_changed", 1, std::bind(&LL2MapInterface::mapChangeCallback, this, std::placeholders::_1));
-    startup_timer_ = parent_node_->create_wall_timer(0.1s, std::bind(&LL2MapInterface::startupTimerCallback, this));
+    startup_timer_ = parent_node_->create_wall_timer(1.0s, std::bind(&LL2MapInterface::startupTimerCallback, this));
 }
 
 lanelet::LaneletMapPtr LL2MapInterface::getNonConstMapPtr()
@@ -68,12 +68,13 @@ bool LL2MapInterface::loadMap()
 {
     // Get parameters
     auto request = std::make_shared<lanelet2_map_manager_ifs::srv::ProvideMapParams::Request>();
-    while (!parameter_client_->wait_for_service(0.1s)) {
+    request->requesting_node_name=parent_node_->get_name();
+    if(!parameter_client_->wait_for_service(0.1s)) {
         if (!rclcpp::ok()) {
             RCLCPP_ERROR(parent_node_->get_logger(), "Interrupted while waiting for the service. Exiting.");
-            return false;
         }
         RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Service "+ map_server_name_ +"/provide_map_parameters is not available, waiting...");
+        return false;
     }
     auto result = parameter_client_->async_send_request(request);
     std::future_status status = result.wait_for(0.1s);  // timeout to guarantee a graceful finish

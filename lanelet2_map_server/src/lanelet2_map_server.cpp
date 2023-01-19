@@ -67,6 +67,7 @@ bool LL2MapServer::map_sanity_check(std::string map_filename, double origin_lat,
 
 void LL2MapServer::provide_params(const std::shared_ptr<lanelet2_map_manager_ifs::srv::ProvideMapParams::Request> request, std::shared_ptr<lanelet2_map_manager_ifs::srv::ProvideMapParams::Response> response)
 {
+  RCLCPP_INFO_STREAM(get_logger(), "Received request to provide lanelet2-map-parameters from " << request->requesting_node_name << "!");
   response->map_filename = map_filename_;
   response->map_frame_id = map_frame_id_;
   response->origin_lat = origin_lat_;

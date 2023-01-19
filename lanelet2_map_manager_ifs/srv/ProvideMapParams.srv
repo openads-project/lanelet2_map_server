@@ -1,3 +1,4 @@
+string requesting_node_name
 ---
 string map_filename
 string map_frame_id
