@@ -1,8 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include "lanelet2_map_manager_ifs/srv/provide_map_params.hpp"
-#include "lanelet2_map_manager_ifs/msg/map_change.hpp"
-
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_io/Projection.h>
 #include <lanelet2_io/Io.h>
@@ -23,17 +20,19 @@ class LL2MapInterface
         
     private:
         rclcpp::Node::SharedPtr parent_node_;
-        rclcpp::Client<lanelet2_map_manager_ifs::srv::ProvideMapParams>::SharedPtr parameter_client_;
-        rclcpp::CallbackGroup::SharedPtr client_callback_group_;
-        rclcpp::Subscription<lanelet2_map_manager_ifs::msg::MapChange>::SharedPtr reload_sub_;
-        rclcpp::TimerBase::SharedPtr startup_timer_;
+        std::shared_ptr<rclcpp::SyncParametersClient> parameter_client_;
+        std::shared_ptr<rclcpp::ParameterEventHandler> parameter_sub_;
+        std::shared_ptr<rclcpp::ParameterCallbackHandle> filepath_callback_handle_, frame_id_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;
+
+        std::vector<rclcpp::Parameter> map_params_;
+        std::string map_filepath_;
+        double origin_lat_, origin_lon_;
 
         lanelet::LaneletMapPtr mapPtr_;
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
         
         std::string map_server_name_;
 
-        void mapChangeCallback(const lanelet2_map_manager_ifs::msg::MapChange::SharedPtr msg);
-        void startupTimerCallback();
+        void updateMapParam(rclcpp::Parameter param);
         bool loadMap();
 };

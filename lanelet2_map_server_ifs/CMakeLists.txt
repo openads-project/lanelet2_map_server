@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(lanelet2_map_manager_ifs)
+project(lanelet2_map_server_ifs)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -15,9 +15,6 @@ find_package(builtin_interfaces REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ChangeMapParams.srv"
-  "srv/ProvideMapParams.srv"
-  "msg/MapChange.msg"
-  DEPENDENCIES builtin_interfaces
 )
 
 ament_export_dependencies(rosidl_default_runtime)

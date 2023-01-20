@@ -8,7 +8,6 @@
   <license>TODO: License declaration</license>
 
   <depend>rclcpp</depend>
-  <depend>lanelet2_map_manager_ifs</depend>
   <depend>lanelet2_core</depend>
   <depend>lanelet2_io</depend>
   <depend>lanelet2_projection</depend>
