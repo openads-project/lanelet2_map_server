@@ -4,7 +4,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::strin
 {
     parent_node_ = parent_node;
     map_server_name_ = map_server_name;
-    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "This is the Lanelet2-Interface of " << parent_node_->get_name());
+    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "This is the Lanelet2-Interface of " << parent_node_->get_name() << "! Conntecting to " << map_server_name_ << ".");
     
     // Initialize parameter client and event handler
     parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(parent_node_, map_server_name);
@@ -95,7 +95,7 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
     }
     if(param.get_name()=="origin_lon")
     {
-        origin_lat_ = param.as_double();
+        origin_lon_ = param.as_double();
     }
 }
 
