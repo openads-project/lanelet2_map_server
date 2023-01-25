@@ -10,6 +10,9 @@
 #include <lanelet2_io/Exceptions.h>
 #include <lanelet2_projection/UTM.h>
 
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+
 class LL2MapServer : public rclcpp::Node
 {
     public:
@@ -19,6 +22,7 @@ class LL2MapServer : public rclcpp::Node
 
         void change_params(const std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Response> response);
         bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon);
+        void pub_tf();
 
         rclcpp::Service<lanelet2_map_server_ifs::srv::ChangeMapParams>::SharedPtr change_map_srv_;
 
@@ -27,4 +31,5 @@ class LL2MapServer : public rclcpp::Node
 
         bool init_=false;
 
+        std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
 };

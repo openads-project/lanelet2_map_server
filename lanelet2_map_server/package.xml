@@ -12,6 +12,8 @@
   <depend>lanelet2_core</depend>
   <depend>lanelet2_io</depend>
   <depend>lanelet2_projection</depend>
+  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

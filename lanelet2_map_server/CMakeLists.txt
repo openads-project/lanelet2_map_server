@@ -15,9 +15,18 @@ find_package(lanelet2_map_server_ifs REQUIRED)
 find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
 find_package(lanelet2_projection REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_executable(lanelet2_map_server src/lanelet2_map_server.cpp)
-ament_target_dependencies(lanelet2_map_server rclcpp lanelet2_map_server_ifs lanelet2_core lanelet2_io lanelet2_projection)
+ament_target_dependencies(lanelet2_map_server
+  rclcpp
+  lanelet2_map_server_ifs
+  lanelet2_core
+  lanelet2_io
+  lanelet2_projection
+  tf2_ros
+  geometry_msgs)
 
 target_include_directories(lanelet2_map_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

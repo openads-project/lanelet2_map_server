@@ -5,6 +5,8 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server")
   // Initialize service to change the map-parameters
   change_map_srv_ = create_service<lanelet2_map_server_ifs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
 
+  // Initialize the transform broadcaster
+  tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 }
 
 void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Response> response)
@@ -38,6 +40,7 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_ifs::
                                           rclcpp::Parameter("origin_lat", origin_lat_),
                                           rclcpp::Parameter("origin_lon", origin_lon_)};
     this->set_parameters(params);
+    this->pub_tf();
     response->success = true;
   }
   else
@@ -67,6 +70,32 @@ bool LL2MapServer::map_sanity_check(std::string map_filename, double origin_lat,
     RCLCPP_ERROR_STREAM(get_logger(), e.what());
     return false;
   }
+}
+
+void LL2MapServer::pub_tf()
+{
+    geometry_msgs::msg::TransformStamped t;
+
+    t.header.stamp = this->get_clock()->now();
+    t.header.frame_id = "utm";
+    t.child_frame_id = map_frame_id_;
+
+    // Create Projector without offset
+    lanelet::projection::UtmProjector proj_utm(lanelet::Origin({origin_lat_, origin_lon_}), false);
+    lanelet::BasicPoint3d origin_utm = proj_utm.forward(lanelet::GPSPoint({origin_lat_,origin_lon_,0.0}));
+
+    t.transform.translation.x = origin_utm.x();
+    t.transform.translation.y = origin_utm.y();
+    t.transform.translation.z = origin_utm.z();
+
+    t.transform.rotation.x = 0;
+    t.transform.rotation.y = 0;
+    t.transform.rotation.z = 0;
+    t.transform.rotation.w = 1;
+
+    // Send the transformation
+    tf_static_broadcaster_->sendTransform(t);
+    RCLCPP_INFO_STREAM(get_logger(), "Sending transform utm->" << map_frame_id_);
 }
 
 int main(int argc, char ** argv)
