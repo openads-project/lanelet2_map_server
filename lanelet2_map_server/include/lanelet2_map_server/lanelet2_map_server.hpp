@@ -21,7 +21,7 @@ class LL2MapServer : public rclcpp::Node
     private:
 
         void change_params(const std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Response> response);
-        bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon);
+        bool map_sanity_check(std::string map_filename, std::string map_frame_id, double origin_lat, double origin_lon);
         void pub_tf();
 
         rclcpp::Service<lanelet2_map_server_ifs::srv::ChangeMapParams>::SharedPtr change_map_srv_;

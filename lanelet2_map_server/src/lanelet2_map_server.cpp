@@ -13,7 +13,7 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_ifs::
 {
   RCLCPP_INFO(get_logger(), "Received request to change the lanelet2 map parameters!");
   // Perform sanity check of map, before changing parameters and creating service --> e.g. check if map is available etc.
-  if(map_sanity_check(request->map_filename, request->origin_lat, request->origin_lon))
+  if(map_sanity_check(request->map_filename, request->map_frame_id, request->origin_lat, request->origin_lon))
   {
     map_filename_ = request->map_filename;
     map_frame_id_ = request->map_frame_id;
@@ -49,9 +49,9 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_ifs::
   }
 }
 
-bool LL2MapServer::map_sanity_check(std::string map_filename, double origin_lat, double origin_lon)
+bool LL2MapServer::map_sanity_check(std::string map_filename, std::string map_frame_id, double origin_lat, double origin_lon)
 {
-  if(map_filename == map_filename_ && origin_lat == origin_lat_ && origin_lon == origin_lon_)
+  if(map_filename == map_filename_ && origin_lat == origin_lat_ && origin_lon == origin_lon_ && map_frame_id == map_frame_id_)
   {
     RCLCPP_WARN_STREAM(get_logger(), "Map " << map_filename << " is already loaded with origin (" << origin_lat << " | " << origin_lon << ")");
     return false;
