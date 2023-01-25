@@ -105,5 +105,6 @@ bool LL2MapInterface::loadMap()
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_=true;
     RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
+    update_pending_=true;
     return true;
 }

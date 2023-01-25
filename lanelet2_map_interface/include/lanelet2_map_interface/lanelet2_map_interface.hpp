@@ -16,6 +16,7 @@ class LL2MapInterface
         lanelet::LaneletMapPtr getNonConstMapPtr();
         std::shared_ptr<lanelet::Projector> getProjectorPtr();
         bool map_loaded_=false;
+        bool update_pending_=false; // Flag indicating if the client node should update map
         std::string map_frame_id_;
         
     private:
