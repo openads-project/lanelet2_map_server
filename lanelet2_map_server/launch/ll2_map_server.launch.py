@@ -8,6 +8,7 @@ from launch.substitutions import LaunchConfiguration, FindExecutable
 
 def generate_launch_description():
     node_name = LaunchConfiguration('node_name')
+    ll2_map_path = LaunchConfiguration('ll2_map_path')
     ll2_map_filename = LaunchConfiguration('ll2_map_filename')
     map_frame_id = LaunchConfiguration('map_frame_id')
     origin_lat = LaunchConfiguration('origin_lat')
@@ -16,6 +17,11 @@ def generate_launch_description():
     node_name_launch_arg = DeclareLaunchArgument(
         'node_name',
         default_value='ll2_map_server'
+    )
+
+    ll2_map_path_launch_arg = DeclareLaunchArgument(
+        'll2_map_path',
+        default_value='/data/maps'
     )
 
     ll2_map_filename_launch_arg = DeclareLaunchArgument(
@@ -52,7 +58,7 @@ def generate_launch_description():
             '/change_map_parameters ',
             'lanelet2_map_server_ifs/srv/ChangeMapParams ',
             '"{map_filename: "',
-            ll2_map_filename,
+            ll2_map_path+"/"+ll2_map_filename,
             '", map_frame_id: "',
             map_frame_id,
             '", origin_lat: "',
@@ -66,6 +72,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         node_name_launch_arg,
+        ll2_map_path_launch_arg,
         ll2_map_filename_launch_arg,
         map_frame_id_launch_arg,
         origin_lat_launch_arg,
