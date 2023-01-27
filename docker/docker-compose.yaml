@@ -1,25 +1,27 @@
-x-args: &args
-  BASE_IMAGE: gitlab.ika.rwth-aachen.de:5050/automated-driving/docker/ros2:rolling
-  PACKAGE_NAME: ""
-  COMMAND: "ros2 launch lanelet2_map_server ll2_map_server.launch.py"
+x-base-image:   &base-image gitlab.ika.rwth-aachen.de:5050/automated-driving/docker/ros2:rolling
+x-devel-image:  &devel-image gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/devel:latest
+x-run-image:    &run-image gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/run:latest
+x-command:      &command "ros2 launch lanelet2_map_server ll2_map_server.launch.py"
 
-x-dockerfile: &dockerfile ./docker/docker-ros/Dockerfile
-x-context: &context ../
+# ==============================================================================
+
+x-build: &build
+  dockerfile: ./docker/docker-ros/Dockerfile
+  context: ../
+  args:
+    BASE_IMAGE: *base-image
+    COMMAND: *command
+    GIT_HTTPS_USER: $GIT_HTTPS_USER
+    GIT_HTTPS_PASSWORD: $GIT_HTTPS_PASSWORD
 
 services:
-  run:
-    image: gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/run:latest
-    build:
-      dockerfile: *dockerfile
-      context: *context
-      target: run
-      args:
-        <<: *args
   devel:
-    image: gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager/devel:latest
+    image: *devel-image
     build:
-      dockerfile: *dockerfile
-      context: *context
       target: development
-      args:
-        <<: *args
+      <<: *build
+  run:
+    image: *run-image
+    build:
+      target: run
+      <<: *build

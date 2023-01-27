@@ -1,0 +1,4 @@
+include:
+  - project: ops/docker-ros
+    ref: main
+    file: .gitlab-ci.template.yml
