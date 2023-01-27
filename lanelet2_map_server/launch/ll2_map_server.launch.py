@@ -26,7 +26,7 @@ def generate_launch_description():
 
     ll2_map_filename_launch_arg = DeclareLaunchArgument(
         'll2_map_filename',
-        default_value='/home/lutix/ws/src/mbs/Frankenberg.osm'
+        default_value='Frankenberg.osm'
     )
 
     map_frame_id_launch_arg = DeclareLaunchArgument(
