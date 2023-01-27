@@ -58,7 +58,7 @@ def generate_launch_description():
             '/change_map_parameters ',
             'lanelet2_map_server_ifs/srv/ChangeMapParams ',
             '"{map_filename: "',
-            ll2_map_path+"/"+ll2_map_filename,
+            ll2_map_path,"/",ll2_map_filename,
             '", map_frame_id: "',
             map_frame_id,
             '", origin_lat: "',
