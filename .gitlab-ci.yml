@@ -1,7 +1,0 @@
-include:
-  - project: fb-fi/ops/docker-ros
-    ref: main
-    file: .gitlab-ci.template.yml
-
-variables:
-  NOT_TEST_BUILD: 'true'
