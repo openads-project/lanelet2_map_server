@@ -1,7 +1,7 @@
-x-base-image:   &base-image gitlab.ika.rwth-aachen.de:5050/automated-driving/docker/ros2:rolling
-x-devel-image:  &devel-image gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager:latest-dev
-x-run-image:    &run-image gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager:latest
-x-command:      &command "ros2 launch lanelet2_map_server ll2_map_server.launch.py"
+x-base-image: &base-image gitlab.ika.rwth-aachen.de:5050/automated-driving/docker/ros2:rolling
+x-dev-image:  &dev-image  gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager:latest-dev
+x-run-image:  &run-image  gitlab.ika.rwth-aachen.de:5050/gkueppers/lanelet2_map_manager:latest
+x-command:    &command    "ros2 launch lanelet2_map_server ll2_map_server.launch.py"
 
 # ==============================================================================
 
@@ -15,10 +15,10 @@ x-build: &build
     GIT_HTTPS_PASSWORD: $GIT_HTTPS_PASSWORD
 
 services:
-  devel:
-    image: *devel-image
+  dev:
+    image: *dev-image
     build:
-      target: development
+      target: dev
       <<: *build
   run:
     image: *run-image
