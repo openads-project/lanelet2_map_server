@@ -13,13 +13,17 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(rclcpp REQUIRED)
 find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
 find_package(lanelet2_projection REQUIRED)
+find_package(rclcpp REQUIRED)
 
 add_library(lanelet2_map_interface src/lanelet2_map_interface.cpp)
-ament_target_dependencies(lanelet2_map_interface rclcpp lanelet2_core lanelet2_io lanelet2_projection)
+ament_target_dependencies(lanelet2_map_interface
+                          lanelet2_core
+                          lanelet2_io
+                          lanelet2_projection
+                          rclcpp)
 
 target_include_directories(lanelet2_map_interface PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

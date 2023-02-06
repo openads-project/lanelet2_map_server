@@ -7,10 +7,10 @@
   <maintainer email="guido.kueppers@ika.rwth-aachen.de">Guido Küppers</maintainer>
   <license>TODO: License declaration</license>
 
-  <depend>rclcpp</depend>
   <depend>lanelet2_core</depend>
   <depend>lanelet2_io</depend>
   <depend>lanelet2_projection</depend>
+  <depend>rclcpp</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
