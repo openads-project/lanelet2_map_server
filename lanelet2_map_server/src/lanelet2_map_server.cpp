@@ -3,13 +3,13 @@
 LL2MapServer::LL2MapServer() : Node("ll2_map_server")
 {
   // Initialize service to change the map-parameters
-  change_map_srv_ = create_service<lanelet2_map_server_ifs::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
+  change_map_srv_ = create_service<lanelet2_map_server_interfaces::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
 
   // Initialize the transform broadcaster
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 }
 
-void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Response> response)
+void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Response> response)
 {
   RCLCPP_INFO(get_logger(), "Received request to change the lanelet2 map parameters!");
   // Perform sanity check of map, before changing parameters and creating service --> e.g. check if map is available etc.

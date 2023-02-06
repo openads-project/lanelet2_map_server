@@ -13,7 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
-find_package(lanelet2_map_server_ifs REQUIRED)
+find_package(lanelet2_map_server_interfaces REQUIRED)
 find_package(lanelet2_projection REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -23,7 +23,7 @@ ament_target_dependencies(lanelet2_map_server
   geometry_msgs
   lanelet2_core
   lanelet2_io
-  lanelet2_map_server_ifs
+  lanelet2_map_server_interfaces
   lanelet2_projection
   rclcpp
   tf2_ros

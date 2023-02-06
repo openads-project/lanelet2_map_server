@@ -56,7 +56,7 @@ def generate_launch_description():
             ' service call /',
             node_name,
             '/change_map_parameters ',
-            'lanelet2_map_server_ifs/srv/ChangeMapParams ',
+            'lanelet2_map_server_interfaces/srv/ChangeMapParams ',
             '"{map_filename: "',
             ll2_map_path,"/",ll2_map_filename,
             '", map_frame_id: "',

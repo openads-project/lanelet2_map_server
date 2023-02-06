@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "lanelet2_map_server_ifs/srv/change_map_params.hpp"
+#include "lanelet2_map_server_interfaces/srv/change_map_params.hpp"
 
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_io/Projection.h>
@@ -20,11 +20,11 @@ class LL2MapServer : public rclcpp::Node
         
     private:
 
-        void change_params(const std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_ifs::srv::ChangeMapParams::Response> response);
+        void change_params(const std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Response> response);
         bool map_sanity_check(std::string map_filename, std::string map_frame_id, double origin_lat, double origin_lon);
         void pub_tf();
 
-        rclcpp::Service<lanelet2_map_server_ifs::srv::ChangeMapParams>::SharedPtr change_map_srv_;
+        rclcpp::Service<lanelet2_map_server_interfaces::srv::ChangeMapParams>::SharedPtr change_map_srv_;
 
         std::string map_filename_, map_frame_id_;
         double origin_lat_, origin_lon_;
