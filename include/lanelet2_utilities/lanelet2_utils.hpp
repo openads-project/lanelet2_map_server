@@ -162,7 +162,7 @@ public:
 
         if (diff_heading > M_PI)
         {
-          diff_heading = M_PI_TIMES_2 - diff_heading;
+          diff_heading = M_PI*2.0 - diff_heading;
         }
 
         if (!!trafficRules && !(*trafficRules)->isOneWay(lanelets[i].second) && diff_heading > M_PI/2.0)
