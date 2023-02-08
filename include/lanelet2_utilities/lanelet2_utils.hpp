@@ -7,8 +7,6 @@
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
-#include "ika_utilities/ika_utils.hpp"
-
 // #include <definitions/IkaObject.h>
 // #include <definitions/utility/object_definitions.h>
 // #include <definitions/IkaObjectList.h>
@@ -16,7 +14,6 @@
 // #include <definitions/IkaLaneletLine2D.h>
 // #include <definitions/IkaLaneletLine3D.h>
 // #include <definitions/IkaDrivableSpace.h>
-// #include <definitions/utility/ika_utilities.h>
 
 // #include <tf2_ros/transform_listener.h>
 // #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -106,7 +103,15 @@ public:
     BasicPoint2d point_x_y_after = fromArcCoordinates_fast(laneletLine, length + 0.25, 0.);
     double lanelet_heading = atan2(point_x_y_after.y() - point_x_y_before.y(), point_x_y_after.x() - point_x_y_before.x());
 
-    IkaUtilities::limitTo2PI(lanelet_heading);
+    // Limit to 2PI
+    while (lanelet_heading > M_PI*2)
+    {
+      lanelet_heading -= M_PI*2;
+    }
+    while (lanelet_heading < 0.)
+    {
+      lanelet_heading += M_PI*2;
+    }
 
     return lanelet_heading;
   }

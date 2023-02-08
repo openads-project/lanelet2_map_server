@@ -8,7 +8,6 @@
   <license>TODO: License declaration</license>
 
   <depend>lanelet2</depend>
-  <depend>ika_utilities</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
