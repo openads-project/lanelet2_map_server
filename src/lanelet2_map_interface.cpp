@@ -3,9 +3,9 @@
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::string map_server_name)
 {
-    if(isdigit(map_server_name[0]))
+    if(!isalpha(map_server_name[0]) && !(map_server_name[0]=='~' && map_server_name[1]=='/'))
     {
-        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed to start with a number! Unable to initialize the interface");
+        RCLCPP_ERROR_STREAM(parent_node->get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed! Unable to initialize the interface.");
         return;
     }
 
