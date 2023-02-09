@@ -20,6 +20,16 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
     origin_lat_ = request->origin_lat;
     origin_lon_ = request->origin_lon;
 
+    RCLCPP_INFO_STREAM(get_logger(), "Set Lanelet2 Parameters:"
+                                    << "\n Map-Filepath: " << map_filename_ 
+                                    << "\n Map-Frame ID: " << map_frame_id_ 
+                                    << "\n Origin Lat: " << origin_lat_
+                                    << "\n Origin Lon: " << origin_lon_);
+
+    std::vector<rclcpp::Parameter> params{rclcpp::Parameter("map_filepath", map_filename_),
+                                          rclcpp::Parameter("map_frame_id", map_frame_id_),
+                                          rclcpp::Parameter("origin_lat", origin_lat_),
+                                          rclcpp::Parameter("origin_lon", origin_lon_)};
     if(!init_)
     {
       this->declare_parameter("map_filepath");
@@ -28,17 +38,7 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
       this->declare_parameter("origin_lon");
       init_=true;
     }
-
-    RCLCPP_INFO_STREAM(get_logger(), "Set Lanelet2 Parameters:"
-                                      << "\n Map-Filepath: " << map_filename_ 
-                                      << "\n Map-Frame ID: " << map_frame_id_ 
-                                      << "\n Origin Lat: " << origin_lat_
-                                      << "\n Origin Lon: " << origin_lon_);
-
-    std::vector<rclcpp::Parameter> params{rclcpp::Parameter("map_filepath", map_filename_),
-                                          rclcpp::Parameter("map_frame_id", map_frame_id_),
-                                          rclcpp::Parameter("origin_lat", origin_lat_),
-                                          rclcpp::Parameter("origin_lon", origin_lon_)};
+    
     this->set_parameters(params);
     this->pub_tf();
     response->success = true;
