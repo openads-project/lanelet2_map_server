@@ -36,7 +36,7 @@ class LL2MapInterface
 
         void updateMapParam(rclcpp::Parameter param);
         bool loadMap();
-        bool validateParams(std::vector<rclcpp::Parameter> params);
+        bool validateParams();
 
 
         void updateParamsCallback(const rclcpp::Parameter & p);

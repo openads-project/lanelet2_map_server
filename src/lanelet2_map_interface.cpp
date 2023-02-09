@@ -55,15 +55,25 @@ void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcp
     loadMap();
 }
 
-bool LL2MapInterface::validateParams(std::vector<rclcpp::Parameter> params)
+bool LL2MapInterface::validateParams()
 {
-    for(int i = 0; i<params.size(); i++)
+    if(map_frame_id_.size()==0)
     {
-        if(params[i].value_to_string().size()==0)
-        {
-            RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter " << params[i].get_name() << " has an empty value!");
-            return false;
-        }
+        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_frame_id_ is an empty string!");
+        return false;
+    }
+    if(map_filepath_.size()==0)
+    {
+        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_filepath_ is an empty string!");
+        return false;
+    }
+    if(origin_lat_==0.0)
+    {
+        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lat_ is 0.0, is this intended?");
+    }
+    if(origin_lon_==0.0)
+    {
+        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lon_ is 0.0, is this intended?");
     }
     return true;
 }
