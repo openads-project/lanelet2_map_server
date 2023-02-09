@@ -61,7 +61,7 @@ bool LL2MapInterface::validateParams(std::vector<rclcpp::Parameter> params)
     {
         if(params[i].value_to_string().size()==0)
         {
-            ROS_WARN_STREAM(parent_node_->get_logger(), "Parameter " << params[i].get_name() << " has an empty value!");
+            RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter " << params[i].get_name() << " has an empty value!");
             return false;
         }
     }
