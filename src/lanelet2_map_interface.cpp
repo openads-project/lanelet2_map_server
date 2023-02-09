@@ -48,12 +48,6 @@ void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
 void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcpp::Parameter>> future)
 {
     auto result = future.get();
-    if(!validateParams(result))
-    {
-        auto temp_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "origin_lat", "origin_lon"},
-                                                            std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-        return;
-    }
     for (auto & parameter : result)
     {
         updateMapParam(parameter);
@@ -126,7 +120,11 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
 }
 
 bool LL2MapInterface::loadMap()
-{
+{   
+    if(!validateParams())
+    {
+        return false;
+    }
     utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_=true;
