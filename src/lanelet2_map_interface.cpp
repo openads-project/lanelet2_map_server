@@ -1,7 +1,14 @@
 #include "lanelet2_map_interface/lanelet2_map_interface.hpp"
+#include <cctype>
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::string map_server_name)
 {
+    if(isdigit(map_server_name[0]))
+    {
+        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed to start with a number! Unable to initialize the interface");
+        return;
+    }
+
     parent_node_ = parent_node;
     map_server_name_ = map_server_name;
     RCLCPP_INFO_STREAM(parent_node_->get_logger(), "This is the Lanelet2-Interface of " << parent_node_->get_name() << "! Conntecting to " << map_server_name_ << ".");
