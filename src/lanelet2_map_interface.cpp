@@ -43,16 +43,35 @@ void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
     "Received an update to parameter " << p.get_name() << "! \n Reloading lanelet2-map!");
     updateMapParam(p);
     loadMap();
-};
+}
 
 void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcpp::Parameter>> future)
 {
     auto result = future.get();
+    if(!validateParams(result))
+    {
+        auto temp_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "origin_lat", "origin_lon"},
+                                                            std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+        return;
+    }
     for (auto & parameter : result)
     {
         updateMapParam(parameter);
     }
     loadMap();
+}
+
+bool LL2MapInterface::validateParams(std::vector<rclcpp::Parameter> params)
+{
+    for(int i = 0; i<params.size(); i++)
+    {
+        if(params[i].value_to_string().size()==0)
+        {
+            ROS_WARN_STREAM(parent_node_->get_logger(), "Parameter " << params[i].get_name() << " has an empty value!");
+            return false;
+        }
+    }
+    return true;
 }
 
 lanelet::LaneletMapPtr LL2MapInterface::getNonConstMapPtr()
