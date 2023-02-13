@@ -27,7 +27,7 @@ class LL2MapInterface
 
         std::vector<rclcpp::Parameter> map_params_;
         std::string map_filepath_;
-        double origin_lat_, origin_lon_;
+        double origin_lat_=91.0, origin_lon_=181.0;
 
         lanelet::LaneletMapPtr mapPtr_;
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;

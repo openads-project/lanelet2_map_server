@@ -67,13 +67,15 @@ bool LL2MapInterface::validateParams()
         RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_filepath_ is an empty string!");
         return false;
     }
-    if(origin_lat_==0.0)
+    if(origin_lat_==91.0)
     {
-        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lat_ is 0.0, is this intended?");
+        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lat_ is not set!");
+        return false;
     }
-    if(origin_lon_==0.0)
+    if(origin_lon_==181.0)
     {
-        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lon_ is 0.0, is this intended?");
+        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lon_ is not set!");
+        return false;
     }
     return true;
 }
