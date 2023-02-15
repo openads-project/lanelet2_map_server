@@ -2,9 +2,8 @@ ROS2 Industrial CI:
   variables:
     DISABLE_ARCH_AMD64: 'true'
     DISABLE_ARCH_ARM64: 'true'
-    DOCKER_IMAGE: gitlab.ika.rwth-aachen.de:5050/fb-fi/ops/docker-base/ros2:latest
+    ROS_DISTRO: rolling
     NOT_TEST_BUILD: 'true'
-    OS_CODE_NAME: jammy
   trigger:
     include:
       - project: fb-fi/ops/docker-ros
