@@ -4,6 +4,7 @@ ROS2 Industrial CI:
     DISABLE_ARCH_ARM64: 'true'
     DOCKER_IMAGE: gitlab.ika.rwth-aachen.de:5050/fb-fi/ops/docker-base/ros2:latest
     NOT_TEST_BUILD: 'true'
+    ROS_DISTRO: rolling
   trigger:
     include:
       - project: fb-fi/ops/docker-ros
