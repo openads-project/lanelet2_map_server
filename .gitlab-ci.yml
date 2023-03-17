@@ -2,7 +2,7 @@ ROS2 Industrial CI:
   variables:
     DISABLE_ARCH_AMD64: 'true'
     DISABLE_ARCH_ARM64: 'true'
-    DOCKER_IMAGE: osrf/ros2:testing
+    DOCKER_IMAGE: ros:rolling
     NOT_TEST_BUILD: 'true'
   trigger:
     include:
