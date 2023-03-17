@@ -1,6 +1,6 @@
 include:
   - project: fb-fi/ops/docker-ros
-    ref: fix/standalone_industrial_ci
+    ref: main
     file: templates/.gitlab-ci.template.yml
 variables:
   DISABLE_ARCH_AMD64: 'true'
