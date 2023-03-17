@@ -2,8 +2,14 @@ include:
   - project: fb-fi/ops/docker-ros
     ref: main
     file: templates/.gitlab-ci.template.yml
+Test dev-amd64:
+  variables:
+    DOCKER_IMAGE: ros:rolling
+    NOT_TEST_BUILD: 'true'
+Test dev-arm64:
+  variables:
+    DOCKER_IMAGE: ros:rolling
+    NOT_TEST_BUILD: 'true'
 variables:
   DISABLE_ARCH_AMD64: 'true'
   DISABLE_ARCH_ARM64: 'true'
-  DOCKER_IMAGE: ros:rolling
-  NOT_TEST_BUILD: 'true'
