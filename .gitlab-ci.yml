@@ -7,6 +7,6 @@ ROS2 Industrial CI:
   trigger:
     include:
       - project: fb-fi/ops/docker-ros
-        ref: main
+        ref: fix/standalone_industrial_ci
         file: templates/.gitlab-ci.template.yml
     strategy: depend
