@@ -434,30 +434,30 @@ public:
     }
   } */
 
-  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const LineString3d &ll_line)
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString3d &ll_line)
   {
     std::vector<geometry_msgs::msg::Point> points;
-    for (auto &p : line_to_visu)
+    for (auto &p : ll_line)
     {
       geometry_msgs::msg::Point point;
       point.x = p.x();
       point.y = p.y();
       point.z = p.z();
-      points.points.push_back(point);
+      points.push_back(point);
     }
     return points;
   }
 
-  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const LineString2d &ll_line)
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString2d &ll_line)
   {
     std::vector<geometry_msgs::msg::Point> points;
-    for (auto &p : line_to_visu)
+    for (auto &p : ll_line)
     {
       geometry_msgs::msg::Point point;
       point.x = p.x();
       point.y = p.y();
       point.z = 0.0;
-      points.points.push_back(point);
+      points.push_back(point);
     }
     return points;
   }
@@ -600,7 +600,7 @@ public:
 
   // converts std::vector<geometry_msgs::msg::Point> to a visualization_msgs::Marker spheres for visualization
   // output is visualization_msgs::Marker marker
-  static void convertLinestringLine2VisuSphere(const std::vector<geometry_msgs::msg::Point> &line_to_visu,
+  static visualization_msgs::msg::Marker convertLinestring2VisuSphere(const std::vector<geometry_msgs::msg::Point> &line_to_visu,
                                               const std::string &frame,
                                               const builtin_interfaces::msg::Time &stamp, 
                                               const std::string &name_space_id,
