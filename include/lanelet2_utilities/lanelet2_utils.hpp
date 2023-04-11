@@ -434,25 +434,50 @@ public:
     }
   } */
 
-  // converts lanelet::LineString3d to a visualization_msgs::Marker linestrip for visualization
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const LineString3d &ll_line)
+  {
+    std::vector<geometry_msgs::msg::Point> points;
+    for (auto &p : line_to_visu)
+    {
+      geometry_msgs::msg::Point point;
+      point.x = p.x();
+      point.y = p.y();
+      point.z = p.z();
+      points.points.push_back(point);
+    }
+    return points;
+  }
+
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const LineString2d &ll_line)
+  {
+    std::vector<geometry_msgs::msg::Point> points;
+    for (auto &p : line_to_visu)
+    {
+      geometry_msgs::msg::Point point;
+      point.x = p.x();
+      point.y = p.y();
+      point.z = 0.0;
+      points.points.push_back(point);
+    }
+    return points;
+  }
+
+  // converts std::vector<geometry_msgs::msg::Point> to a visualization_msgs::Marker linestrip for visualization
   // output is visualization_msgs::Marker line_strip
-  static void convertLaneletLine2VisuLineStrip(const LineString3d &line_to_visu,
-                                               visualization_msgs::msg::Marker &line_strip,
+  static visualization_msgs::msg::Marker convertLinestring2VisuLineStrip(const std::vector<geometry_msgs::msg::Point> &line_to_visu,
                                                const std::string &frame,
                                                const builtin_interfaces::msg::Time &stamp,
                                                const std::string &name_space,
                                                const std::vector<float> &colors,
-                                               const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
+                                               const double &scale = 0.1)
   {
-    geometry_msgs::msg::Point point;
-    line_strip.points.clear();
-    line_strip.points.reserve(line_to_visu.size());
+    visualization_msgs::msg::Marker line_strip;
+    line_strip.points=line_to_visu;
 
     line_strip.header.frame_id = frame;
     line_strip.header.stamp = stamp;
     line_strip.ns = name_space;
-    line_strip.type = marker_type;
+    line_strip.type = visualization_msgs::msg::Marker::LINE_STRIP;
     line_strip.action = visualization_msgs::msg::Marker::ADD;
 
     line_strip.scale.x = scale;
@@ -470,105 +495,7 @@ public:
     line_strip.color.r = colors[0];
     line_strip.color.g = colors[1];
     line_strip.color.b = colors[2];
-
-    for (auto &p : line_to_visu)
-    {
-      point.x = p.x();
-      point.y = p.y();
-      point.z = p.z();
-      line_strip.points.push_back(point);
-    }
-  }
-
-  // converts lanelet::LineString3d to a visualization_msgs::Marker linestrip for visualization
-  // output is visualization_msgs::Marker line_strip
-  static void convertLaneletLine2VisuLineStrip(const BasicLineString3d &line_to_visu,
-                                               visualization_msgs::msg::Marker &line_strip,
-                                               const std::string &frame,
-                                               const builtin_interfaces::msg::Time &stamp,
-                                               const std::string &name_space_id,
-                                               const std::vector<float> &colors,
-                                               const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
-  {
-    geometry_msgs::msg::Point point;
-    line_strip.points.clear();
-
-    line_strip.header.frame_id = frame;
-    line_strip.header.stamp = stamp;
-    line_strip.ns = name_space_id;
-    line_strip.type = marker_type;
-    line_strip.action = visualization_msgs::msg::Marker::ADD;
-
-    line_strip.scale.x = scale;
-    line_strip.scale.y = scale;
-    line_strip.scale.z = scale;
-
-    if (colors.size() > 3)
-    {
-      line_strip.color.a = colors[3];
-    }
-    else
-    {
-      line_strip.color.a = 1.0;
-    }
-    line_strip.color.r = colors[0];
-    line_strip.color.g = colors[1];
-    line_strip.color.b = colors[2];
-
-    for (auto &p : line_to_visu)
-    {
-      point.x = p.x();
-      point.y = p.y();
-      point.z = p.z();
-      line_strip.points.push_back(point);
-    }
-  }
-
-  // converts lanelet::BasicLineString2d to a visualization_msgs::Marker linestrip for visualization
-  // output is visualization_msgs::Marker line_strip
-  static void convertLaneletLine2VisuLineStrip(const BasicLineString2d &line_to_visu,
-                                               visualization_msgs::msg::Marker &line_strip,
-                                               const std::string &frame,
-                                               const builtin_interfaces::msg::Time &stamp,
-                                               const std::string &name_space_id,
-                                               const std::vector<float> &colors,
-                                               const double &scale = 0.1,
-                                               const uint8_t marker_type = visualization_msgs::msg::Marker::LINE_STRIP)
-  {
-    geometry_msgs::msg::Point point;
-    line_strip.points.clear();
-
-    line_strip.header.frame_id = frame;
-    line_strip.header.stamp = stamp;
-    line_strip.ns = name_space_id;
-    line_strip.type = marker_type;
-    line_strip.action = visualization_msgs::msg::Marker::ADD;
-
-    line_strip.scale.x = scale;
-    line_strip.scale.y = scale;
-    line_strip.scale.z = scale;
-
-    if (colors.size() > 3)
-    {
-      line_strip.color.a = colors[3];
-    }
-    else
-    {
-      line_strip.color.a = 1.0;
-    }
-
-    line_strip.color.r = colors[0];
-    line_strip.color.g = colors[1];
-    line_strip.color.b = colors[2];
-
-    for (auto &p : line_to_visu)
-    {
-      point.x = p.x();
-      point.y = p.y();
-      point.z = 0.0;
-      line_strip.points.push_back(point);
-    }
+    return line_strip;
   }
 
   // converts lanelet::BasicPolygon2d to a visualization_msgs::Marker linestrip for visualization
@@ -671,17 +598,16 @@ public:
     line_strip.points.push_back(point);
   } */
 
-  // converts lanelet::LineString3d to a visualization_msgs::Marker spheres for visualization
+  // converts std::vector<geometry_msgs::msg::Point> to a visualization_msgs::Marker spheres for visualization
   // output is visualization_msgs::Marker marker
-  static void convertLaneletLine2VisuSphere(const LineString3d &line_to_visu,
-                                            visualization_msgs::msg::Marker &marker,
-                                            const std::string &frame,
-                                            const builtin_interfaces::msg::Time &stamp, 
-                                            const std::string &name_space_id,
-                                            const std::vector<float> &colors)
+  static void convertLinestringLine2VisuSphere(const std::vector<geometry_msgs::msg::Point> &line_to_visu,
+                                              const std::string &frame,
+                                              const builtin_interfaces::msg::Time &stamp, 
+                                              const std::string &name_space_id,
+                                              const std::vector<float> &colors)
   {
-    geometry_msgs::msg::Point point;
-    marker.points.clear();
+    visualization_msgs::msg::Marker marker;
+    marker.points=line_to_visu;
 
     marker.header.frame_id = frame;
     marker.header.stamp = stamp;
@@ -706,14 +632,7 @@ public:
     marker.color.g = colors[1];
     marker.color.b = colors[2];
 
-    for (auto &p : line_to_visu)
-    {
-      point.x = p.x();
-      point.y = p.y();
-      point.z = p.z();
-
-      marker.points.push_back(point);
-    }
+    return marker;
   }
 
   // converts lanelet::LineString3d to a visualization_msgs::Marker spheres for visualization
