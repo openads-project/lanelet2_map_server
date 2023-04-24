@@ -199,6 +199,167 @@ public:
     return points;
   }
 
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const double &length, const double &distance, boost::optional<double&> line_length = {})
+  {
+    if (line.size() == 1)
+    {
+      //ROS_WARN_DELAYED_THROTTLE(0.5, "fromArcCoordinates_fast: line size == 1");
+      return line.at(0);
+    }
+    //ROS_ASSERT(line.size() > 0);
+
+    double cur_len = 0.0;
+    double cur_cum_len = 0.0;
+    double remaining_dis = 0.0;
+    size_t start_idx = 0;
+    size_t end_idx = 0;
+    bool is_s_bigger_length = false;
+
+    for (size_t i=0; i<line.size() - 1; i++)
+    {
+      cur_len = boost::geometry::distance(line.at(i), line.at(i+1));
+      cur_cum_len += cur_len;
+
+      if (cur_cum_len > length)
+      {
+        remaining_dis = length - (cur_cum_len - cur_len);
+        start_idx = i;
+        end_idx = i + 1;
+        break;
+      }
+    }
+
+    // arc_length > line length
+    if (end_idx == 0)
+    {
+      end_idx = line.size() - 1;
+      start_idx = end_idx - 1;
+      is_s_bigger_length = true;
+      remaining_dis = boost::geometry::distance(line.at(start_idx), line.at(end_idx));
+
+      if(!!line_length)
+      {
+        *line_length = cur_cum_len;
+      }
+    }
+
+    // Very small line: generating point randomly around first point of line
+    if (is_s_bigger_length && cur_cum_len < 0.05)
+    {
+      return line.at(0);
+    }
+
+    const double dx = cur_len == 0.0 ? 0 : (line.at(start_idx).x() - line.at(end_idx).x()) / cur_len;
+    const double dy = cur_len == 0.0 ? 0 : (line.at(start_idx).y() - line.at(end_idx).y()) / cur_len;
+
+    const double p_x = line.at(start_idx).x() - dx * remaining_dis;
+    const double p_y = line.at(start_idx).y() - dy * remaining_dis;
+
+    return BasicPoint2d(p_x + dy * distance, p_y - dx * distance);
+  }
+
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const double &length, const double &distance)
+  {
+    return fromArcCoordinates_fast(line.basicLineString(), length, distance);
+  }
+
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const double &length, const double &distance)
+  {
+    return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), length, distance);
+  }
+
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const ArcCoordinates &arc)
+  {
+    return fromArcCoordinates_fast(line, arc.length, arc.distance);
+  }
+
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const ArcCoordinates &arc)
+  {
+    return fromArcCoordinates_fast(line.basicLineString(), arc.length, arc.distance);
+  }
+
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const ArcCoordinates &arc)
+  {
+    return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), arc.length, arc.distance);
+  }
+
+    static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d>& boundaries, const std::pair<BasicLineString2d, BasicLineString2d>& segments, const BasicLineString2d& centerline)
+  {
+    // Left
+    {
+      const BasicPoint2d boundaryEnd = getLastBoundaryPoint(segments.first, centerline, 10.0);
+      BasicLineString2d line1, line2;
+      splitLinestring(segments.first, boundaryEnd, line1, line2);
+      boundaries.first.insert(boundaries.first.end(), line1.begin(), line1.end());
+    }
+
+    // Right
+    {
+      const BasicPoint2d boundaryEnd = getLastBoundaryPoint(segments.second, centerline, -10.0);
+      BasicLineString2d line1, line2;
+      splitLinestring(segments.second, boundaryEnd, line1, line2);
+      boundaries.second.insert(boundaries.second.end(), line1.begin(), line1.end());
+    }
+  }
+
+  static void delFromBoundarySegment(BasicLineString2d& left_segment, BasicLineString2d& right_segment, const BasicLineString2d& centerline)
+  {
+    // Left
+    {
+      const BasicPoint2d boundaryEnd = getLastBoundaryPoint(left_segment, centerline, 10.0);
+      BasicLineString2d line1, line2;
+      splitLinestring(left_segment, boundaryEnd, line1, line2);
+      left_segment = line2;
+    }
+
+    // Right
+    {
+      const BasicPoint2d boundaryEnd = getLastBoundaryPoint(right_segment, centerline, -10.0);
+      BasicLineString2d line1, line2;
+      splitLinestring(right_segment, boundaryEnd, line1, line2);
+      right_segment = line2;
+    }
+  }
+
+
+  static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d& boundary_segment, const BasicLineString2d& centerline, const double& max_distance)
+  {
+    const BasicPoint2d test_p = geometry::internal::lateralShiftPointAtIndex(centerline, centerline.size()-1, max_distance);
+    const BasicLineString2d test_line({centerline.back(), test_p});
+    BasicPoints2d interpoints;
+    boost::geometry::intersection(boundary_segment, test_line, interpoints);
+
+    // Sort according to distance
+    std::vector<std::pair<double, BasicPoint2d> > all_interpoints;
+    for (const BasicPoint2d &poi : interpoints)
+    {
+      all_interpoints.emplace_back(geometry::distance(centerline.back(), poi), poi);
+    }
+    std::sort(all_interpoints.begin(), all_interpoints.end(),
+              [](auto const &t1, auto const &t2) {
+                return t1.first < t2.first;
+              });
+
+    return interpoints.size() ? all_interpoints.front().second : BasicPoint2d(boundary_segment.back());
+  }
+
+  static void splitLinestring(const BasicLineString2d& ls, const BasicPoint2d& pt, BasicLineString2d& line1, BasicLineString2d& line2)
+  {
+    const ArcCoordinates arc_pt = geometry::toArcCoordinates(ls, pt);
+    BasicPoint2d nearestPoint = geometry::nearestPointAtDistance(ls, arc_pt.length);
+    const ArcCoordinates arc_nearest_pt = geometry::toArcCoordinates(ls, nearestPoint);
+    auto idx = std::find(ls.begin(), ls.end(), nearestPoint);
+    if(arc_pt.length < arc_nearest_pt.length && idx != ls.begin()) idx--;
+
+    line1.clear();
+    line1.insert(line1.begin(), ls.begin(), idx);
+    line1.push_back(pt);
+
+    line2.clear();
+    line2.push_back(pt);
+    line2.insert(line2.begin() + 1, idx + 1, ls.end());
+  }
+
   // Creates a linestring from a lanelet path, sampled by distane with step size ds, accounting for lane changes with a sine function
   static BasicLineString2d convertLLPath2LineString2dSBased(
       const ConstLanelets &ll_path,
