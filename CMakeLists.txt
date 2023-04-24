@@ -11,13 +11,11 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(lanelet2 REQUIRED)
-find_package(visualization_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
 ament_target_dependencies(${PROJECT_NAME} INTERFACE
   lanelet2
-  visualization_msgs
 )
 
 target_include_directories(${PROJECT_NAME} INTERFACE
