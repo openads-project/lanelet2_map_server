@@ -203,10 +203,8 @@ public:
   {
     if (line.size() == 1)
     {
-      //ROS_WARN_DELAYED_THROTTLE(0.5, "fromArcCoordinates_fast: line size == 1");
       return line.at(0);
     }
-    //ROS_ASSERT(line.size() > 0);
 
     double cur_len = 0.0;
     double cur_cum_len = 0.0;
