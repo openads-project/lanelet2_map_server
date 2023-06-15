@@ -1,7 +1,10 @@
 include:
-  - project: fb-fi/ops/docker-ros
-    ref: main
-    file: templates/.gitlab-ci.template.yml
+  - remote: 'https://raw.githubusercontent.com/ika-rwth-aachen/docker-ros/main/.gitlab-ci/docker-ros.yml'
 
 variables:
+  BASE_IMAGE: rwthika/ros2:rolling
+  COMMAND: ros2 launch lanelet2_map_server ll2_map_server.launch.py
+  TARGET: dev,run
+  PLATFORM: amd64
+  ENABLE_INDUSTRIAL_CI: 'true'
   NOT_TEST_BUILD: 'true'
