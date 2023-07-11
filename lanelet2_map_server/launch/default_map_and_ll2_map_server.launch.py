@@ -13,7 +13,6 @@ def generate_launch_description():
     map_frame_id = LaunchConfiguration('map_frame_id')
     origin_lat = LaunchConfiguration('origin_lat')
     origin_lon = LaunchConfiguration('origin_lon')
-    use_sim_time_arg = LaunchConfiguration('use_sim_time_arg')
 
     node_name_launch_arg = DeclareLaunchArgument(
         'node_name',
@@ -45,11 +44,6 @@ def generate_launch_description():
         default_value='6.102233877820072'
     )
 
-    use_sim_time_launch_arg = DeclareLaunchArgument(
-        'use_sim_time_arg',
-        default_value='False'
-    )
-
     ll2_map_server_node = Node(
             package='lanelet2_map_server',
             executable='lanelet2_map_server',
@@ -76,11 +70,6 @@ def generate_launch_description():
         shell=True
     )
 
-    sim_time_param = SetParameter(name='use_sim_time',
-        value=LaunchConfiguration('use_sim_time_arg'),
-        condition=LaunchConfigurationNotEquals('use_sim_time_arg', "None")
-    )
-
     return LaunchDescription([
         node_name_launch_arg,
         ll2_map_storage_launch_arg,
@@ -88,13 +77,11 @@ def generate_launch_description():
         map_frame_id_launch_arg,
         origin_lat_launch_arg,
         origin_lon_launch_arg,
-        use_sim_time_launch_arg,
         ll2_map_server_node,
         RegisterEventHandler(
             OnProcessStart(
                 target_action=ll2_map_server_node,
                 on_start=[
-                    sim_time_param,
                     LogInfo(msg='Calling service to initially set map!'),
                     configure_map
                 ]
