@@ -1,15 +1,7 @@
 include:
   - project: fb-fi/ops/templates/ci-templates
     ref: main
-    file: .industrial-ci.template.yml
-Test dev-amd64:
-  variables:
-    DOCKER_IMAGE: ros:humble
-    NOT_TEST_BUILD: 'true'
-Test dev-arm64:
-  variables:
-    DOCKER_IMAGE: ros:humble
-    NOT_TEST_BUILD: 'true'
+    file: .industrial_ci.template.yml
 variables:
-  DISABLE_ARCH_AMD64: 'true'
-  DISABLE_ARCH_ARM64: 'true'
+  DOCKER_IMAGE: ros:humble
+  NOT_TEST_BUILD: 'true'
