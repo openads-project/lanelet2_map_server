@@ -2,7 +2,7 @@ include:
   - remote: 'https://raw.githubusercontent.com/ika-rwth-aachen/docker-ros/main/.gitlab-ci/docker-ros.yml'
 
 variables:
-  BASE_IMAGE: rwthika/ros2:rolling
+  BASE_IMAGE: rwthika/ros2:humble
   COMMAND: ros2 launch lanelet2_map_server ll2_map_server.launch.py
   TARGET: dev,run
   PLATFORM: amd64
