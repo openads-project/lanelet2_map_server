@@ -1,7 +1,7 @@
 include:
-  - project: fb-fi/ops/docker-ros
+  - project: fb-fi/ops/templates/ci-templates
     ref: main
-    file: templates/.gitlab-ci.template.yml
+    file: .industrial-ci.template.yml
 variables:
   DOCKER_IMAGE: ros:humble
   NOT_TEST_BUILD: 'true'
