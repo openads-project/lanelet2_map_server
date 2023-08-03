@@ -32,10 +32,17 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
                                           rclcpp::Parameter("origin_lon", origin_lon_)};
     if(!init_)
     {
-      this->declare_parameter("map_filepath");
-      this->declare_parameter("map_frame_id");
-      this->declare_parameter("origin_lat");
-      this->declare_parameter("origin_lon");
+      // set parameter description
+      rcl_interfaces::msg::ParameterDescriptor param_desc;
+      
+      param_desc.description = "Path to the Lanelet2 map-file.";
+      this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+      param_desc.description = "Frame ID of the Lanelet2 map-frame.";
+      this->declare_parameter("map_frame_id", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+      param_desc.description = "Latitude-Origin of the Lanelet2 map-frame.";
+      this->declare_parameter("origin_lat", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
+      param_desc.description = "Longitude-Origin of the Lanelet2 map-frame.";
+      this->declare_parameter("origin_lon", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
       init_=true;
     }
     
