@@ -3,5 +3,5 @@ include:
     ref: main
     file: .industrial_ci.template.yml
 variables:
-  DOCKER_IMAGE: ros:humble
+  ROS_DISTRO: humble
   NOT_TEST_BUILD: 'true'
