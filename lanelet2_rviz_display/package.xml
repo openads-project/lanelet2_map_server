@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format2.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>lanelet2_rviz_display</name>
+  <version>12.2.0</version>
+  <description>
+    Plugin for RViz to visualize a lanelet2 map.
+  </description>
+
+  <maintainer email="guido.kueppers@ika.rwth-aachen.de">Guido Küppers</maintainer>
+
+  <license>BSD</license>
+
+  <author email="guido.kueppers@ika.rwth-aachen.de">Guido Küppers</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>rviz_ogre_vendor</build_depend>
+
+  <build_export_depend>rviz_ogre_vendor</build_export_depend>
+
+  <exec_depend>libqt5-core</exec_depend>
+  <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
+  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>rviz_ogre_vendor</exec_depend>
+
+  <depend>lanelet2_map_interface</depend>
+  <depend>lanelet2_io</depend>
+  <depend>lanelet2_core</depend>
+  <depend>lanelet2_projection</depend>
+
+
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

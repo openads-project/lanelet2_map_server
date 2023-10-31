@@ -1,0 +1,14 @@
+<library path="lanelet2_rviz_display">
+
+  <!-- Displays plugins -->
+  <class
+    name="lanelet2_rviz_display/Lanelet2MapDisplay"
+    type="lanelet2_rviz_display::Lanelet2Display"
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays an Lanelet2 Map.
+    </description>
+  </class>
+
+</library>
