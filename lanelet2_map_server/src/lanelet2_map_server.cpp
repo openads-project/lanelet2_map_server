@@ -79,13 +79,17 @@ bool LL2MapServer::map_sanity_check(std::string map_filename, std::string map_fr
   }
 }
 
+void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp)
+{
+  if(latitude>=0.0) northp = true;
+  else northp = false;
+  zone = (int)std::ceil((longitude + 180.0)/6.0);
+  return;
+}
+
 void LL2MapServer::pub_tf()
 {
     geometry_msgs::msg::TransformStamped t;
-
-    t.header.stamp = this->get_clock()->now();
-    t.header.frame_id = "utm";
-    t.child_frame_id = map_frame_id_;
 
     // Create Projector without offset
     lanelet::projection::UtmProjector proj_utm(lanelet::Origin({origin_lat_, origin_lon_}), false);
@@ -100,9 +104,21 @@ void LL2MapServer::pub_tf()
     t.transform.rotation.z = 0;
     t.transform.rotation.w = 1;
 
+    bool northp;
+    int zone;
+    derive_utm_zone(origin_lat_, origin_lon_, zone, northp);
+
+    std::string hemisphere;
+    if(northp) hemisphere="N";
+    else hemisphere="S";
+    
+    t.header.frame_id ="utm_"+std::to_string(zone)+hemisphere;
+    t.child_frame_id = map_frame_id_;
+    t.header.stamp = this->get_clock()->now();
+
     // Send the transformation
     tf_static_broadcaster_->sendTransform(t);
-    RCLCPP_INFO_STREAM(get_logger(), "Sending transform utm->" << map_frame_id_);
+    RCLCPP_INFO_STREAM(get_logger(), "Broadcasting transform " << t.header.frame_id << " -> " << t.child_frame_id);
 }
 
 int main(int argc, char ** argv)
