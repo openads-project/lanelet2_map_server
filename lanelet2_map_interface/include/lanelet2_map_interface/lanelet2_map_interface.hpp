@@ -26,7 +26,7 @@ class LL2MapInterface
         rclcpp::Node::SharedPtr parent_node_;
         std::shared_ptr<rclcpp::AsyncParametersClient> parameter_client_;
         std::shared_ptr<rclcpp::ParameterEventHandler> parameter_sub_;
-        std::shared_ptr<rclcpp::ParameterCallbackHandle> filepath_callback_handle_, frame_id_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;
+        std::shared_ptr<rclcpp::ParameterCallbackHandle> filepath_callback_handle_, frame_id_callback_handle_, contents_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;
 
         std::vector<rclcpp::Parameter> map_params_;
         std::string map_filepath_, map_contents_;
