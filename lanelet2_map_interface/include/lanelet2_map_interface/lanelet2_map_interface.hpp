@@ -5,6 +5,9 @@
 #include <lanelet2_io/Io.h>
 #include <lanelet2_projection/UTM.h>
 
+#include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <string.h>
 
 using namespace std::chrono_literals;
@@ -26,7 +29,7 @@ class LL2MapInterface
         std::shared_ptr<rclcpp::ParameterCallbackHandle> filepath_callback_handle_, frame_id_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;
 
         std::vector<rclcpp::Parameter> map_params_;
-        std::string map_filepath_;
+        std::string map_filepath_, map_contents_;
         double origin_lat_=91.0, origin_lon_=181.0;
 
         lanelet::LaneletMapPtr mapPtr_;

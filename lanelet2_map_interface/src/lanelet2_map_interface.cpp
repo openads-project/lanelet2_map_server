@@ -26,12 +26,13 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::strin
     }
     else
     {
-        auto parameters_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "origin_lat", "origin_lon"},
+        auto parameters_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "map_contents", "origin_lat", "origin_lon"},
                                                             std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
     }
 
     filepath_callback_handle_ = parameter_sub_->add_parameter_callback("map_filepath", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     frame_id_callback_handle_ = parameter_sub_->add_parameter_callback("map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+    contents_callback_handle_ = parameter_sub_->add_parameter_callback("map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
 }
@@ -65,6 +66,11 @@ bool LL2MapInterface::validateParams()
     if(map_filepath_.size()==0)
     {
         RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_filepath_ is an empty string!");
+        return false;
+    }
+    if(map_contents_.size()==0)
+    {
+        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_contents_ is an empty string!");
         return false;
     }
     if(origin_lat_==91.0)
@@ -121,6 +127,10 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
     {
         map_filepath_ = param.value_to_string();
     }
+    if(param.get_name()=="map_contents")
+    {
+        map_contents_ = param.value_to_string();
+    }
     if(param.get_name()=="origin_lat")
     {
         origin_lat_ = param.as_double();
@@ -133,10 +143,31 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
 
 bool LL2MapInterface::loadMap()
 {   
+    // Validate parameters
     if(!validateParams())
     {
         return false;
     }
+
+    // Check if location of map file is exists, if not create all folders
+    std::string map_directory = map_filepath_.substr(0, map_filepath_.find_last_of("/"));
+    if(!std::filesystem::exists(map_directory))
+    {
+        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Creating folder " << map_directory << " for map file.");
+        if (!std::filesystem::create_directories(map_directory))
+        {
+            RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Failed to create folder " << map_directory);
+            return false;
+        }
+    }
+
+    // Save map_contents to file
+    std::ofstream map_file;
+    map_file.open(map_filepath_);
+    map_file << map_contents_;
+    map_file.close();
+
+    // Load map from file
     utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_=true;
