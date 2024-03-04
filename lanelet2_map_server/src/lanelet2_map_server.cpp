@@ -26,8 +26,13 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
                                     << "\n Origin Lat: " << origin_lat_
                                     << "\n Origin Lon: " << origin_lon_);
 
+    // Load the map as string
+    std::ifstream file(map_filename_);
+    map_contents_ = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
     std::vector<rclcpp::Parameter> params{rclcpp::Parameter("map_filepath", map_filename_),
                                           rclcpp::Parameter("map_frame_id", map_frame_id_),
+                                          rclcpp::Parameter("map_contents", map_contents_),
                                           rclcpp::Parameter("origin_lat", origin_lat_),
                                           rclcpp::Parameter("origin_lon", origin_lon_)};
     if(!init_)
@@ -39,6 +44,8 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
       this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
       param_desc.description = "Frame ID of the Lanelet2 map-frame.";
       this->declare_parameter("map_frame_id", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+      param_desc.description = "Contents of the Lanelet2 map-file.";
+      this->declare_parameter("map_contents", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
       param_desc.description = "Latitude-Origin of the Lanelet2 map-frame.";
       this->declare_parameter("origin_lat", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
       param_desc.description = "Longitude-Origin of the Lanelet2 map-frame.";

@@ -1,6 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include <string.h>
+#include <fstream>
 
 #include "lanelet2_map_server_interfaces/srv/change_map_params.hpp"
 
@@ -27,7 +28,7 @@ class LL2MapServer : public rclcpp::Node
 
         rclcpp::Service<lanelet2_map_server_interfaces::srv::ChangeMapParams>::SharedPtr change_map_srv_;
 
-        std::string map_filename_, map_frame_id_;
+        std::string map_filename_, map_frame_id_, map_contents_;
         double origin_lat_, origin_lon_;
 
         bool init_=false;
