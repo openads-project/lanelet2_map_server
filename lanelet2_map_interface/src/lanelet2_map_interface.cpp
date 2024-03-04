@@ -149,7 +149,7 @@ bool LL2MapInterface::loadMap()
         return false;
     }
 
-    // Check if location of map file is exists, if not create all folders
+    // Check if location of map file exists, if not create all folders
     std::string map_directory = map_filepath_.substr(0, map_filepath_.find_last_of("/"));
     if(!std::filesystem::exists(map_directory))
     {
