@@ -90,7 +90,8 @@ void LL2MapServer::derive_utm_zone(const double latitude, const double longitude
 {
   if(latitude>=0.0) northp = true;
   else northp = false;
-  zone = (int)std::ceil((longitude + 180.0)/6.0);
+
+  zone = (int)std::floor((longitude + 180.0)/6.0) + 1;
   return;
 }
 
