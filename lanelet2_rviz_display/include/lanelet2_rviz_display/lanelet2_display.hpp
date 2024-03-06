@@ -46,7 +46,7 @@ private Q_SLOTS:
 
 private:
 
-  void initializeMapInterface(rclcpp::Node::SharedPtr parent_node);
+  void initializeMapInterface(rclcpp::Node& parent_node);
   bool visualizeMap();
   void updateVisualization();
 

@@ -83,7 +83,7 @@ Lanelet2Display::Lanelet2Display()
 
 Lanelet2Display::~Lanelet2Display() = default;
 
-void Lanelet2Display::initializeMapInterface(rclcpp::Node::SharedPtr parent_node)
+void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node)
 {
   std::string name = ll2_server_name_property_->getStdString();
   ll2if_ = new LL2MapInterface(parent_node, name);
@@ -93,7 +93,7 @@ void Lanelet2Display::onInitialize()
 {
   auto nodeAbstraction = context_->getRosNodeAbstraction().lock();
   rviz_node_ = nodeAbstraction->get_raw_node();
-  initializeMapInterface(rviz_node_);
+  initializeMapInterface(*rviz_node_);
 }
 
 void Lanelet2Display::update(float dt, float ros_dt)
