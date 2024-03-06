@@ -134,7 +134,7 @@ void Lanelet2Display::update(float dt, float ros_dt)
 void Lanelet2Display::updateServerName()
 {
   delete ll2if_;
-  initializeMapInterface(rviz_node_);
+  initializeMapInterface(*rviz_node_);
   viz_init_=false;
 }
 
