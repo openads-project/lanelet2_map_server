@@ -31,6 +31,10 @@ Lanelet2Display::Lanelet2Display() {
   alpha_property_->setMin(0.0f);
   alpha_property_->setMax(1.0f);
 
+  three_d_property_ = new BoolProperty("Show Map in 3D", true,
+                                       "Toggles wether to display the lanelet map with or without its z coordinates.",
+                                       this, SLOT(update3D()));
+
   viz_linestring_property_ =
       new BoolProperty("Visualize Lanelet-Linestrings", true, "Activate the visualization of Lanelet-Linestrings.",
                        this, SLOT(updateLinestringRendering()));
@@ -52,13 +56,9 @@ Lanelet2Display::Lanelet2Display() {
   separators_col_property_ = new ColorProperty("Separators Color", QColor{25, 25, 230}, "Color of Lanelet Separators.",
                                                viz_separators_property_, SLOT(updateColor()), this);
 
-  separators_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
+  separators_width_property_ = new FloatProperty("Linestring Width", 0.2f, "The width, in meters, of each linestring.",
                                                  viz_separators_property_, SLOT(updateWidth()), this);
   separators_width_property_->setMin(0.01f);
-
-  three_d_property_ = new BoolProperty("Show Map in 3D", true,
-                                       "Toggles wether to display the lanelet map with or without its z coordinates.",
-                                       this, SLOT(update3D()));
 
   viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.",
                                              this, SLOT(updateStopLineRendering()));

@@ -59,6 +59,9 @@ using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObj
 class Lanelet2Map {
  public:
   struct RenderingOptions {
+    // General
+    bool threeD = true;
+
     // Line-Strings
     bool renderLaneletLinestrings = true;
     double linestringWidth = 0.1;
@@ -74,13 +77,6 @@ class Lanelet2Map {
     bool renderStopLines = true;
     Ogre::ColourValue colorStopLine{Ogre::ColourValue(1.0, 0.1, 0.1, 1.0)};  // red
     double stopLineWidth = 0.2;
-
-    // ID's
-    bool renderLaneletIds = false;
-    double characterHeight = 1.0;
-
-    // 3D
-    bool threeD = true;
 
     // Traffic lights
     bool renderTrafficLights = true;
@@ -98,6 +94,10 @@ class Lanelet2Map {
     Ogre::ColourValue colorParking{Ogre::ColourValue(0.0, 0.7, 0.3, 1.0)};  // green
     double parkingWidth = 0.3;
     bool fillParking = true;
+
+    // IDs
+    bool renderLaneletIds = false;
+    double characterHeight = 1.0;
   };
 
   Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node, Lanelet2Map::RenderingOptions rend_opts,
@@ -107,10 +107,10 @@ class Lanelet2Map {
   void clearObjects();
 
   /**
-         * \brief Get the Ogre scene node associated with this ll2-map
-         *
-         * @return The Ogre scene node associated with this ll2-map
-         */
+   * \brief Get the Ogre scene node associated with this ll2-map
+   *
+   * @return The Ogre scene node associated with this ll2-map
+   */
   Ogre::SceneNode *getSceneNode() { return scene_node_; }
 
   void updateMap(Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
