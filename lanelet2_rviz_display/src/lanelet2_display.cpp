@@ -179,46 +179,34 @@ void Lanelet2Display::updateVisualization() {
   }
 }
 
-// *viz_linestring_property_, *viz_separators_property_,
-// *fill_area_property_, *fill_parking_property_, *viz_stop_line_property_, *viz_traffic_light_property_,
-// *viz_area_property_, *viz_parking_property_, *viz_id_property_;
-
 void Lanelet2Display::updateLinestringRendering() {
   rendering_options_.renderLaneletLinestrings = viz_linestring_property_->getBool();
-  if (!rendering_options_.renderLaneletLinestrings) {
-    viz_linestring_property_->collapse();
-  } else {
-    viz_linestring_property_->expand();
+  for (uint16_t i = 0; i < viz_linestring_property_->numChildren(); i++) {
+    viz_linestring_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletLinestrings);
   }
   updateVisualization();
 }
 
 void Lanelet2Display::updateSeparatorsRendering() {
   rendering_options_.renderLaneletSeparators = viz_separators_property_->getBool();
-  if (!rendering_options_.renderLaneletSeparators) {
-    viz_separators_property_->collapse();
-  } else {
-    viz_separators_property_->expand();
+  for (uint16_t i = 0; i < viz_separators_property_->numChildren(); i++) {
+    viz_separators_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletSeparators);
   }
   updateVisualization();
 }
 
 void Lanelet2Display::updateStopLineRendering() {
   rendering_options_.renderStopLines = viz_stop_line_property_->getBool();
-  if (!rendering_options_.renderStopLines) {
-    viz_stop_line_property_->collapse();
-  } else {
-    viz_stop_line_property_->expand();
+  for (uint16_t i = 0; i < viz_stop_line_property_->numChildren(); i++) {
+    viz_stop_line_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderStopLines);
   }
   updateVisualization();
 }
 
 void Lanelet2Display::updateTrafficLightRendering() {
   rendering_options_.renderTrafficLights = viz_traffic_light_property_->getBool();
-  if (!rendering_options_.renderTrafficLights) {
-    viz_traffic_light_property_->collapse();
-  } else {
-    viz_traffic_light_property_->expand();
+  for (uint16_t i = 0; i < viz_traffic_light_property_->numChildren(); i++) {
+    viz_traffic_light_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderTrafficLights);
   }
   updateVisualization();
 }
@@ -226,10 +214,8 @@ void Lanelet2Display::updateTrafficLightRendering() {
 void Lanelet2Display::updateAreaRendering() {
   rendering_options_.renderAreas = viz_area_property_->getBool();
   rendering_options_.fillArea = fill_area_property_->getBool();
-  if (!rendering_options_.renderAreas) {
-    viz_area_property_->collapse();
-  } else {
-    viz_area_property_->expand();
+  for (uint16_t i = 0; i < viz_area_property_->numChildren(); i++) {
+    viz_area_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderAreas);
   }
   updateVisualization();
 }
@@ -237,20 +223,16 @@ void Lanelet2Display::updateAreaRendering() {
 void Lanelet2Display::updateParkingRendering() {
   rendering_options_.renderParking = viz_parking_property_->getBool();
   rendering_options_.fillParking = fill_parking_property_->getBool();
-  if (!rendering_options_.renderParking) {
-    viz_parking_property_->collapse();
-  } else {
-    viz_parking_property_->expand();
+  for (uint16_t i = 0; i < viz_parking_property_->numChildren(); i++) {
+    viz_parking_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderParking);
   }
   updateVisualization();
 }
 
 void Lanelet2Display::updateIdRendering() {
   rendering_options_.renderLaneletIds = viz_id_property_->getBool();
-  if (!rendering_options_.renderLaneletIds) {
-    viz_id_property_->collapse();
-  } else {
-    viz_id_property_->expand();
+  for (uint16_t i = 0; i < viz_id_property_->numChildren(); i++) {
+    viz_id_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletIds);
   }
   updateVisualization();
 }
