@@ -9,9 +9,9 @@
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/frame_manager_iface.hpp"
+#include "rviz_common/interaction/selection_manager.hpp"
 #include "rviz_common/properties/parse_color.hpp"
 #include "rviz_common/properties/property.hpp"
-#include "rviz_common/interaction/selection_manager.hpp"
 
 using rviz_common::properties::BoolProperty;
 using rviz_common::properties::ColorProperty;
@@ -19,100 +19,128 @@ using rviz_common::properties::FloatProperty;
 using rviz_common::properties::qtToOgre;
 using rviz_common::properties::StringProperty;
 
-namespace lanelet2_rviz_display
-{
+namespace lanelet2_rviz_display {
 
-Lanelet2Display::Lanelet2Display()
-{
-  ll2_server_name_property_ = new StringProperty(
-    QString::fromStdString("Lanelet2-Map-Server Name"),
-    QString::fromStdString("ll2_map_server"),
-    QString::fromStdString("Name of the Lanelet2-Map-Server."),
-    this, SLOT(updateServerName()));
+Lanelet2Display::Lanelet2Display() {
+  ll2_server_name_property_ =
+      new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
+                         QString::fromStdString("Name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
 
-  alpha_property_ = new FloatProperty(
-    "Alpha", 1.0f,
-    "The amount of transparency to apply to the Map.",
-    this, SLOT(updateColor()), this);
+  alpha_property_ = new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this,
+                                      SLOT(updateColor()), this);
   alpha_property_->setMin(0.0f);
   alpha_property_->setMax(1.0f);
 
-  viz_linestring_property_ = new BoolProperty(
-    "Visualize Lanelet-Linestrings", true,
-    "Activate the visualization of Lanelet-Linestrings.",
-    this, SLOT(updateLinestringRendering()));
+  viz_linestring_property_ =
+      new BoolProperty("Visualize Lanelet-Linestrings", true, "Activate the visualization of Lanelet-Linestrings.",
+                       this, SLOT(updateLinestringRendering()));
 
-  ll_left_col_property_ = new ColorProperty(
-    "LL Color Left", Qt::white,
-    "Color of left Lanelet-Linestring.",
-    viz_linestring_property_, SLOT(updateColor()), this);
+  ll_left_col_property_ = new ColorProperty("LL Color Left", Qt::white, "Color of left Lanelet-Linestring.",
+                                            viz_linestring_property_, SLOT(updateColor()), this);
 
-  ll_right_col_property_ = new ColorProperty(
-    "LL Color Right", Qt::white,
-    "Color of right Lanelet-Linestring.",
-    viz_linestring_property_, SLOT(updateColor()), this);
+  ll_right_col_property_ = new ColorProperty("LL Color Right", Qt::white, "Color of right Lanelet-Linestring.",
+                                             viz_linestring_property_, SLOT(updateColor()), this);
 
-  linestring_width_property_ = new FloatProperty(
-    "Linestring Width", 0.1f,
-    "The width, in meters, of each linestring.",
-    viz_linestring_property_, SLOT(updateWidth()), this);
+  linestring_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
+                                                 viz_linestring_property_, SLOT(updateWidth()), this);
   linestring_width_property_->setMin(0.01f);
 
-  viz_separators_property_ = new BoolProperty(
-    "Visualize Lanelet-Separators", false,
-    "Activate the visualization of Lanelet-Separators.",
-    this, SLOT(updateSeparatorsRendering()));
+  viz_separators_property_ =
+      new BoolProperty("Visualize Lanelet-Separators", false, "Activate the visualization of Lanelet-Separators.", this,
+                       SLOT(updateSeparatorsRendering()));
 
-  separators_col_property_ = new ColorProperty(
-    "Separators Color", Qt::blue,
-    "Color of Lanelet Separators.",
-    viz_separators_property_, SLOT(updateColor()), this);
+  separators_col_property_ = new ColorProperty("Separators Color", Qt::blue, "Color of Lanelet Separators.",
+                                               viz_separators_property_, SLOT(updateColor()), this);
 
-  separators_width_property_ = new FloatProperty(
-    "Linestring Width", 0.1f,
-    "The width, in meters, of each linestring.",
-    viz_separators_property_, SLOT(updateWidth()), this);
+  separators_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
+                                                 viz_separators_property_, SLOT(updateWidth()), this);
   separators_width_property_->setMin(0.01f);
-  
-  three_d_property_ = new BoolProperty(
-    "Show Map in 3D", true,
-    "Toggles wether to display the lanelet map with or without its z coordinates.",
-    this, SLOT(update3D()));
 
+  three_d_property_ = new BoolProperty("Show Map in 3D", true,
+                                       "Toggles wether to display the lanelet map with or without its z coordinates.",
+                                       this, SLOT(update3D()));
+
+  viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.",
+                                             this, SLOT(updateStopLineRendering()));
+
+  stop_line_col_property_ = new ColorProperty("Stop Line Color", Qt::red, "Color of Stop-Lines.",
+                                              viz_stop_line_property_, SLOT(updateColor()), this);
+
+  stop_line_width_property_ = new FloatProperty("Stop Line Width", 0.2f, "The width, in meters, of each stop line.",
+                                                viz_stop_line_property_, SLOT(updateWidth()), this);
+  stop_line_width_property_->setMin(0.01f);
+
+  viz_traffic_light_property_ =
+      new BoolProperty("Visualize Traffic Lights", true, "Activate the visualization of Traffic-Lights.", this,
+                       SLOT(updateTrafficLightRendering()));
+
+  traffic_light_col_property_ = new ColorProperty("Traffic Light Color", Qt::gray, "Color of Traffic-Lights.",
+                                                  viz_traffic_light_property_, SLOT(updateColor()), this);
+
+  traffic_light_height_property_ =
+      new FloatProperty("Traffic Light Height", 3.0f, "The height, in meters, of each traffic light.",
+                        viz_traffic_light_property_, SLOT(updateWidth()), this);
+  traffic_light_height_property_->setMin(0.01f);
+
+  viz_area_property_ = new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this,
+                                        SLOT(updateAreaRendering()));
+
+  area_col_property_ =
+      new ColorProperty("Area Color", Qt::darkYellow, "Color of Areas.", viz_area_property_, SLOT(updateColor()), this);
+
+  area_width_property_ = new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.",
+                                           viz_area_property_, SLOT(updateWidth()), this);
+  area_width_property_->setMin(0.01f);
+
+  fill_area_property_ = new BoolProperty("Fill Areas", false, "Toggles wether to fill the areas with color or not.",
+                                         viz_area_property_, SLOT(updateAreaRendering()), this);
+
+  viz_parking_property_ = new BoolProperty("Visualize Parking", true, "Activate the visualization of Parking.", this,
+                                           SLOT(updateParkingRendering()));
+
+  parking_col_property_ = new ColorProperty("Parking Color", Qt::darkGreen, "Color of Parking.", viz_parking_property_,
+                                            SLOT(updateColor()), this);
+
+  parking_width_property_ = new FloatProperty("Parking Width", 0.3f, "The width, in meters, of each parking.",
+                                              viz_parking_property_, SLOT(updateWidth()), this);
+  parking_width_property_->setMin(0.01f);
+
+  fill_parking_property_ =
+      new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
+                       viz_parking_property_, SLOT(updateParkingRendering()), this);
+
+  viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.",
+                                      this, SLOT(updateIdRendering()));
+
+  char_height_property_ = new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_,
+                                            SLOT(updateWidth()), this);
 }
 
 Lanelet2Display::~Lanelet2Display() = default;
 
-void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node)
-{
+void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
   std::string name = ll2_server_name_property_->getStdString();
   ll2if_ = new LL2MapInterface(parent_node, name);
 }
 
-void Lanelet2Display::onInitialize()
-{
+void Lanelet2Display::onInitialize() {
   auto nodeAbstraction = context_->getRosNodeAbstraction().lock();
   rviz_node_ = nodeAbstraction->get_raw_node();
   initializeMapInterface(*rviz_node_);
 }
 
-void Lanelet2Display::update(float dt, float ros_dt)
-{
-  if(ll2if_->map_loaded_)
-  {
-    if(!viz_init_ )
-    {
+void Lanelet2Display::update(float dt, float ros_dt) {
+  if (ll2if_->map_loaded_) {
+    if (!viz_init_) {
       viz_init_ = visualizeMap();
-      ll2if_->update_pending_=false;
+      ll2if_->update_pending_ = false;
     }
 
-    if(ll2if_->update_pending_)
-    {
+    if (ll2if_->update_pending_) {
       updateVisualization();
     }
-    
-    if(viz_init_)
-    {
+
+    if (viz_init_) {
       Q_UNUSED(dt);
       Q_UNUSED(ros_dt);
 
@@ -131,59 +159,103 @@ void Lanelet2Display::update(float dt, float ros_dt)
   }
 }
 
-void Lanelet2Display::updateServerName()
-{
+void Lanelet2Display::updateServerName() {
   delete ll2if_;
   initializeMapInterface(*rviz_node_);
-  viz_init_=false;
+  viz_init_ = false;
 }
 
-bool Lanelet2Display::visualizeMap()
-{
-  map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_, ll2if_->getMapPtr());
+bool Lanelet2Display::visualizeMap() {
+  map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_,
+                                                       ll2if_->getMapPtr());
   map_->getSceneNode()->setVisible(false);
   return true;
 }
 
-void Lanelet2Display::updateVisualization()
-{
-  if(viz_init_)
-  {
+void Lanelet2Display::updateVisualization() {
+  if (viz_init_) {
     map_->updateMap(rendering_options_, ll2if_->getMapPtr());
-    ll2if_->update_pending_=false;
+    ll2if_->update_pending_ = false;
   }
 }
 
-void Lanelet2Display::updateLinestringRendering()
-{
+// *viz_linestring_property_, *viz_separators_property_,
+// *fill_area_property_, *fill_parking_property_, *viz_stop_line_property_, *viz_traffic_light_property_,
+// *viz_area_property_, *viz_parking_property_, *viz_id_property_;
+
+void Lanelet2Display::updateLinestringRendering() {
   rendering_options_.renderLaneletLinestrings = viz_linestring_property_->getBool();
-  if(!rendering_options_.renderLaneletLinestrings)
-  {
+  if (!rendering_options_.renderLaneletLinestrings) {
     viz_linestring_property_->collapse();
-  }
-  else
-  {
+  } else {
     viz_linestring_property_->expand();
   }
   updateVisualization();
 }
 
-void Lanelet2Display::updateSeparatorsRendering()
-{
+void Lanelet2Display::updateSeparatorsRendering() {
   rendering_options_.renderLaneletSeparators = viz_separators_property_->getBool();
-  if(!rendering_options_.renderLaneletSeparators)
-  {
+  if (!rendering_options_.renderLaneletSeparators) {
     viz_separators_property_->collapse();
-  }
-  else
-  {
+  } else {
     viz_separators_property_->expand();
   }
   updateVisualization();
 }
 
-void Lanelet2Display::updateColor()
-{
+void Lanelet2Display::updateStopLineRendering() {
+  rendering_options_.renderStopLines = viz_stop_line_property_->getBool();
+  if (!rendering_options_.renderStopLines) {
+    viz_stop_line_property_->collapse();
+  } else {
+    viz_stop_line_property_->expand();
+  }
+  updateVisualization();
+}
+
+void Lanelet2Display::updateTrafficLightRendering() {
+  rendering_options_.renderTrafficLights = viz_traffic_light_property_->getBool();
+  if (!rendering_options_.renderTrafficLights) {
+    viz_traffic_light_property_->collapse();
+  } else {
+    viz_traffic_light_property_->expand();
+  }
+  updateVisualization();
+}
+
+void Lanelet2Display::updateAreaRendering() {
+  rendering_options_.renderAreas = viz_area_property_->getBool();
+  rendering_options_.fillArea = fill_area_property_->getBool();
+  if (!rendering_options_.renderAreas) {
+    viz_area_property_->collapse();
+  } else {
+    viz_area_property_->expand();
+  }
+  updateVisualization();
+}
+
+void Lanelet2Display::updateParkingRendering() {
+  rendering_options_.renderParking = viz_parking_property_->getBool();
+  rendering_options_.fillParking = fill_parking_property_->getBool();
+  if (!rendering_options_.renderParking) {
+    viz_parking_property_->collapse();
+  } else {
+    viz_parking_property_->expand();
+  }
+  updateVisualization();
+}
+
+void Lanelet2Display::updateIdRendering() {
+  rendering_options_.renderLaneletIds = viz_id_property_->getBool();
+  if (!rendering_options_.renderLaneletIds) {
+    viz_id_property_->collapse();
+  } else {
+    viz_id_property_->expand();
+  }
+  updateVisualization();
+}
+
+void Lanelet2Display::updateColor() {
   // Linestrings
   QColor color_left = ll_left_col_property_->getColor();
   QColor color_right = ll_right_col_property_->getColor();
@@ -197,29 +269,56 @@ void Lanelet2Display::updateColor()
   color_sep.setAlphaF(alpha_property_->getFloat());
   rendering_options_.colorSeperator = qtToOgre(color_sep);
 
+  // Traffic lights
+  QColor color_tl = traffic_light_col_property_->getColor();
+  color_tl.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorTrafficLight = qtToOgre(color_tl);
+
+  // Stop lines
+  QColor color_sl = stop_line_col_property_->getColor();
+  color_sl.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorStopLine = qtToOgre(color_sl);
+
+  // Areas
+  QColor color_area = area_col_property_->getColor();
+  color_area.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorArea = qtToOgre(color_area);
+
+  // Parking
+  QColor color_parking = parking_col_property_->getColor();
+  color_parking.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorParking = qtToOgre(color_parking);
+
   updateVisualization();
 }
 
-void Lanelet2Display::updateWidth()
-{
+void Lanelet2Display::updateWidth() {
   // Linestrings
   rendering_options_.linestringWidth = linestring_width_property_->getFloat();
 
   // Separators
   rendering_options_.seperatorWidth = separators_width_property_->getFloat();
 
+  // Stop lines
+  rendering_options_.stopLineWidth = stop_line_width_property_->getFloat();
+
+  // Traffic lights
+  rendering_options_.trafficLightHeightAboveGround = traffic_light_height_property_->getFloat();
+
+  // IDs
+  rendering_options_.characterHeight = char_height_property_->getFloat();
+
   updateVisualization();
 }
 
-void Lanelet2Display::update3D()
-{
+void Lanelet2Display::update3D() {
   // 3D
   rendering_options_.threeD = three_d_property_->getBool();
 
   updateVisualization();
 }
 
-} // namespace lanelet2_rviz_display
+}  // namespace lanelet2_rviz_display
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
 PLUGINLIB_EXPORT_CLASS(lanelet2_rviz_display::Lanelet2Display, rviz_common::Display)
