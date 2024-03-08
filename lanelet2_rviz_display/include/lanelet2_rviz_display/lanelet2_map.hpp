@@ -97,6 +97,7 @@ class Lanelet2Map {
 
     // IDs
     bool renderLaneletIds = false;
+    Ogre::ColourValue colorLaneletId{Ogre::ColourValue(1.0, 1.0, 1.0, 1.0)};  // white
     double characterHeight = 1.0;
   };
 

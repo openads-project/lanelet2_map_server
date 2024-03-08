@@ -113,6 +113,9 @@ Lanelet2Display::Lanelet2Display() {
   viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.",
                                       this, SLOT(updateIdRendering()));
 
+  id_col_property_ =
+      new ColorProperty("ID Color", Qt::white, "Color of Lanelet-IDs.", viz_id_property_, SLOT(updateColor()), this);
+
   char_height_property_ = new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_,
                                             SLOT(updateWidth()), this);
 }
@@ -271,6 +274,11 @@ void Lanelet2Display::updateColor() {
   QColor color_parking = parking_col_property_->getColor();
   color_parking.setAlphaF(alpha_property_->getFloat());
   rendering_options_.colorParking = qtToOgre(color_parking);
+
+  // IDs
+  QColor color_id = id_col_property_->getColor();
+  color_id.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorLaneletId = qtToOgre(color_id);
 
   updateVisualization();
 }

@@ -64,7 +64,8 @@ class Lanelet2Display : public rviz_common::Display {
       *viz_area_property_, *viz_parking_property_, *viz_id_property_;
   rviz_common::properties::FloatProperty *alpha_property_;
   rviz_common::properties::ColorProperty *ll_left_col_property_, *ll_right_col_property_, *separators_col_property_,
-      *traffic_light_col_property_, *stop_line_col_property_, *area_col_property_, *parking_col_property_;
+      *traffic_light_col_property_, *stop_line_col_property_, *area_col_property_, *parking_col_property_,
+      *id_col_property_;
   rviz_common::properties::FloatProperty *linestring_width_property_, *separators_width_property_,
       *stop_line_width_property_, *traffic_light_height_property_, *area_width_property_, *parking_width_property_,
       *char_height_property_;

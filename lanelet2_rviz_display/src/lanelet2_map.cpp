@@ -362,7 +362,7 @@ void Lanelet2Map::attachLaneletIdToSceneNode(const lanelet::ConstLanelet &lanele
 
   rviz_rendering::MovableText *msg = new rviz_rendering::MovableText(std::to_string(lanelet.id()));
   msg->setCharacterHeight(rend_opts_.characterHeight);
-  msg->setColor(Ogre::ColourValue::White);
+  msg->setColor(rend_opts_.colorLaneletId);
   msg->setTextAlignment(rviz_rendering::MovableText::H_CENTER,
                         rviz_rendering::MovableText::V_ABOVE);  // Center horizontally and
                                                                 // display above the node
