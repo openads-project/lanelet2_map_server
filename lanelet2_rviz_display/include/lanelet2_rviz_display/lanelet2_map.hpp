@@ -84,18 +84,18 @@ class Lanelet2Map {
 
     // Traffic lights
     bool renderTrafficLights = true;
-    Ogre::ColourValue colorTrafficLight{Ogre::ColourValue(0.4, 0.4, 0.4, 0.8)};  // gray
+    Ogre::ColourValue colorTrafficLight{Ogre::ColourValue(0.4, 0.4, 0.4, 1.0)};  // gray
     double trafficLightHeightAboveGround = 3.0;
 
     // Areas
     bool renderAreas = true;
-    Ogre::ColourValue colorArea{Ogre::ColourValue(0.9, 0.5, 0.1, 0.6)};  // orange
+    Ogre::ColourValue colorArea{Ogre::ColourValue(0.9, 0.5, 0.1, 1.0)};  // orange
     double areaWidth = 0.3;
     bool fillArea = false;
 
     // Parking
     bool renderParking = true;
-    Ogre::ColourValue colorParking{Ogre::ColourValue(0.0, 0.7, 0.3, 0.8)};  // green
+    Ogre::ColourValue colorParking{Ogre::ColourValue(0.0, 0.7, 0.3, 1.0)};  // green
     double parkingWidth = 0.3;
     bool fillParking = true;
   };

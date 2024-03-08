@@ -49,7 +49,7 @@ Lanelet2Display::Lanelet2Display() {
       new BoolProperty("Visualize Lanelet-Separators", false, "Activate the visualization of Lanelet-Separators.", this,
                        SLOT(updateSeparatorsRendering()));
 
-  separators_col_property_ = new ColorProperty("Separators Color", Qt::blue, "Color of Lanelet Separators.",
+  separators_col_property_ = new ColorProperty("Separators Color", QColor{25, 25, 230}, "Color of Lanelet Separators.",
                                                viz_separators_property_, SLOT(updateColor()), this);
 
   separators_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
@@ -63,7 +63,7 @@ Lanelet2Display::Lanelet2Display() {
   viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.",
                                              this, SLOT(updateStopLineRendering()));
 
-  stop_line_col_property_ = new ColorProperty("Stop Line Color", Qt::red, "Color of Stop-Lines.",
+  stop_line_col_property_ = new ColorProperty("Stop Line Color", QColor{255, 25, 25}, "Color of Stop-Lines.",
                                               viz_stop_line_property_, SLOT(updateColor()), this);
 
   stop_line_width_property_ = new FloatProperty("Stop Line Width", 0.2f, "The width, in meters, of each stop line.",
@@ -74,8 +74,9 @@ Lanelet2Display::Lanelet2Display() {
       new BoolProperty("Visualize Traffic Lights", true, "Activate the visualization of Traffic-Lights.", this,
                        SLOT(updateTrafficLightRendering()));
 
-  traffic_light_col_property_ = new ColorProperty("Traffic Light Color", Qt::gray, "Color of Traffic-Lights.",
-                                                  viz_traffic_light_property_, SLOT(updateColor()), this);
+  traffic_light_col_property_ =
+      new ColorProperty("Traffic Light Color", QColor{102, 102, 102}, "Color of Traffic-Lights.",
+                        viz_traffic_light_property_, SLOT(updateColor()), this);
 
   traffic_light_height_property_ =
       new FloatProperty("Traffic Light Height", 3.0f, "The height, in meters, of each traffic light.",
@@ -85,8 +86,8 @@ Lanelet2Display::Lanelet2Display() {
   viz_area_property_ = new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this,
                                         SLOT(updateAreaRendering()));
 
-  area_col_property_ =
-      new ColorProperty("Area Color", Qt::darkYellow, "Color of Areas.", viz_area_property_, SLOT(updateColor()), this);
+  area_col_property_ = new ColorProperty("Area Color", QColor{230, 127, 25}, "Color of Areas.", viz_area_property_,
+                                         SLOT(updateColor()), this);
 
   area_width_property_ = new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.",
                                            viz_area_property_, SLOT(updateWidth()), this);
@@ -98,8 +99,8 @@ Lanelet2Display::Lanelet2Display() {
   viz_parking_property_ = new BoolProperty("Visualize Parking", true, "Activate the visualization of Parking.", this,
                                            SLOT(updateParkingRendering()));
 
-  parking_col_property_ = new ColorProperty("Parking Color", Qt::darkGreen, "Color of Parking.", viz_parking_property_,
-                                            SLOT(updateColor()), this);
+  parking_col_property_ = new ColorProperty("Parking Color", QColor{0, 179, 76}, "Color of Parking.",
+                                            viz_parking_property_, SLOT(updateColor()), this);
 
   parking_width_property_ = new FloatProperty("Parking Width", 0.3f, "The width, in meters, of each parking.",
                                               viz_parking_property_, SLOT(updateWidth()), this);
