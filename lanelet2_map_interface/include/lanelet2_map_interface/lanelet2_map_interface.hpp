@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 class LL2MapInterface
 {
     public:
-        LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::string map_server_name);
+        LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name);
         lanelet::LaneletMapConstPtr getMapPtr();
         lanelet::LaneletMapPtr getNonConstMapPtr();
         std::shared_ptr<lanelet::Projector> getProjectorPtr();
@@ -23,7 +23,7 @@ class LL2MapInterface
         std::string map_frame_id_;
         
     private:
-        rclcpp::Node::SharedPtr parent_node_;
+        rclcpp::Node& parent_node_;
         std::shared_ptr<rclcpp::AsyncParametersClient> parameter_client_;
         std::shared_ptr<rclcpp::ParameterEventHandler> parameter_sub_;
         std::shared_ptr<rclcpp::ParameterCallbackHandle> filepath_callback_handle_, frame_id_callback_handle_, contents_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;

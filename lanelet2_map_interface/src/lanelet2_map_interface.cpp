@@ -1,28 +1,26 @@
 #include "lanelet2_map_interface/lanelet2_map_interface.hpp"
 #include <cctype>
 
-LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::string map_server_name)
+LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name) : parent_node_(parent_node), map_server_name_(map_server_name)
 {
     if(!isalpha(map_server_name[0]) && !(map_server_name[0]=='~' && map_server_name[1]=='/'))
     {
-        RCLCPP_ERROR_STREAM(parent_node->get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed! Unable to initialize the interface.");
+        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed! Unable to initialize the interface.");
         return;
     }
 
-    parent_node_ = parent_node;
-    map_server_name_ = map_server_name;
-    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "This is the Lanelet2-Interface of " << parent_node_->get_name() << "! Conntecting to " << map_server_name_ << ".");
+    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "This is the Lanelet2-Interface of " << parent_node_.get_name() << "! Conntecting to " << map_server_name_ << ".");
     
     // Initialize parameter client and event handler
-    parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(parent_node_, map_server_name);
-    parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(parent_node_);
+    parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
+    parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
     
     if(!parameter_client_->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
-            RCLCPP_ERROR(parent_node_->get_logger(), "Interrupted while waiting for the parameter-service. Exiting.");
+            RCLCPP_ERROR(parent_node_.get_logger(), "Interrupted while waiting for the parameter-service. Exiting.");
             rclcpp::shutdown();
         }
-        RCLCPP_INFO(parent_node_->get_logger(), "LL2-Map-Server Parameter-service is currently not available! Waiting for parameters to change!");
+        RCLCPP_INFO(parent_node_.get_logger(), "LL2-Map-Server Parameter-service is currently not available! Waiting for parameters to change!");
     }
     else
     {
@@ -40,7 +38,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node::SharedPtr parent_node, std::strin
 void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p) 
 {
     RCLCPP_INFO_STREAM(
-    parent_node_->get_logger(),
+    parent_node_.get_logger(),
     "Received an update to parameter " << p.get_name() << "! \n Reloading lanelet2-map!");
     updateMapParam(p);
     loadMap();
@@ -60,27 +58,27 @@ bool LL2MapInterface::validateParams()
 {
     if(map_frame_id_.size()==0)
     {
-        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_frame_id_ is an empty string!");
+        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_frame_id_ is an empty string!");
         return false;
     }
     if(map_filepath_.size()==0)
     {
-        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_filepath_ is an empty string!");
+        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_filepath_ is an empty string!");
         return false;
     }
     if(map_contents_.size()==0)
     {
-        RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter map_contents_ is an empty string!");
+        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_contents_ is an empty string!");
         return false;
     }
     if(origin_lat_==91.0)
     {
-        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lat_ is not set!");
+        RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lat_ is not set!");
         return false;
     }
     if(origin_lon_==181.0)
     {
-        RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter origin_lon_ is not set!");
+        RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lon_ is not set!");
         return false;
     }
     return true;
@@ -90,7 +88,7 @@ lanelet::LaneletMapPtr LL2MapInterface::getNonConstMapPtr()
 {
     if(!map_loaded_)
     {
-        RCLCPP_ERROR(parent_node_->get_logger(), "Lanelet2-Map is currently not loaded. Returning nullptr!");
+        RCLCPP_ERROR(parent_node_.get_logger(), "Lanelet2-Map is currently not loaded. Returning nullptr!");
         return nullptr;
     }
     else
@@ -108,7 +106,7 @@ std::shared_ptr<lanelet::Projector> LL2MapInterface::getProjectorPtr()
 {
     if(!map_loaded_)
     {
-        RCLCPP_ERROR(parent_node_->get_logger(), "Lanelet2-Projector is currently not initialized. Returning nullptr!");
+        RCLCPP_ERROR(parent_node_.get_logger(), "Lanelet2-Projector is currently not initialized. Returning nullptr!");
         return nullptr;
     }
     else
@@ -153,10 +151,10 @@ bool LL2MapInterface::loadMap()
     std::string map_directory = map_filepath_.substr(0, map_filepath_.find_last_of("/"));
     if(!std::filesystem::exists(map_directory))
     {
-        RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Creating folder " << map_directory << " for map file.");
+        RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Creating folder " << map_directory << " for map file.");
         if (!std::filesystem::create_directories(map_directory))
         {
-            RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Failed to create folder " << map_directory);
+            RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to create folder " << map_directory);
             return false;
         }
     }
@@ -171,7 +169,7 @@ bool LL2MapInterface::loadMap()
     utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_=true;
-    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
+    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
     update_pending_=true;
     return true;
 }
