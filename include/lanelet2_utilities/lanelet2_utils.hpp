@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include <geometry_msgs/msg/point.hpp>
+
 // LANELET2 Header
 #include <lanelet2_core/primitives/Lanelet.h>
 // #include <lanelet2_core/primitives/GPSPoint.h>
@@ -40,6 +42,26 @@
 using namespace lanelet;
 using namespace lanelet::traffic_rules;
 using LaneletRouteSet = std::vector<ConstLanelets>;
+
+struct PathElement {
+  int64_t ll_id;
+  bool inverted;
+};
+
+inline bool operator==(const PathElement &lhs, const PathElement &rhs) {
+  return lhs.ll_id == rhs.ll_id && lhs.inverted == rhs.inverted;
+};
+inline bool operator!=(const PathElement &lhs, const PathElement &rhs) { return !(lhs == rhs); };
+
+using Path = std::vector<PathElement>;
+
+struct PointWithTime {
+  float x;
+  float y;
+  float t;
+};
+
+using LineWithTime = std::vector<PointWithTime>;
 
 class Lanelet2Utilities
 {
@@ -639,5 +661,404 @@ public:
       // output_line.push_back(BasicPoint2d((x2 - x1) * t + x1, (y2 - y1) * t + y1));
     }
     return output_line;
+  }
+
+    // Line conversions
+  static void internalLine2llLine(BasicLineString2d &lanelet_line, const LineWithTime &line) {
+    lanelet_line.clear();
+    lanelet_line.reserve(line.size());
+
+    for (const auto &point : line) {
+      lanelet_line.push_back(BasicPoint2d(point.x, point.y));
+    }
+  }
+
+  static void llLine2internalLine(const BasicLineString3d &lanelet_line, LineWithTime &line) {
+    line.clear();
+    line.reserve(lanelet_line.size());
+
+    for (auto &lanelet_point : lanelet_line) {
+      PointWithTime point;
+      point.x = lanelet_point.x();
+      point.y = lanelet_point.y();
+      point.t = lanelet_point.z();
+
+      line.push_back(point);
+    }
+  }
+
+  // Path conversions
+  static ConstLanelets internalPath2llPath(const Path &ll_id_vec, const LaneletMapConstPtr &ll_map) {
+    ConstLanelets ll_route;
+    ll_route.reserve(ll_id_vec.size());
+
+    for (size_t i = 0; i < ll_id_vec.size(); ++i) {
+      if (ll_id_vec[i].inverted) {
+        ll_route.push_back(ll_map->laneletLayer.get(ll_id_vec[i].ll_id).invert());
+      } else {
+        ll_route.push_back(ll_map->laneletLayer.get(ll_id_vec[i].ll_id));
+      }
+    }
+    return ll_route;
+  }
+
+  static Path llPath2internalPath(const ConstLanelets &ll_route) {
+    Path ll_id_vec;
+    ll_id_vec.reserve(ll_route.size());
+
+    for (const auto &ll_id : ll_route) {
+      ll_id_vec.push_back({ll_id.id(), ll_id.inverted()});
+    }
+
+    return ll_id_vec;
+  }
+
+  // Path to line conversions
+  static LineWithTime llPath2internalLine(const ConstLanelets &ll_route) {
+    LineWithTime line;
+    line.reserve(ll_route.size());
+
+    for (const auto &ll : ll_route) {
+      for (const auto &p : ll.centerline()) {
+        PointWithTime point;
+        point.x = p.x();
+        point.y = p.y();
+        point.t = 0.0;
+        line.push_back(point);
+      }
+    }
+
+    return line;
+  }
+
+  static BasicLineString2d llPath2llLineTimeBased(const ConstLanelets &ll_path, const BasicPoint2d &cur_pos,
+                                                  const double &vel, const double &t_ref, const double &t_max,
+                                                  const double &dt,
+                                                  boost::optional<const BasicPoint2d &> target_point) {
+    BasicLineString2d path_line;
+
+    std::vector<BasicLineString2d> segments;
+    for (size_t l = 0; l < ll_path.size(); l++) {
+      if (l < ll_path.size() - 1 &&
+          (geometry::rightOf(ll_path.at(l), ll_path.at(l + 1)) || geometry::leftOf(ll_path.at(l), ll_path.at(l + 1)))) {
+        segments.push_back(ll_path.at(l + 1).centerline2d().basicLineString());
+        l++;
+        continue;
+      }
+
+      if (l == 0) {
+        segments.push_back(ll_path.at(0).centerline2d().basicLineString());
+      } else {
+        BasicLineString2d line = ll_path.at(l).centerline2d().basicLineString();
+        segments.back().insert(segments.back().end(), line.begin() + 1, line.end());
+      }
+    }
+
+    double target_s = std::numeric_limits<double>::max();
+    uint best_seg = std::numeric_limits<uint>::max();
+    if (!!target_point) {
+      double min_dis = std::numeric_limits<double>::max();
+      for (size_t i = 0; i < segments.size(); i++) {
+        double dis = geometry::distance(segments.at(i), *target_point);
+        if (dis <= min_dis) {
+          min_dis = dis;
+          best_seg = i;
+        }
+      }
+      ArcCoordinates arc = geometry::toArcCoordinates(segments.at(best_seg), *target_point);
+      target_s = arc.length;
+    }
+
+    ArcCoordinates arc = geometry::toArcCoordinates(segments.at(0), cur_pos);
+
+    double t_total = 0.0;
+    double t = 0.0;
+    double s_segment = arc.length;  // s on segment line
+    double w;                       // offset
+    double d = arc.distance;        // current offset
+    double last_d = arc.distance;   // last offset
+    uint l = 0;
+    double len = geometry::length(segments.at(0));
+    bool b_offset = false;
+
+    if (std::fabs(d) > 0.01) {
+      b_offset = true;
+      w = 0.5 * d;
+    }
+
+    while (l < segments.size() && t_total < t_max) {
+      bool need_new_segment = len < s_segment;
+
+      if ((l == segments.size() - 1 || l == best_seg) && s_segment > target_s) {
+        path_line.push_back(*target_point);
+        break;
+      }
+
+      if (need_new_segment && l == segments.size() - 1) {  // no more lines, segments or lanelets
+        break;
+      }
+
+      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(
+          segments.at(l), s_segment, d));  // Lanelet2Utilities from new lanelet2_utils.hpp
+
+      if (b_offset) {
+        // https://www.desmos.com/calculator/erjar0accp
+        // w = 0.5 * w
+        d = w * sin(t / t_ref * M_PI + M_PI_2) + w;
+      } else {
+        d = 0.0;
+      }
+
+      if (need_new_segment) {  // lane change
+        l++;
+        const BasicPoint2d &p = path_line.back();
+        const BasicLineString2d &line = segments.at(l);
+        w = 0.5 * geometry::signedDistance(line, p) - d / 2;
+        len = geometry::length(segments.at(l));
+        s_segment = 0.0;
+        t = 0.0;
+        b_offset = true;
+        d = w * sin(t / t_ref * M_PI + M_PI_2) + w;
+
+        if (l == segments.size() - 2) {  // segment before last segment
+          d = 0;
+          b_offset = false;
+        }
+      }
+
+      if (b_offset && (std::fabs(d) < 0.005 || t > t_ref)) {
+        d = 0.0;
+        b_offset = false;
+      }
+
+      t += dt;
+      t_total += dt;
+
+      double dd = d - last_d;
+      double ds = std::sqrt(std::max(0.0, vel * dt * vel * dt - dd * dd));
+      s_segment += ds;
+      last_d = d;
+    }
+    return path_line;
+  }
+
+  static BasicLineString2d llPath2llLineDistanceBased(
+      const ConstLanelets &ll_path, const BasicPoint2d &cur_pos, const double &vel, const double &t_ref,
+      const double &s_max, const double &ds, boost::optional<const BasicPoint2d &> target_point,
+      boost::optional<std::pair<BasicLineString2d, BasicLineString2d> &> boundaries = {},
+      boost::optional<const routing::RoutingGraph &> routing_graph = {}) {
+    BasicLineString2d path_line;
+    path_line.push_back(cur_pos);
+
+    // Extract centerlines from lanelets, push or extend entries in segment vector
+    std::vector<BasicLineString2d> segments(1), segments_boundary_left(1), segments_boundary_right(1);
+    bool wasBicycleBoundary = false;
+    for (size_t l = 0; l < ll_path.size(); l++) {
+      // Adjacent lanelets (lane change) -> push new segment
+      if (l < ll_path.size() - 1 &&
+          (geometry::rightOf(ll_path.at(l), ll_path.at(l + 1)) || geometry::leftOf(ll_path.at(l), ll_path.at(l + 1)))) {
+        if (l == 0) {
+          segments.clear();
+          segments_boundary_left.clear();
+          segments_boundary_right.clear();
+        }
+        segments.push_back(ll_path.at(l + 1).centerline2d().basicLineString());
+        if (!!boundaries) {
+          segments_boundary_left.push_back(ll_path.at(l + 1).leftBound2d().basicLineString());
+          segments_boundary_right.push_back(ll_path.at(l + 1).rightBound2d().basicLineString());
+        }
+        l++;
+        continue;
+      }
+
+      // Append to path linestring
+      const BasicLineString2d line = ll_path.at(l).centerline2d().basicLineString();
+      segments.back().insert(segments.back().end(), line.begin() + int(l != 0), line.end());
+
+      // Append to boundary linestrings
+      if (!!boundaries) {
+        BasicLineString2d bicycle_lane_right;
+        if (!!routing_graph) {
+          ConstLanelets right_lanelets = routing_graph->rights(ll_path.at(l));
+          size_t ll_count = 0;
+          for (const auto &ll : right_lanelets) {
+            if (ll.hasAttribute(AttributeName::Subtype) &&
+                ll.attribute(AttributeName::Subtype) == AttributeValueString::BicycleLane &&
+                ((ll.leftBound().hasAttribute(AttributeName::Subtype) &&
+                  ll.leftBound().attribute(AttributeName::Subtype) == AttributeValueString::Dashed) ||
+                 (ll.leftBound().hasAttribute(AttributeName::Type) &&
+                  ll.leftBound().attribute(AttributeName::Type) == AttributeValueString::Virtual))) {
+              const BasicLineString2d line_bicycle_lane_right = ll.rightBound2d().basicLineString();
+              bicycle_lane_right.insert(bicycle_lane_right.end(), line_bicycle_lane_right.begin() + int(ll_count != 0),
+                                        line_bicycle_lane_right.end());
+            }
+          }
+        }
+        const BasicLineString2d line_b_left = ll_path.at(l).leftBound2d().basicLineString();
+        segments_boundary_left.back().insert(segments_boundary_left.back().end(), line_b_left.begin() + int(l != 0),
+                                             line_b_left.end());
+
+        bool offset_right = l != 0;
+        if (!bicycle_lane_right.size()) {
+          bicycle_lane_right = ll_path.at(l).rightBound2d().basicLineString();
+          if (wasBicycleBoundary) {
+            offset_right = 0;
+          }
+          wasBicycleBoundary = false;
+        } else {
+          if (!wasBicycleBoundary) {
+            offset_right = 0;
+          }
+          wasBicycleBoundary = true;
+        }
+        segments_boundary_right.back().insert(segments_boundary_right.back().end(),
+                                              bicycle_lane_right.begin() + offset_right, bicycle_lane_right.end());
+      }
+    }
+
+    // Find closest segment to target point (and its arc coordinate)
+    double target_s = std::numeric_limits<double>::max();
+    uint best_seg = std::numeric_limits<uint>::max();
+    if (!!target_point) {
+      double min_dis = std::numeric_limits<double>::max();
+      for (size_t i = 0; i < segments.size(); i++) {
+        double dis = geometry::distance(segments.at(i), *target_point);
+        if (dis <= min_dis) {
+          min_dis = dis;
+          best_seg = i;
+        }
+      }
+      const ArcCoordinates arc = geometry::toArcCoordinates(segments.at(best_seg), *target_point);
+      target_s = arc.length;
+    }
+
+    // Prepare main loop (handle lane changes)
+    ArcCoordinates arc = geometry::toArcCoordinates(segments.at(0), cur_pos);
+    double s_total = 0.0;           // s on the global route
+    double s_maneuver = 0.0;        // s during lane change maneuver
+    double s_segment = arc.length;  // s on current segment line
+    double w;                       // offset during lane change maneuver
+    double d = arc.distance;        // current offset
+    uint l = 0;
+    double len = geometry::length(segments.at(0));  // length of segment
+    bool b_offset = false;
+    double s_ref = t_ref * vel;  // target distance length for lange change maneuver
+    double boundary_dist_left = 0.0;
+    double boundary_dist_right = 0.0;
+    BasicLineString2d tmp_boundary_left, tmp_boundary_right;
+    if (std::fabs(d) > 0.01) {
+      b_offset = true;
+      w = 0.5 * d;
+    }
+
+    // Main loop; sampled by distance with ds as step size and handles lane changes
+    while (s_total < s_max && l < segments.size()) {
+      // Have we reached the target point?
+      if ((l == segments.size() - 1 || l == best_seg) && s_segment > target_s) {
+        path_line.push_back(*target_point);
+        break;
+      }
+
+      // No more lines, segments or lanelets?
+      const bool need_new_segment = s_segment > len;
+      if (need_new_segment && l == segments.size() - 1) {
+        break;
+      }
+
+      // In case the remaining route length is shorter than the required s for the lane change maneuver
+      if (l == best_seg && (target_s - s_segment) < s_ref) {
+        s_ref = target_s - s_segment;
+      }
+
+      // Approximate lange change maneuver with sine function
+      if (b_offset) {
+        // https://www.desmos.com/calculator/erjar0accp
+        // w = 0.5 * w
+        d = w * sin(s_maneuver / s_ref * M_PI + M_PI_2) + w;
+      } else {
+        d = 0.0;
+        s_maneuver = 0.0;
+      }
+
+      // Lane change
+      if (need_new_segment) {
+        l++;
+        const BasicPoint2d &p = path_line.back();
+        const BasicLineString2d &line = segments.at(l);
+        w = 0.5 * geometry::signedDistance(line, p) - d / 2;
+        len = geometry::length(segments.at(l));
+        s_maneuver = 0.0;
+        b_offset = true;
+        d = w * sin(s_maneuver / s_ref * M_PI + M_PI_2) + w;
+
+        const BasicPoint2d p_tmp = Lanelet2Utilities::fromArcCoordinates_fast(
+            segments.at(l), 0.0, d);  // Lanelet2Utilities from new lanelet2_utils.hpp
+        s_segment = ds - geometry::distance(path_line.back(), p_tmp);
+
+        // Last boundary point before lane change
+        if (!!boundaries) {
+          Lanelet2Utilities::addBoundarySegment(
+              *boundaries, std::make_pair(segments_boundary_left[l - 1], segments_boundary_right[l - 1]),
+              path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
+          boundary_dist_left = geometry::distance(path_line.back(), boundaries->first.back());
+          boundary_dist_right = geometry::distance(path_line.back(), boundaries->second.back());
+        }
+      }
+
+      // Lane change / offset complete
+      bool b_lane_change_complete = false;
+      if (b_offset && (std::fabs(d) < 0.005 || s_maneuver > s_ref)) {
+        d = 0.0;
+        s_maneuver = 0.0;
+        b_offset = false;
+        b_lane_change_complete = true;
+      }
+
+      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(
+          segments.at(l), s_segment, d));  // Lanelet2Utilities from new lanelet2_utils.hpp
+
+      if (!!boundaries) {
+        // Lane change completed -> remove original boundaries during lane change and insert our manually created boundaries instead
+        if (b_lane_change_complete) {
+          Lanelet2Utilities::delFromBoundarySegment(segments_boundary_left[l], segments_boundary_right[l],
+                                                    path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
+          boundaries->first.insert(boundaries->first.end(), tmp_boundary_left.begin(), tmp_boundary_left.end());
+          boundaries->second.insert(boundaries->second.end(), tmp_boundary_right.begin(), tmp_boundary_right.end());
+          tmp_boundary_left.clear();
+          tmp_boundary_right.clear();
+        }
+        // Manually create boundaries during lane change
+        else if (b_offset) {
+          tmp_boundary_left.push_back(
+              geometry::internal::lateralShiftPointAtIndex(path_line, path_line.size() - 1, boundary_dist_left));
+          tmp_boundary_right.push_back(
+              geometry::internal::lateralShiftPointAtIndex(path_line, path_line.size() - 1, -boundary_dist_right));
+        }
+      }
+
+      s_segment += ds;
+      s_maneuver += ds;
+      s_total += ds;
+    }
+    if (!!boundaries && l < segments_boundary_left.size()) {
+      Lanelet2Utilities::addBoundarySegment(*boundaries,
+                                            std::make_pair(segments_boundary_left[l], segments_boundary_right[l]),
+                                            path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
+    }
+
+    return path_line;
+  }
+
+  static double computeCurvature(const BasicPoint2d &p1, const BasicPoint2d &p2, const BasicPoint2d &p3) {
+    // https://en.wikipedia.org/wiki/Menger_curvature#Definition
+    const double area = 0.5 * ((p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x()));
+    const double side1 = geometry::distance(p1, p2);
+    const double side2 = geometry::distance(p1, p3);
+    const double side3 = geometry::distance(p2, p3);
+    const double product = side1 * side2 * side3;
+    if (product < 1e-20) {
+      return std::numeric_limits<double>::max();
+    }
+    return 4 * area / product;
   }
 };
