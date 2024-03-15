@@ -46,7 +46,7 @@ Lanelet2Display::Lanelet2Display() {
                                              viz_linestring_property_, SLOT(updateColor()), this);
 
   linestring_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
-                                                 viz_linestring_property_, SLOT(updateWidth()), this);
+                                                 viz_linestring_property_, SLOT(updateStyle()), this);
   linestring_width_property_->setMin(0.01f);
 
   viz_separators_property_ =
@@ -57,7 +57,7 @@ Lanelet2Display::Lanelet2Display() {
                                                viz_separators_property_, SLOT(updateColor()), this);
 
   separators_width_property_ = new FloatProperty("Linestring Width", 0.2f, "The width, in meters, of each linestring.",
-                                                 viz_separators_property_, SLOT(updateWidth()), this);
+                                                 viz_separators_property_, SLOT(updateStyle()), this);
   separators_width_property_->setMin(0.01f);
 
   viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.",
@@ -67,7 +67,7 @@ Lanelet2Display::Lanelet2Display() {
                                               viz_stop_line_property_, SLOT(updateColor()), this);
 
   stop_line_width_property_ = new FloatProperty("Stop Line Width", 0.2f, "The width, in meters, of each stop line.",
-                                                viz_stop_line_property_, SLOT(updateWidth()), this);
+                                                viz_stop_line_property_, SLOT(updateStyle()), this);
   stop_line_width_property_->setMin(0.01f);
 
   viz_traffic_light_property_ =
@@ -80,7 +80,7 @@ Lanelet2Display::Lanelet2Display() {
 
   traffic_light_height_property_ =
       new FloatProperty("Traffic Light Height", 3.0f, "The height, in meters, of each traffic light.",
-                        viz_traffic_light_property_, SLOT(updateWidth()), this);
+                        viz_traffic_light_property_, SLOT(updateStyle()), this);
   traffic_light_height_property_->setMin(0.01f);
 
   viz_area_property_ = new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this,
@@ -90,11 +90,11 @@ Lanelet2Display::Lanelet2Display() {
                                          SLOT(updateColor()), this);
 
   area_width_property_ = new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.",
-                                           viz_area_property_, SLOT(updateWidth()), this);
+                                           viz_area_property_, SLOT(updateStyle()), this);
   area_width_property_->setMin(0.01f);
 
   fill_area_property_ = new BoolProperty("Fill Areas", false, "Toggles wether to fill the areas with color or not.",
-                                         viz_area_property_, SLOT(updateAreaRendering()), this);
+                                         viz_area_property_, SLOT(updateStyle()), this);
 
   viz_parking_property_ = new BoolProperty("Visualize Parking", true, "Activate the visualization of Parking.", this,
                                            SLOT(updateParkingRendering()));
@@ -103,12 +103,12 @@ Lanelet2Display::Lanelet2Display() {
                                             viz_parking_property_, SLOT(updateColor()), this);
 
   parking_width_property_ = new FloatProperty("Parking Width", 0.3f, "The width, in meters, of each parking.",
-                                              viz_parking_property_, SLOT(updateWidth()), this);
+                                              viz_parking_property_, SLOT(updateStyle()), this);
   parking_width_property_->setMin(0.01f);
 
   fill_parking_property_ =
       new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
-                       viz_parking_property_, SLOT(updateParkingRendering()), this);
+                       viz_parking_property_, SLOT(updateStyle()), this);
 
   viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.",
                                       this, SLOT(updateIdRendering()));
@@ -117,7 +117,7 @@ Lanelet2Display::Lanelet2Display() {
       new ColorProperty("ID Color", Qt::white, "Color of Lanelet-IDs.", viz_id_property_, SLOT(updateColor()), this);
 
   char_height_property_ = new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_,
-                                            SLOT(updateWidth()), this);
+                                            SLOT(updateStyle()), this);
 }
 
 Lanelet2Display::~Lanelet2Display() = default;
@@ -154,7 +154,7 @@ void Lanelet2Display::update(float dt, float ros_dt) {
         scene_node_->setPosition(position);
         scene_node_->setOrientation(orientation);
         setTransformOk();
-        map_->getSceneNode()->setVisible(true);
+        //map_->getSceneNode()->setVisible(true);
       } else {
         setMissingTransformToFixedFrame(ll2if_->map_frame_id_);
         map_->getSceneNode()->setVisible(false);
@@ -172,7 +172,6 @@ void Lanelet2Display::updateServerName() {
 bool Lanelet2Display::visualizeMap() {
   map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_,
                                                        ll2if_->getMapPtr());
-  map_->getSceneNode()->setVisible(false);
   return true;
 }
 
@@ -183,12 +182,18 @@ void Lanelet2Display::updateVisualization() {
   }
 }
 
+void Lanelet2Display::updateVisibility() {
+  if (viz_init_) {
+    map_->updateVisibility(rendering_options_);
+  }
+}
+
 void Lanelet2Display::updateLinestringRendering() {
   rendering_options_.renderLaneletLinestrings = viz_linestring_property_->getBool();
   for (uint16_t i = 0; i < viz_linestring_property_->numChildren(); i++) {
     viz_linestring_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletLinestrings);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateSeparatorsRendering() {
@@ -196,7 +201,7 @@ void Lanelet2Display::updateSeparatorsRendering() {
   for (uint16_t i = 0; i < viz_separators_property_->numChildren(); i++) {
     viz_separators_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletSeparators);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateStopLineRendering() {
@@ -204,7 +209,7 @@ void Lanelet2Display::updateStopLineRendering() {
   for (uint16_t i = 0; i < viz_stop_line_property_->numChildren(); i++) {
     viz_stop_line_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderStopLines);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateTrafficLightRendering() {
@@ -212,25 +217,23 @@ void Lanelet2Display::updateTrafficLightRendering() {
   for (uint16_t i = 0; i < viz_traffic_light_property_->numChildren(); i++) {
     viz_traffic_light_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderTrafficLights);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateAreaRendering() {
   rendering_options_.renderAreas = viz_area_property_->getBool();
-  rendering_options_.fillArea = fill_area_property_->getBool();
   for (uint16_t i = 0; i < viz_area_property_->numChildren(); i++) {
     viz_area_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderAreas);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateParkingRendering() {
   rendering_options_.renderParking = viz_parking_property_->getBool();
-  rendering_options_.fillParking = fill_parking_property_->getBool();
   for (uint16_t i = 0; i < viz_parking_property_->numChildren(); i++) {
     viz_parking_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderParking);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateIdRendering() {
@@ -238,7 +241,7 @@ void Lanelet2Display::updateIdRendering() {
   for (uint16_t i = 0; i < viz_id_property_->numChildren(); i++) {
     viz_id_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletIds);
   }
-  updateVisualization();
+  updateVisibility();
 }
 
 void Lanelet2Display::updateColor() {
@@ -283,7 +286,7 @@ void Lanelet2Display::updateColor() {
   updateVisualization();
 }
 
-void Lanelet2Display::updateWidth() {
+void Lanelet2Display::updateStyle() {
   // Linestrings
   rendering_options_.linestringWidth = linestring_width_property_->getFloat();
 
@@ -298,6 +301,12 @@ void Lanelet2Display::updateWidth() {
 
   // IDs
   rendering_options_.characterHeight = char_height_property_->getFloat();
+
+  // Areas
+  rendering_options_.fillArea = fill_area_property_->getBool();
+
+  // Parking
+  rendering_options_.fillParking = fill_parking_property_->getBool();
 
   updateVisualization();
 }
