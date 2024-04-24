@@ -1,12 +1,76 @@
 #include "lanelet2_map_server/lanelet2_map_server.hpp"
 
-LL2MapServer::LL2MapServer() : Node("ll2_map_server")
-{
-  // Initialize service to change the map-parameters
-  change_map_srv_ = create_service<lanelet2_map_server_interfaces::srv::ChangeMapParams>("~/change_map_parameters", std::bind(&LL2MapServer::change_params, this, std::placeholders::_1, std::placeholders::_2));
+LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
+  this->declareParameters();
+  this->loadParameters();
+  this->setup();
+}
 
-  // Initialize the transform broadcaster
+void LL2MapServer::declareParameters() {
+
+  random::msg::ParameterDescriptor param_desc;
+
+  param_desc.description = "Path to Lanelet2 map";
+  this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+
+  param_desc.description = "Frame ID of Lanelet2 map";
+  this->declare_parameter("map_frame_id", map_frame_id_, param_desc);
+
+  param_desc.description = "Latitude of origin of Lanelet2 map";
+  this->declare_parameter("origin_lat", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
+
+  param_desc.description = "Longitude of origin of Lanelet2 map";
+  this->declare_parameter("origin_lon", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
+}
+
+void LL2MapServer::loadParameters() {
+
+  try {
+    map_filepath_ = this->get_parameter("map_filepath").as_string();
+  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_filepath");
+    exit(EXIT_FAILURE);
+  }
+
+  map_frame_id_ = this->get_parameter("map_frame_id").as_string();
+
+  try {
+    origin_lat_ = this->get_parameter("origin_lat").as_double();
+  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lat");
+    exit(EXIT_FAILURE);
+  }
+
+  try {
+    origin_lon_ = this->get_parameter("origin_lon").as_double();
+  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lon");
+    exit(EXIT_FAILURE);
+  }
+}
+
+void LL2MapServer::setup() {
+
+  parameters_callback_ = this->add_on_set_parameters_callback(std::bind(&TestPkg::parametersCallback, this, std::placeholders::_1));
+
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
+}
+
+rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
+
+  for (const auto& param : parameters) {
+    if (param.get_name() == "param") {
+      param_ = param.as_double();
+      // TODO
+    }
+  }
+
+  // mark parameter change successful
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = true;
+  result.reason = "success";
+
+  return result;
 }
 
 void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Request> request, std::shared_ptr<lanelet2_map_server_interfaces::srv::ChangeMapParams::Response> response)
@@ -21,8 +85,8 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
     origin_lon_ = request->origin_lon;
 
     RCLCPP_INFO_STREAM(get_logger(), "Set Lanelet2 Parameters:"
-                                    << "\n Map-Filepath: " << map_filename_ 
-                                    << "\n Map-Frame ID: " << map_frame_id_ 
+                                    << "\n Map-Filepath: " << map_filename_
+                                    << "\n Map-Frame ID: " << map_frame_id_
                                     << "\n Origin Lat: " << origin_lat_
                                     << "\n Origin Lon: " << origin_lon_);
 
@@ -39,7 +103,7 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
     {
       // set parameter description
       rcl_interfaces::msg::ParameterDescriptor param_desc;
-      
+
       param_desc.description = "Path to the Lanelet2 map-file.";
       this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
       param_desc.description = "Frame ID of the Lanelet2 map-frame.";
@@ -52,7 +116,7 @@ void LL2MapServer::change_params(const std::shared_ptr<lanelet2_map_server_inter
       this->declare_parameter("origin_lon", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
       init_=true;
     }
-    
+
     this->set_parameters(params);
     this->pub_tf();
     response->success = true;
@@ -119,7 +183,7 @@ void LL2MapServer::pub_tf()
     std::string hemisphere;
     if(northp) hemisphere="N";
     else hemisphere="S";
-    
+
     t.header.frame_id ="utm_"+std::to_string(zone)+hemisphere;
     t.child_frame_id = map_frame_id_;
     t.header.stamp = this->get_clock()->now();
