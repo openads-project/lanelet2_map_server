@@ -18,10 +18,11 @@ class LL2MapInterface
         lanelet::LaneletMapConstPtr getMapPtr();
         lanelet::LaneletMapPtr getNonConstMapPtr();
         std::shared_ptr<lanelet::Projector> getProjectorPtr();
+        void setParametersOnMapServer(const std::vector<rclcpp::Parameter>& params);
         bool map_loaded_=false;
         bool update_pending_=false; // Flag indicating if the client node should update map
         std::string map_frame_id_;
-        
+
     private:
         rclcpp::Node& parent_node_;
         std::shared_ptr<rclcpp::AsyncParametersClient> parameter_client_;
@@ -34,7 +35,7 @@ class LL2MapInterface
 
         lanelet::LaneletMapPtr mapPtr_;
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
-        
+
         std::string map_server_name_;
 
         void updateMapParam(rclcpp::Parameter param);

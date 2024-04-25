@@ -25,6 +25,20 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
     origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
 }
 
+void setParametersOnMapServer(const std::vector<rclcpp::Parameter>& params) {
+
+    auto set_parameters_results = parameter_client_->set_parameters(
+      params,
+      [this](std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>> future) {
+        auto results = future.get();
+        for (const auto& result : results) {
+          if (!result.successful)
+            RCLCPP_ERROR(parent_node.get_logger(), "Failed to set parameter: %s", result.reason.c_str());
+        }
+        RCLCPP_INFO(parent_node.get_logger(), "Finished setting map server parameters");
+      });
+}
+
 void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
 {
     RCLCPP_INFO_STREAM(
