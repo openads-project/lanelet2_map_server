@@ -3,14 +3,6 @@
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name) : parent_node_(parent_node), map_server_name_(map_server_name)
 {
-    if(!isalpha(map_server_name[0]) && !(map_server_name[0]=='~' && map_server_name[1]=='/'))
-    {
-        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed! Unable to initialize the interface.");
-        return;
-    }
-
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "This is the Lanelet2-Interface of " << parent_node_.get_name() << "! Conntecting to " << map_server_name_ << ".");
-
     // Initialize parameter client and event handler
     parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
     parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
