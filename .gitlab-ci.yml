@@ -3,8 +3,7 @@ include:
 
 variables:
   BASE_IMAGE: rwthika/ros2:humble
-  COMMAND: ros2 launch lanelet2_map_server ll2_map_server.launch.py
-  TARGET: dev,run
+  COMMAND: ros2 run lanelet2_map_server lanelet2_map_server
   PLATFORM: amd64
   ENABLE_INDUSTRIAL_CI: 'true'
   NOT_TEST_BUILD: 'true'
