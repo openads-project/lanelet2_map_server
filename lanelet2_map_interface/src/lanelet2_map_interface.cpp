@@ -10,23 +10,21 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
     }
 
     RCLCPP_INFO_STREAM(parent_node_.get_logger(), "This is the Lanelet2-Interface of " << parent_node_.get_name() << "! Conntecting to " << map_server_name_ << ".");
-    
+
     // Initialize parameter client and event handler
     parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
     parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
-    
-    if(!parameter_client_->wait_for_service(1s)) {
+
+    while(!parameter_client_->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
-            RCLCPP_ERROR(parent_node_.get_logger(), "Interrupted while waiting for the parameter-service. Exiting.");
+            RCLCPP_FATAL(parent_node.get_logger(), "Interrupted while waiting for the map server ('%s') parameter service, shutting down", map_server_name.c_str());
             rclcpp::shutdown();
         }
-        RCLCPP_INFO(parent_node_.get_logger(), "LL2-Map-Server Parameter-service is currently not available! Waiting for parameters to change!");
+        RCLCPP_WARN(parent_node.get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name.c_str());
     }
-    else
-    {
-        auto parameters_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-                                                            std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    }
+    auto parameters_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                                        std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service", map_server_name.c_str());
 
     filepath_callback_handle_ = parameter_sub_->add_parameter_callback("map_filepath", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     frame_id_callback_handle_ = parameter_sub_->add_parameter_callback("map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
@@ -35,7 +33,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
     origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
 }
 
-void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p) 
+void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
 {
     RCLCPP_INFO_STREAM(
     parent_node_.get_logger(),
@@ -140,7 +138,7 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
 }
 
 bool LL2MapInterface::loadMap()
-{   
+{
     // Validate parameters
     if(!validateParams())
     {
