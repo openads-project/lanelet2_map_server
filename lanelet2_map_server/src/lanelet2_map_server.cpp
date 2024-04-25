@@ -58,9 +58,10 @@ void LL2MapServer::setup() {
 
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
-  this->map_sanity_check(map_filepath_, map_frame_id_, origin_lat_, origin_lon_);
-  this->loadMapContents();
-  this->pub_tf();
+  if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+    this->loadMapContents();
+    this->pub_tf();
+  }
 }
 
 rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
@@ -97,7 +98,7 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
   }
 
   // perform map sanity check
-  result.successful = this->map_sanity_check(map_filepath, map_frame_id, origin_lat, origin_lon);
+  result.successful = this->map_sanity_check(map_filepath, origin_lat, origin_lon);
   if (!result.successful) {
     result.reason = "Map sanity check failed";
     return result;
@@ -128,27 +129,17 @@ void LL2MapServer::loadMapContents() {
   RCLCPP_INFO(this->get_logger(), "Loaded map contents from '%s' to parameter 'map_contents'", map_filepath_.c_str());
 }
 
-bool LL2MapServer::map_sanity_check(std::string map_filepath, std::string map_frame_id, double origin_lat, double origin_lon)
-{
-  if(map_filepath == map_filepath_ && origin_lat == origin_lat_ && origin_lon == origin_lon_ && map_frame_id == map_frame_id_)
-  {
-    RCLCPP_WARN_STREAM(get_logger(), "Map " << map_filepath << " is already loaded with origin (" << origin_lat << " | " << origin_lon << ")");
-    return false;
-  }
-  // Create Projector
+bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) {
+
   lanelet::projection::UtmProjector proj(lanelet::Origin({origin_lat, origin_lon}));
-  // Load Map
-  try
-  {
+  try {
     lanelet::LaneletMapPtr map = lanelet::load(map_filepath, proj);
-    return true;
-  }
-  catch(const lanelet::IOError& e)
-  {
-    RCLCPP_ERROR_STREAM(get_logger(), "Could not load map " << map_filepath);
-    RCLCPP_ERROR_STREAM(get_logger(), e.what());
+  } catch(const lanelet::IOError& e) {
+    RCLCPP_ERROR_STREAM(this->get_logger(), "Could not load map '" << map_filepath << "': " << e.what());
     return false;
   }
+
+  return true;
 }
 
 void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp)
