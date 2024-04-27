@@ -25,7 +25,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
     origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
 }
 
-void setParametersOnMapServer(const std::vector<rclcpp::Parameter>& params) {
+void LL2MapInterface::setParametersOnMapServer(const std::vector<rclcpp::Parameter>& params) {
 
     auto set_parameters_results = parameter_client_->set_parameters(
       params,
