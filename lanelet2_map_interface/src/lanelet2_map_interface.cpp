@@ -3,39 +3,35 @@
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name) : parent_node_(parent_node), map_server_name_(map_server_name)
 {
-    if(!isalpha(map_server_name[0]) && !(map_server_name[0]=='~' && map_server_name[1]=='/'))
-    {
-        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "The name of the map-server (" << map_server_name << ") is not allowed! Unable to initialize the interface.");
-        return;
-    }
 
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "This is the Lanelet2-Interface of " << parent_node_.get_name() << "! Conntecting to " << map_server_name_ << ".");
-    
+    // load own parameters
+    rcl_interfaces::msg::ParameterDescriptor param_desc;
+    param_desc.description = "Path to Lanelet2 map";
+    parent_node_.declare_parameter("map_filepath", map_filepath_, param_desc);
+    map_filepath_ = parent_node_.get_parameter("map_filepath").as_string();
+
     // Initialize parameter client and event handler
     parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
     parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
-    
-    if(!parameter_client_->wait_for_service(1s)) {
+
+    while(!parameter_client_->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
-            RCLCPP_ERROR(parent_node_.get_logger(), "Interrupted while waiting for the parameter-service. Exiting.");
+            RCLCPP_FATAL(parent_node_.get_logger(), "Interrupted while waiting for the map server ('%s') parameter service, shutting down", map_server_name.c_str());
             rclcpp::shutdown();
         }
-        RCLCPP_INFO(parent_node_.get_logger(), "LL2-Map-Server Parameter-service is currently not available! Waiting for parameters to change!");
+        RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name.c_str());
     }
-    else
-    {
-        auto parameters_future = parameter_client_->get_parameters({"map_filepath", "map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-                                                            std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    }
+    auto parameters_future = parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                                        std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service", map_server_name.c_str());
 
-    filepath_callback_handle_ = parameter_sub_->add_parameter_callback("map_filepath", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     frame_id_callback_handle_ = parameter_sub_->add_parameter_callback("map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     contents_callback_handle_ = parameter_sub_->add_parameter_callback("map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
     origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
 }
 
-void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p) 
+void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
 {
     RCLCPP_INFO_STREAM(
     parent_node_.get_logger(),
@@ -71,12 +67,12 @@ bool LL2MapInterface::validateParams()
         RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_contents_ is an empty string!");
         return false;
     }
-    if(origin_lat_==91.0)
+    if(origin_lat_==91.0) // check if still initialized to invalid value
     {
         RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lat_ is not set!");
         return false;
     }
-    if(origin_lon_==181.0)
+    if(origin_lon_==181.0) // check if still initialized to invalid value
     {
         RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lon_ is not set!");
         return false;
@@ -121,10 +117,6 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
     {
         map_frame_id_ = param.value_to_string();
     }
-    if(param.get_name()=="map_filepath")
-    {
-        map_filepath_ = param.value_to_string();
-    }
     if(param.get_name()=="map_contents")
     {
         map_contents_ = param.value_to_string();
@@ -140,7 +132,7 @@ void LL2MapInterface::updateMapParam(rclcpp::Parameter param)
 }
 
 bool LL2MapInterface::loadMap()
-{   
+{
     // Validate parameters
     if(!validateParams())
     {
