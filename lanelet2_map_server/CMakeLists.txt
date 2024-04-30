@@ -13,7 +13,6 @@ find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
-find_package(lanelet2_map_server_interfaces REQUIRED)
 find_package(lanelet2_projection REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -23,7 +22,6 @@ ament_target_dependencies(lanelet2_map_server
   geometry_msgs
   lanelet2_core
   lanelet2_io
-  lanelet2_map_server_interfaces
   lanelet2_projection
   rclcpp
   tf2_ros
@@ -36,13 +34,6 @@ target_compile_features(lanelet2_map_server PUBLIC c_std_99 cxx_std_17)  # Requi
 
 install(TARGETS lanelet2_map_server
   DESTINATION lib/${PROJECT_NAME})
-
-# Install launch files.
-install(DIRECTORY
-launch
-DESTINATION share/${PROJECT_NAME}/
-)
-
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
