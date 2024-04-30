@@ -19,7 +19,6 @@ class LL2MapInterface
         lanelet::LaneletMapConstPtr getMapPtr();
         lanelet::LaneletMapPtr getNonConstMapPtr();
         std::shared_ptr<lanelet::Projector> getProjectorPtr();
-        void setParametersOnMapServer(const std::vector<rclcpp::Parameter>& params);
         bool map_loaded_=false;
         bool update_pending_=false; // Flag indicating if the client node should update map
         std::string map_frame_id_;
