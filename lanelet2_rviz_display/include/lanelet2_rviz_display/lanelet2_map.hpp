@@ -29,25 +29,7 @@
 
 namespace rviz_rendering {
 
-enum ObjectClassification {
-  UNKOWN,
-  MAP,
-  LANELETID,
-  AREA,
-  PARKINGAREA,
-  SEPERATOR,
-  REGULATORYELEMENT,
-  STOPLINE,
-  TRAFFICLIGHT,
-  SPEEDLIMIT
-};
-
-static const ObjectClassification regElementClassifications[] = {REGULATORYELEMENT, STOPLINE, TRAFFICLIGHT,
-                                                                 SPEEDLIMIT};  // List of Classifications that
-                                                                               // are associated with regulatory
-                                                                               // Elements
-
-static int manual_object_counter_{0};
+enum class ObjectClassification { UNKOWN, MAP, LANELETID, AREA, PARKINGAREA, SEPERATOR, STOPLINE, TRAFFICLIGHT };
 
 using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObject *>;
 /**
@@ -58,6 +40,7 @@ using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObj
      */
 class Lanelet2Map {
  public:
+  static int manual_object_counter_;
   struct RenderingOptions {
     // General
     bool threeD = true;
@@ -114,7 +97,8 @@ class Lanelet2Map {
    */
   Ogre::SceneNode *getSceneNode() { return scene_node_; }
 
-  void updateMap(Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
+  void updateMap(RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
+  void updateVisibility(const RenderingOptions &rend_opts);
 
  private:
   Lanelet2Map::RenderingOptions rend_opts_;  // Rendering options for this ll2-map
@@ -123,7 +107,7 @@ class Lanelet2Map {
   Ogre::SceneNode *scene_node_;  // The scene node that this ll2-map is attached to
   std::vector<ClassifiedMovableObject> objects_;
 
-  Ogre::MaterialPtr material_;
+  std::shared_ptr<Ogre::Material> material_;
 
   void create(lanelet::LaneletMapConstPtr map_ptr);
 
@@ -144,6 +128,8 @@ class Lanelet2Map {
   std::vector<Ogre::Vector3> ogreLineFromLLetPts(const lanelet::ConstPoints3d &ptsVector) const;
   Ogre::Vector3 ogreVec3FromLLetPoint(const lanelet::ConstPoint3d point) const;
   Ogre::Vector3 ogreVec3FromLLetTrafficLight(const lanelet::ConstPoint3d point, const double zOffset) const;
+
+  void updateVisibility(ObjectClassification classification, bool visible);
 
   // Helper functions
   std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3> &line, double buffer_length);

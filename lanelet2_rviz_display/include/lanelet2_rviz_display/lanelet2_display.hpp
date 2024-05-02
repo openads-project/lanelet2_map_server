@@ -42,13 +42,14 @@ class Lanelet2Display : public rviz_common::Display {
   void updateParkingRendering();
   void updateIdRendering();
   void updateColor();
-  void updateWidth();
+  void updateStyle();
   void update3D();
 
  private:
   void initializeMapInterface(rclcpp::Node &parent_node);
   bool visualizeMap();
   void updateVisualization();
+  void updateVisibility();
 
   LL2MapInterface *ll2if_;
   rclcpp::Node::SharedPtr rviz_node_;

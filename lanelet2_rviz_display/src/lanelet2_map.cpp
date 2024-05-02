@@ -22,6 +22,8 @@
 
 namespace rviz_rendering {
 
+int Lanelet2Map::manual_object_counter_{0};
+
 Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node,
                          Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr)
     : rend_opts_(rend_opts), scene_manager_(manager) {
@@ -46,6 +48,7 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
     material_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
     material_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);  // No culling
     create(map_ptr);
+    updateVisibility(rend_opts_);
   }
 }
 
@@ -69,7 +72,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::MAP: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -78,7 +81,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::LANELETID: {
         auto mov_text = dynamic_cast<rviz_rendering::MovableText *>(object.second);
         if (mov_text) {
-          mov_text->getParentSceneNode()->detachObject(mov_text);
+          mov_text->detachFromParent();
           delete mov_text;
         }
         break;
@@ -87,7 +90,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::AREA: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -96,7 +99,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::PARKINGAREA: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -105,7 +108,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::SEPERATOR: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -114,7 +117,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::STOPLINE: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -123,7 +126,7 @@ void Lanelet2Map::clearObjects() {
       case ObjectClassification::TRAFFICLIGHT: {
         auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
         if (man_object) {
-          man_object->getParentSceneNode()->detachObject(man_object);
+          man_object->detachFromParent();
           scene_manager_->destroyManualObject(man_object);
         }
         break;
@@ -131,19 +134,40 @@ void Lanelet2Map::clearObjects() {
 
       default: {
         if (object.second) {
-          object.second->getParentSceneNode()->detachObject(object.second);
+          object.second->detachFromParent();
           delete object.second;
         }
       }
     }
   }
+  manual_object_counter_ = 0;
   objects_.clear();
 }
 
 void Lanelet2Map::updateMap(Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr) {
   rend_opts_ = rend_opts;
-  clearObjects();   // Clear all old objects
-  create(map_ptr);  // Create new objects from map
+  clearObjects();                // Clear all old objects
+  create(map_ptr);               // Create new objects from map
+  updateVisibility(rend_opts_);  // Hide all objects that are not supposed to be visible
+}
+
+void Lanelet2Map::updateVisibility(const RenderingOptions &rend_opts) {
+  rend_opts_ = rend_opts;
+  updateVisibility(ObjectClassification::MAP, rend_opts_.renderLaneletLinestrings);
+  updateVisibility(ObjectClassification::LANELETID, rend_opts_.renderLaneletIds);
+  updateVisibility(ObjectClassification::AREA, rend_opts_.renderAreas);
+  updateVisibility(ObjectClassification::PARKINGAREA, rend_opts_.renderParking);
+  updateVisibility(ObjectClassification::SEPERATOR, rend_opts_.renderLaneletSeparators);
+  updateVisibility(ObjectClassification::STOPLINE, rend_opts_.renderStopLines);
+  updateVisibility(ObjectClassification::TRAFFICLIGHT, rend_opts_.renderTrafficLights);
+}
+
+void Lanelet2Map::updateVisibility(ObjectClassification classification, bool visible) {
+  for (auto object : objects_) {
+    if (object.first == classification) {
+      object.second->setVisible(visible);
+    }
+  }
 }
 
 void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
@@ -165,29 +189,17 @@ void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
     parkingManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
     // Iterate through all lanelets in map-graph
     for (const lanelet::ConstLanelet &lanelet : map_ptr->laneletLayer) {
-      if (rend_opts_.renderLaneletLinestrings) {
-        addLaneletToManualObject(lanelet, mapManualObject);
-      }
-      if (rend_opts_.renderLaneletSeparators) {
-        addSeperatorToManualObject(lanelet, seperatorManualObject);
-      }
-      if (rend_opts_.renderTrafficLights || rend_opts_.renderStopLines) {
-        addRegulatoryElements(lanelet, scene_node_);
-      }
-      if (rend_opts_.renderLaneletIds) {
-        attachLaneletIdToSceneNode(lanelet, scene_node_);
-      }
+      addLaneletToManualObject(lanelet, mapManualObject);
+      addSeperatorToManualObject(lanelet, seperatorManualObject);
+      addRegulatoryElements(lanelet, scene_node_);
+      attachLaneletIdToSceneNode(lanelet, scene_node_);
     }
     for (const lanelet::ConstArea &area : map_ptr->areaLayer) {
       auto attributes = area.attributes();
       if (attributes[lanelet::AttributeName::Subtype] == lanelet::AttributeValueString::Parking) {
-        if (rend_opts_.renderParking) {
-          addParkingAreaToManualObject(area, parkingManualObject);
-        }
+        addParkingAreaToManualObject(area, parkingManualObject);
       } else {
-        if (rend_opts_.renderAreas) {
-          addAreaToManualObject(area, areaManualObject);
-        }
+        addAreaToManualObject(area, areaManualObject);
       }
     }
     mapManualObject->end();
@@ -199,24 +211,32 @@ void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
       scene_node_->attachObject(mapManualObject);
       // save ptr to manual object (needed later for deletion)
       objects_.push_back(std::make_pair(ObjectClassification::MAP, mapManualObject));
+    } else {
+      scene_manager_->destroyManualObject(mapManualObject);
     }
 
     if (seperatorManualObject->getNumSections()) {
       scene_node_->attachObject(seperatorManualObject);
       // save ptr to manual object (needed later for deletion)
       objects_.push_back(std::make_pair(ObjectClassification::SEPERATOR, seperatorManualObject));
+    } else {
+      scene_manager_->destroyManualObject(seperatorManualObject);
     }
 
     if (areaManualObject->getNumSections()) {
       scene_node_->attachObject(areaManualObject);
       // save ptr to manual object (needed later for deletion)
       objects_.push_back(std::make_pair(ObjectClassification::AREA, areaManualObject));
+    } else {
+      scene_manager_->destroyManualObject(areaManualObject);
     }
 
     if (parkingManualObject->getNumSections()) {
       scene_node_->attachObject(parkingManualObject);
       // save ptr to manual object (needed later for deletion)
       objects_.push_back(std::make_pair(ObjectClassification::PARKINGAREA, parkingManualObject));
+    } else {
+      scene_manager_->destroyManualObject(parkingManualObject);
     }
   }
 }
