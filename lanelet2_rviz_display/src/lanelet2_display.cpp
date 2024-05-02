@@ -154,7 +154,6 @@ void Lanelet2Display::update(float dt, float ros_dt) {
         scene_node_->setPosition(position);
         scene_node_->setOrientation(orientation);
         setTransformOk();
-        //map_->getSceneNode()->setVisible(true);
       } else {
         setMissingTransformToFixedFrame(ll2if_->map_frame_id_);
         map_->getSceneNode()->setVisible(false);
