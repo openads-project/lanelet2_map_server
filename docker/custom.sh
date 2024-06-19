@@ -1,5 +1,5 @@
 # create symbolic links to provide maps in /data/maps
-mkdir -p /data/maps/carla
+mkdir -p /data/maps/default
 ln -s /docker-ros/additional-files /data/maps
 
 # add symbolic links to provide default maps for the carla_its_adapter
