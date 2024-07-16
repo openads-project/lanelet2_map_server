@@ -124,7 +124,12 @@ Lanelet2Display::~Lanelet2Display() = default;
 
 void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
   std::string name = ll2_server_name_property_->getStdString();
-  ll2if_ = new LL2MapInterface(parent_node, name);
+  if(!name.empty()) {
+    if(name[0] != '/') {
+        name = '/' + name;
+    }
+    ll2if_ = new LL2MapInterface(parent_node, name);
+  } 
 }
 
 void Lanelet2Display::onInitialize() {
