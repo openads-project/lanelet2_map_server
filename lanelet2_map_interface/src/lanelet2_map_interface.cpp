@@ -19,7 +19,7 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
 }
 
 void LL2MapInterface::findMapServer() {
-    if(!parameter_client_->wait_for_service(1s)) {
+    if(!parameter_client_->wait_for_service(0.01s)) {
         if (!rclcpp::ok()) {
             RCLCPP_FATAL(parent_node_.get_logger(), "Interrupted while waiting for the map server ('%s') parameter service, shutting down", map_server_name_.c_str());
             rclcpp::shutdown();
