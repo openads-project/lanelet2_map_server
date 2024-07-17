@@ -40,6 +40,7 @@ class LL2MapInterface
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
 
         std::string map_server_name_;
+        bool params_declared_ = false;
 
         void updateMapParam(rclcpp::Parameter param);
         bool loadMap();

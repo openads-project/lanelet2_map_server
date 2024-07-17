@@ -24,7 +24,7 @@ namespace lanelet2_rviz_display {
 Lanelet2Display::Lanelet2Display() {
   ll2_server_name_property_ =
       new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
-                         QString::fromStdString("Name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
+                         QString::fromStdString("Global name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
 
   alpha_property_ = new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this,
                                       SLOT(updateColor()), this);
