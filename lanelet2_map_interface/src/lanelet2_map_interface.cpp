@@ -157,11 +157,15 @@ bool LL2MapInterface::loadMap()
     map_file << map_contents_;
     map_file.close();
 
-    // Load map from file
-    utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
-    mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
-    map_loaded_=true;
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
-    update_pending_=true;
-    return true;
+    try {
+        // Load map from file
+        utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
+        mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
+        map_loaded_=true;
+        RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
+        update_pending_=true;
+        return true;
+    } catch (const std::exception &exc) {
+        RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Unable to load "+ map_filepath_ + ". Exception: " + exc.what());
+    }
 }
