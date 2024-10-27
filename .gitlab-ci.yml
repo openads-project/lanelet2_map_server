@@ -1,8 +1,7 @@
 include:
-  - remote: 'https://raw.githubusercontent.com/ika-rwth-aachen/docker-ros/fix-industrial-ci-zenoh/.gitlab-ci/docker-ros.yml'
+  - remote: 'https://raw.githubusercontent.com/ika-rwth-aachen/docker-ros/main/.gitlab-ci/docker-ros.yml'
 
 variables:
-  DOCKER_ROS_GIT_REF: fix-industrial-ci-zenoh
   BASE_IMAGE: rwthika/ros2:jazzy
   RMW_IMPLEMENTATION: rmw_zenoh_cpp
   COMMAND: ros2 run lanelet2_map_server lanelet2_map_server
