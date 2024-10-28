@@ -37,7 +37,7 @@ void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
     parent_node_.get_logger(),
     "Received an update to parameter " << p.get_name() << "! \n Reloading lanelet2-map!");
     updateMapParam(p);
-    loadMap();
+    bool success = loadMap();
 }
 
 void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcpp::Parameter>> future)
@@ -47,7 +47,7 @@ void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcp
     {
         updateMapParam(parameter);
     }
-    loadMap();
+    bool success = loadMap();
 }
 
 bool LL2MapInterface::validateParams()
@@ -164,8 +164,10 @@ bool LL2MapInterface::loadMap()
         map_loaded_=true;
         RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded "+ map_filepath_ +" succesfully!");
         update_pending_=true;
-        return true;
     } catch (const std::exception &exc) {
         RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Unable to load "+ map_filepath_ + ". Exception: " + exc.what());
+        return false;
     }
+
+    return true;
 }
