@@ -3,7 +3,6 @@ include:
 
 variables:
   BASE_IMAGE: rwthika/ros2:jazzy
-  RMW_IMPLEMENTATION: rmw_zenoh_cpp
   COMMAND: ros2 run lanelet2_map_server lanelet2_map_server
   PLATFORM: amd64
   ENABLE_INDUSTRIAL_CI: 'true'
