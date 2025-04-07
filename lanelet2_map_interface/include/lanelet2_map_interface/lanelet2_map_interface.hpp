@@ -28,6 +28,7 @@ class LL2MapInterface
         std::shared_ptr<rclcpp::AsyncParametersClient> parameter_client_;
         std::shared_ptr<rclcpp::ParameterEventHandler> parameter_sub_;
         std::shared_ptr<rclcpp::ParameterCallbackHandle> frame_id_callback_handle_, contents_callback_handle_, origin_lat_callback_handle_, origin_lon_callback_handle_;
+        rclcpp::TimerBase::SharedPtr startup_timer_;
 
         std::string map_filepath_ = std::string(getenv("HOME")) + "/.ros/lanelet2_map_interface/map.osm";
 
@@ -39,12 +40,13 @@ class LL2MapInterface
         std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
 
         std::string map_server_name_;
+        bool params_declared_ = false;
 
         void updateMapParam(rclcpp::Parameter param);
         bool loadMap();
         bool validateParams();
 
-
+        void findMapServer();
         void updateParamsCallback(const rclcpp::Parameter & p);
         void serviceParamsCallback(std::shared_future<std::vector<rclcpp::Parameter>> future);
 };

@@ -24,7 +24,7 @@ namespace lanelet2_rviz_display {
 Lanelet2Display::Lanelet2Display() {
   ll2_server_name_property_ =
       new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
-                         QString::fromStdString("Name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
+                         QString::fromStdString("Global name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
 
   alpha_property_ = new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this,
                                       SLOT(updateColor()), this);
@@ -124,7 +124,12 @@ Lanelet2Display::~Lanelet2Display() = default;
 
 void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
   std::string name = ll2_server_name_property_->getStdString();
-  ll2if_ = new LL2MapInterface(parent_node, name);
+  if(!name.empty()) {
+    if(name[0] != '/') {
+        name = '/' + name;
+    }
+    ll2if_ = new LL2MapInterface(parent_node, name);
+  } 
 }
 
 void Lanelet2Display::onInitialize() {

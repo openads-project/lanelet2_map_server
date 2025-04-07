@@ -14,22 +14,35 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
     parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
     parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
 
-    while(!parameter_client_->wait_for_service(1s)) {
+    // Periodically check if the parameter server is available
+    startup_timer_ = parent_node_.create_wall_timer(1s, std::bind(&LL2MapInterface::findMapServer, this));
+}
+
+void LL2MapInterface::findMapServer() {
+    if(!parameter_client_->wait_for_service(0.01s)) {
         if (!rclcpp::ok()) {
-            RCLCPP_FATAL(parent_node_.get_logger(), "Interrupted while waiting for the map server ('%s') parameter service, shutting down", map_server_name.c_str());
+            RCLCPP_FATAL(parent_node_.get_logger(), "Interrupted while waiting for the map server ('%s') parameter service, shutting down", map_server_name_.c_str());
             rclcpp::shutdown();
         }
-        RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name.c_str());
-    }
-    auto parameters_future = parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-                                                        std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service", map_server_name.c_str());
+        RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name_.c_str());
+        return;
+    } else {
+        auto parameters_future = parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                                            std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+        RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service", map_server_name_.c_str());
 
-    frame_id_callback_handle_ = parameter_sub_->add_parameter_callback("map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-    contents_callback_handle_ = parameter_sub_->add_parameter_callback("map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-    origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-    origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+        // Only declare parameters once
+        if(!params_declared_) {
+            frame_id_callback_handle_ = parameter_sub_->add_parameter_callback("map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+            contents_callback_handle_ = parameter_sub_->add_parameter_callback("map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+            origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+            origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+            params_declared_ = true;
+        }
+        startup_timer_->cancel();
+    }
 }
+
 
 void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter & p)
 {
