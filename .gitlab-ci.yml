@@ -12,6 +12,7 @@ ROS2 Humble:
     strategy: depend
   variables:
     ROS_DISTRO: humble
+    NOT_TEST_BUILD: 'true'
 
 ROS2 Jazzy:
   stage: Industrial CI
@@ -23,6 +24,7 @@ ROS2 Jazzy:
     strategy: depend
   variables:
     ROS_DISTRO: jazzy
+    NOT_TEST_BUILD: 'true'
 
 lanelet2_object_list_prediction:
   stage: Downstream
