@@ -2,17 +2,6 @@ stages:
   - Industrial CI
   - Downstream
 
-ROS1:
-  stage: Industrial CI
-  trigger:
-    include:
-      - project: fb-fi/ops/templates/ci-templates
-        ref: main
-        file: .industrial_ci.template.yml
-    strategy: depend
-  variables:
-    ROS_DISTRO: noetic
-
 ROS2 Humble:
   stage: Industrial CI
   trigger:
