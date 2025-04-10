@@ -114,13 +114,11 @@ bool LL2MapInterface::validateParams() {
     RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_contents_' is empty");
     return false;
   }
-  if (origin_lat_ == 91.0)  // check if still initialized to invalid value
-  {
+  if (origin_lat_ == std::numeric_limits<double>::quiet_NaN()) {
     RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lat_' is not set");
     return false;
   }
-  if (origin_lon_ == 181.0)  // check if still initialized to invalid value
-  {
+  if (origin_lon_ == std::numeric_limits<double>::quiet_NaN()) {
     RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lon_' is not set");
     return false;
   }

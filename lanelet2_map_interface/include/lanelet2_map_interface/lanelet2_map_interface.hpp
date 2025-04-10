@@ -8,6 +8,7 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 using namespace std::chrono_literals;
 class LL2MapInterface {
@@ -32,7 +33,8 @@ class LL2MapInterface {
 
   std::vector<rclcpp::Parameter> map_params_;
   std::string map_contents_;
-  double origin_lat_ = 91.0, origin_lon_ = 181.0;  // init to invalid values
+  double origin_lat_ = std::numeric_limits<double>::quiet_NaN();
+  double origin_lon_ = std::numeric_limits<double>::quiet_NaN();
 
   lanelet::LaneletMapPtr mapPtr_;
   std::shared_ptr<lanelet::Projector> utmProjectorPtr_;
