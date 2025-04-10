@@ -6,8 +6,6 @@
 #include <lanelet2_projection/UTM.h>
 
 #include <string.h>
-#include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -30,7 +28,7 @@ class LL2MapInterface {
       origin_lat_callback_handle_, origin_lon_callback_handle_;
   rclcpp::TimerBase::SharedPtr startup_timer_;
 
-  std::string map_filepath_ = std::string(getenv("HOME")) + "/.ros/lanelet2_map_interface/map.osm";
+  std::string map_filepath_;
 
   std::vector<rclcpp::Parameter> map_params_;
   std::string map_contents_;

@@ -1,13 +1,51 @@
-#include "lanelet2_map_interface/lanelet2_map_interface.hpp"
 #include <cctype>
+#include <cstdlib>
+#include <filesystem>
+#include <utility>
+
+#include "lanelet2_map_interface/lanelet2_map_interface.hpp"
+
+/**
+ * @brief Resolves a relative string filepath
+ *
+ * Interprets paths relative to $ROS_HOME, $HOME/.ros, or current working directory.
+ * If the path is absolute, it is returned as-is.
+ *
+ * @param[in] path_string (relative) path
+ * @return resolved path
+ */
+std::filesystem::path resolveFilepath(const std::string& path_string) {
+  std::filesystem::path path(path_string);
+  if (path_string.empty()) return path;
+  if (!path.has_root_path()) {
+    const char* ros_home_ptr = std::getenv("ROS_HOME");
+    if (ros_home_ptr != nullptr && !std::string(ros_home_ptr).empty()) {
+      path = std::filesystem::path(std::string(ros_home_ptr));
+    } else {
+      const char* home_dir = std::getenv("HOME");
+      if (home_dir != nullptr && !std::string(home_dir).empty()) {
+        path = std::filesystem::path(std::string(home_dir) + "/.ros");
+      } else {
+        path = std::filesystem::current_path();
+      }
+    }
+    path.append(path_string);
+  }
+  path = path.lexically_normal();
+  return path;
+}
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name)
     : parent_node_(parent_node), map_server_name_(map_server_name) {
-  // load own parameters
+  // default map filepath includes node name to avoid race conditions
+  map_filepath_ =
+      std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm";
   rcl_interfaces::msg::ParameterDescriptor param_desc;
-  param_desc.description = "Path to Lanelet2 map";
+  param_desc.description = "Local filepath to where map from map server is written to (relative to $ROS_HOME)";
   parent_node_.declare_parameter("map_filepath", map_filepath_, param_desc);
   map_filepath_ = parent_node_.get_parameter("map_filepath").as_string();
+  map_filepath_ = resolveFilepath(map_filepath_).string();
+  RCLCPP_INFO(parent_node_.get_logger(), "Loaded parameter 'map_filepath': %s", map_filepath_.c_str());
 
   // Initialize parameter client and event handler
   parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
@@ -19,16 +57,11 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
 
 void LL2MapInterface::findMapServer() {
   if (!parameter_client_->wait_for_service(0.01s)) {
-    if (!rclcpp::ok()) {
-      RCLCPP_FATAL(parent_node_.get_logger(),
-                   "Interrupted while waiting for the map server ('%s') parameter service, shutting down",
-                   map_server_name_.c_str());
-      rclcpp::shutdown();
-    }
     RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...",
                 map_server_name_.c_str());
     return;
   } else {
+    startup_timer_->cancel();
     auto parameters_future = parameter_client_->get_parameters(
         {"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
         std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
@@ -51,8 +84,6 @@ void LL2MapInterface::findMapServer() {
           map_server_name_);
       params_declared_ = true;
     }
-    // workaround to ensure that map is properly loaded on startup (could lead to infinite attempts to load the map, when map-data is actually corrupt)
-    if (map_loaded_) startup_timer_->cancel();
   }
 }
 
