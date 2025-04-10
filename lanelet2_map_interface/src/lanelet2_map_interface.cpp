@@ -39,6 +39,7 @@ void LL2MapInterface::findMapServer() {
             origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback("origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
             params_declared_ = true;
         }
+        // workaround to ensure that map is properly loaded on startup (could lead to infinite attempts to load the map, when map-data is actually corrupt)
         if(map_loaded_) startup_timer_->cancel();
     }
 }
