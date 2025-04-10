@@ -57,10 +57,9 @@ void LL2MapInterface::findMapServer() {
 }
 
 void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter& p) {
-  RCLCPP_INFO_STREAM(parent_node_.get_logger(),
-                     "Received an update to parameter " << p.get_name() << "! \n Reloading lanelet2-map!");
+  RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Parameter '" << p.get_name() << "' changed, reloading map");
   updateMapParam(p);
-  bool success = loadMap();
+  std::ignore = loadMap();
 }
 
 void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcpp::Parameter>> future) {
@@ -68,30 +67,30 @@ void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcp
   for (auto& parameter : result) {
     updateMapParam(parameter);
   }
-  bool success = loadMap();
+  std::ignore = loadMap();
 }
 
 bool LL2MapInterface::validateParams() {
   if (map_frame_id_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_frame_id_ is an empty string!");
+    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_frame_id_' is empty");
     return false;
   }
   if (map_filepath_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_filepath_ is an empty string!");
+    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_filepath_' is empty");
     return false;
   }
   if (map_contents_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter map_contents_ is an empty string!");
+    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_contents_' is empty");
     return false;
   }
   if (origin_lat_ == 91.0)  // check if still initialized to invalid value
   {
-    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lat_ is not set!");
+    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lat_' is not set");
     return false;
   }
   if (origin_lon_ == 181.0)  // check if still initialized to invalid value
   {
-    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter origin_lon_ is not set!");
+    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lon_' is not set");
     return false;
   }
   return true;
@@ -99,7 +98,6 @@ bool LL2MapInterface::validateParams() {
 
 lanelet::LaneletMapPtr LL2MapInterface::getNonConstMapPtr() {
   if (!map_loaded_) {
-    RCLCPP_ERROR(parent_node_.get_logger(), "Lanelet2-Map is currently not loaded. Returning nullptr!");
     return nullptr;
   } else {
     return mapPtr_;
@@ -110,7 +108,6 @@ lanelet::LaneletMapConstPtr LL2MapInterface::getMapPtr() { return getNonConstMap
 
 std::shared_ptr<lanelet::Projector> LL2MapInterface::getProjectorPtr() {
   if (!map_loaded_) {
-    RCLCPP_ERROR(parent_node_.get_logger(), "Lanelet2-Projector is currently not initialized. Returning nullptr!");
     return nullptr;
   } else {
     return utmProjectorPtr_;
@@ -141,9 +138,8 @@ bool LL2MapInterface::loadMap() {
   // Check if location of map file exists, if not create all folders
   std::string map_directory = map_filepath_.substr(0, map_filepath_.find_last_of("/"));
   if (!std::filesystem::exists(map_directory)) {
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Creating folder " << map_directory << " for map file.");
     if (!std::filesystem::create_directories(map_directory)) {
-      RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to create folder " << map_directory);
+      RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to create directory '" << map_directory << "'");
       return false;
     }
   }
@@ -159,10 +155,10 @@ bool LL2MapInterface::loadMap() {
     utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_ = true;
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded map '" + map_filepath_ + "' successfully!");
+    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded map '" + map_filepath_ + "'");
     update_pending_ = true;
   } catch (const std::exception& exc) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Unable to load " + map_filepath_ + ". Exception: " + exc.what());
+    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to load map '" + map_filepath_ + "': " + exc.what());
     return false;
   }
 
