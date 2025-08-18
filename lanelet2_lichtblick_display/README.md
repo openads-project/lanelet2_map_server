@@ -26,3 +26,7 @@ Traffic lights are visualized as a `MESH_RESOURCE` and can be loaded via https, 
 | `traffic_light_scale` | `double` | Uniform scale factor for traffic light meshes |
 | `traffic_light_z_offset` | `double` | z-offset applied to traffic light positions. Useful to adapt model origin/height. |
 | `traffic_light_opacity` | `double` | Opacity as an alpha value (0.0–1.0) for  traffic lights |
+
+### Visualization Example
+
+![Visualization Example](/lanelet2_lichtblick_display/assets/visualization_example.png)
