@@ -27,6 +27,11 @@ Lanelet2LichtblickDisplay::Lanelet2LichtblickDisplay() : Node("lanelet2_lichtbli
   this->declareAndLoadParameter("traffic_light_z_offset", traffic_light_z_offset_, "Offset in z-direction of the traffic lights models (depends on model and scale)", true, false, false);
   this->declareAndLoadParameter("traffic_light_opacity", traffic_light_opacity_, "Opacity of the traffic lights", true, false, false);
 
+  this->declareAndLoadParameter("yield_sign_mesh_resource", yield_sign_mesh_resource_, "Link to the yield sign model to use", true, false, false);
+  this->declareAndLoadParameter("yield_sign_scale", yield_sign_scale_, "Scale of the yield sign models", true, false, false);
+  this->declareAndLoadParameter("yield_sign_z_offset", yield_sign_z_offset_, "Offset in z-direction of the yield sign models (depends on model and scale)", true, false, false);
+  this->declareAndLoadParameter("yield_sign_opacity", yield_sign_opacity_, "Opacity of the yield signs", true, false, false);
+
   this->setup();
 }
 
@@ -315,6 +320,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
       }
       marker_array_msg.markers.push_back(centerline_marker);
     }
+
     const auto& regulatory_elements = lanelet.regulatoryElements();
     for (const auto& regulatory_element: regulatory_elements) {
       // Check if the element is a reference line
@@ -344,7 +350,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
 
       // https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/RegulatoryElementTagging.md
       std::string subtype = regulatory_element->attribute("subtype").value();
-      if (subtype == "traffic_light") {
+      if (subtype == "traffic_light" || subtype == "right_of_way") {
         // Get the positions of the traffic lights from the "refers" attribute
         std::vector<geometry_msgs::msg::Point> positions = regulatoryElementPositions(regulatory_element);
 
@@ -359,48 +365,92 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
           middle_point.x = (ref_line_pts->at(0).x + ref_line_pts->at(1).x) / 2.0;
           middle_point.y = (ref_line_pts->at(0).y + ref_line_pts->at(1).y) / 2.0;
 
-        // Create a marker for each position
+          // Create a marker for each position
           for (auto& p : positions) {
-            visualization_msgs::msg::Marker tl_marker;
-            tl_marker.header.frame_id = "map";
-            tl_marker.header.stamp = this->now();
-            tl_marker.ns = "traffic_lights";
-            tl_marker.id = current_marker_id++;
-            tl_marker.action = visualization_msgs::msg::Marker::ADD;
-            tl_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
-            tl_marker.mesh_resource = traffic_light_mesh_resource_;
-            tl_marker.scale.x = traffic_light_scale_;
-            tl_marker.scale.y = traffic_light_scale_;
-            tl_marker.scale.z = traffic_light_scale_;
+            if (subtype == "traffic_light") {
+              visualization_msgs::msg::Marker tl_marker;
+              tl_marker.header.frame_id = "map";
+              tl_marker.header.stamp = this->now();
+              tl_marker.ns = "traffic_lights";
+              tl_marker.id = current_marker_id++;
+              tl_marker.action = visualization_msgs::msg::Marker::ADD;
+              tl_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+              tl_marker.mesh_resource = traffic_light_mesh_resource_;
+              tl_marker.scale.x = traffic_light_scale_;
+              tl_marker.scale.y = traffic_light_scale_;
+              tl_marker.scale.z = traffic_light_scale_;
 
-            // Set the position of the traffic sign (depends on scale and model)
-            p.z = traffic_light_z_offset_;
-            tl_marker.pose.position = p;
+              // Set the position of the traffic sign (depends on scale and model)
+              p.z = traffic_light_z_offset_;
+              tl_marker.pose.position = p;
 
-            // Set the orientation to be orthogonal to the reference line
-            // Calculate the vector from traffic sign to the reference line
-            double dx_to_ref = middle_point.x - p.x;
-            double dy_to_ref = middle_point.y - p.y;
-            double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
+              // Set the orientation to be orthogonal to the reference line
+              // Calculate the vector from traffic sign to the reference line
+              double dx_to_ref = middle_point.x - p.x;
+              double dy_to_ref = middle_point.y - p.y;
+              double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
 
-            // Two possible perpendicular orientations to the ref line:
-            double cand1 = yaw_ref_line + M_PI_2; // +90°
-            double cand2 = yaw_ref_line - M_PI_2; // -90°
+              // Two possible perpendicular orientations to the ref line:
+              double cand1 = yaw_ref_line + M_PI_2; // +90°
+              double cand2 = yaw_ref_line - M_PI_2; // -90°
 
-            // measure angular difference (normalized) using atan2(sin,cos)
-            double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
-            double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
+              // measure angular difference (normalized) using atan2(sin,cos)
+              double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
+              double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
 
-            double final_yaw = (d1 < d2) ? cand1 : cand2;
+              double final_yaw = (d1 < d2) ? cand1 : cand2;
 
-            tf2::Quaternion q;
-            q.setRPY(0, 0, final_yaw + M_PI_2);
-            tl_marker.pose.orientation = tf2::toMsg(q);
+              tf2::Quaternion q;
+              q.setRPY(0, 0, final_yaw + M_PI_2);
+              tl_marker.pose.orientation = tf2::toMsg(q);
 
-            tl_marker.mesh_use_embedded_materials = true;
-            tl_marker.color.a = traffic_light_opacity_;
+              tl_marker.mesh_use_embedded_materials = true;
+              tl_marker.color.a = traffic_light_opacity_;
 
-            marker_array_msg.markers.push_back(tl_marker);
+              marker_array_msg.markers.push_back(tl_marker);
+            }
+            if (subtype == "right_of_way") {
+              visualization_msgs::msg::Marker yield_marker;
+              yield_marker.header.frame_id = "map";
+              yield_marker.header.stamp = this->now();
+              yield_marker.ns = "yield_signs";
+              yield_marker.id = current_marker_id++;
+              yield_marker.action = visualization_msgs::msg::Marker::ADD;
+              yield_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+              yield_marker.mesh_resource = yield_sign_mesh_resource_;
+              yield_marker.scale.x = yield_sign_scale_;
+              yield_marker.scale.y = yield_sign_scale_;
+              yield_marker.scale.z = yield_sign_scale_;
+
+              // Set the position of the traffic sign (depends on scale and model)
+              p.z = yield_sign_z_offset_;
+              yield_marker.pose.position = p;
+
+              // Set the orientation to be orthogonal to the reference line
+              // Calculate the vector from traffic sign to the reference line
+              double dx_to_ref = middle_point.x - p.x;
+              double dy_to_ref = middle_point.y - p.y;
+              double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
+
+              // Two possible perpendicular orientations to the ref line:
+              double cand1 = yaw_ref_line + M_PI_2; // +90°
+              double cand2 = yaw_ref_line - M_PI_2; // -90°
+
+              // measure angular difference (normalized) using atan2(sin,cos)
+              double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
+              double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
+
+              double final_yaw = (d1 < d2) ? cand1 : cand2;
+
+              tf2::Quaternion q;
+              q.setRPY(0, 0, final_yaw + M_PI_2);
+              yield_marker.pose.orientation = tf2::toMsg(q);
+
+              yield_marker.mesh_use_embedded_materials = true;
+              yield_marker.color.a = yield_sign_opacity_;
+
+              marker_array_msg.markers.push_back(yield_marker);
+            }
           }
         }
       }

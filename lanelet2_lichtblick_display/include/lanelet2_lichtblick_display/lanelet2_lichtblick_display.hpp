@@ -192,6 +192,10 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   double traffic_light_z_offset_ = 1.3;
   double traffic_light_opacity_ = 1.0;
 
+  std::string yield_sign_mesh_resource_;
+  double yield_sign_scale_ = 1.0;
+  double yield_sign_z_offset_ = 0.0;
+  double yield_sign_opacity_ = 1.0;
 
 };
 
