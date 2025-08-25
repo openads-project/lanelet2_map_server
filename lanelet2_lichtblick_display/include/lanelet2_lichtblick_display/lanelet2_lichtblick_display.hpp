@@ -117,6 +117,68 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   geometry_msgs::msg::Point toRos(const Eigen::Vector3d &point);
 
   /**
+   * @brief Publishes a DELETEALL action to clear all markers from the topic.
+   * * This function creates a single visualization_msgs::msg::Marker with the DELETEALL
+   * action and publishes it. This action signals to the visualization toolto remove all
+   * markers previously published on the topic, ensuring a clean slate for new visualizations.
+   */
+  void clearAllMarkers();
+
+
+  /**
+   * @brief Creates and adds a LINE_STRIP marker to a marker array.
+   * * Encapsulates the repetitive logic for visualizing line segments. It
+   * simplifies the main publishing loop by handling all marker properties based
+   * on the provided parameters.
+   * * @param marker_array_msg The marker array message to which the new marker will be added.
+   * @param current_marker_id A reference to the marker ID counter, which will be incremented.
+   * @param ns The namespace for the marker, used for grouping in the visualization tool.
+   * @param line_width The width of the line in meters.
+   * @param color_hex The hexadecimal color string.
+   * @param opacity The opacity of the line.
+   * @param header The ROS header containing the frame ID and timestamp.
+   * @param points A vector of geometry_msgs::msg::Point objects defining the line segments.
+   */
+  void addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
+                        int& current_marker_id,
+                        const std::string& ns,
+                        float line_width,
+                        const std::string& color_hex,
+                        float opacity,
+                        const std_msgs::msg::Header& header,
+                        const std::vector<geometry_msgs::msg::Point>& points);
+
+
+/**
+ * @brief Creates and adds a MESH_RESOURCE marker for regulatory elements.
+ * * Streamlines the process of visualizing 3D models of traffic signs. It handles the common
+ * logic for setting marker properties, including calculating the orientation to be orthogonal to 
+ * a reference line.
+ * * @param marker_array_msg The marker array message to which the new marker will be added.
+ * @param current_marker_id A reference to the marker ID counter, which will be incremented.
+ * @param ns The namespace for the marker.
+ * @param mesh_resource The URI of the 3D mesh model.
+ * @param position The base position of the mesh marker.
+ * @param scale The uniform scale factor for the mesh.
+ * @param z_offset A vertical offset to correctly position the mesh above the ground.
+ * @param opacity The opacity of the mesh marker.
+ * @param header The ROS header.
+ * @param yaw_ref_line The yaw of the reference line, used to calculate orthogonal orientation.
+ * @param middle_point The middle point of the reference line, used to determine orientation.
+ */
+  void addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
+                    int& current_marker_id,
+                    const std::string& ns,
+                    const std::string& mesh_resource,
+                    const geometry_msgs::msg::Point& position,
+                    double scale,
+                    double z_offset,
+                    double opacity,
+                    const std_msgs::msg::Header& header,
+                    double yaw_ref_line,
+                    const geometry_msgs::msg::Point& middle_point);
+
+  /**
    * @brief Extracts the reference/effect line of a regulatory element.
    *
    * Only the first reference line of the regulatory element is considered.
@@ -182,6 +244,10 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   double centerline_line_width_ = 0.08;
   std::string centerline_color_hex_ = "#008000";
   double centerline_line_opacity_ = 0.4;
+
+  double lanelet_text_scale_ = 0.5;
+  std::string lanelet_text_color_hex_ = "#000000";
+  double lanelet_text_opacity_ = 1.0;
 
   double reference_line_width_ = 0.2;
   std::string reference_line_color_hex_ = "#FFFF00";

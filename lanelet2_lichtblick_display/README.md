@@ -1,6 +1,6 @@
 # lanelet2_lichtblick_display
 
-This ROS 2 node is able to visualize Lanelet2-Maps that are provided via the [lanelet2_map_server](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_server)/[-_interface](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_interface) into `visualization_msgs::msg::MarkerArray`. It converts the various lanelet boundaries, centerlines, reference lines and regulatory elements (e.g. traffic lights). These standard message types can be visualized with both RVIZ and Lichtblick, but we mainly use this for visualizations in the latter, hence the name.
+This ROS 2 node is able to visualize Lanelet2-Maps that are provided via the [lanelet2_map_server](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_server)/[-_interface](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_interface) into `visualization_msgs::msg::MarkerArray`. It converts the various lanelet boundaries, centerlines, reference lines and regulatory elements (e.g. traffic lights). These standard message types can be visualized with both RVIZ and Lichtblick, but we mainly use this for visualizations for the latter, hence the name.
 
 ### Published Topics
 

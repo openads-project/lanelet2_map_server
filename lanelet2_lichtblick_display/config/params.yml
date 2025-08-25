@@ -13,6 +13,10 @@
     centerline_color_hex: "#66ff00"
     centerline_opacity: 0.7
 
+    lanelet_text_scale: 0.5
+    lanelet_text_color_hex: "#000000"
+    lanelet_text_opacity: 1.0
+
     reference_line_width: 0.15
     reference_line_color_hex: "#FF0000"
     reference_line_opacity: 0.5

@@ -18,6 +18,10 @@ Lanelet2LichtblickDisplay::Lanelet2LichtblickDisplay() : Node("lanelet2_lichtbli
   this->declareAndLoadParameter("centerline_color_hex", centerline_color_hex_, "Color of the centerlines", true, false, false);
   this->declareAndLoadParameter("centerline_line_opacity", centerline_line_opacity_, "Opacity of the centerlines", true, false, false);
 
+  this->declareAndLoadParameter("lanelet_text_scale", lanelet_text_scale_, "Scale of the lanelet ID text", true, false, false);
+  this->declareAndLoadParameter("lanelet_text_color", lanelet_text_color_hex_,"Color of the lanelet ID text", true, false, false);
+  this->declareAndLoadParameter("lanelet_text_opacity", lanelet_text_opacity_, "Opacity of the lanelet ID text", true, false, false);
+
   this->declareAndLoadParameter("reference_line_width", reference_line_width_, "Width of the reference lines", true, false, false);
   this->declareAndLoadParameter("reference_line_color_hex", reference_line_color_hex_, "Color of the reference lines", true, false, false);
   this->declareAndLoadParameter("reference_line_opacity", reference_line_opacity_, "Opacity of the reference lines", true, false, false);
@@ -135,17 +139,17 @@ rcl_interfaces::msg::SetParametersResult Lanelet2LichtblickDisplay::parametersCa
 
 void Lanelet2LichtblickDisplay::setup() {
 
-  // Callback for dynamic parameter configuration
+  // callback for dynamic parameter configuration
   parameters_callback_ = this->add_on_set_parameters_callback(std::bind(&Lanelet2LichtblickDisplay::parametersCallback, this, std::placeholders::_1));
 
-  // Publisher for visualization markers
+  // publisher for visualization markers
   auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(); 
   marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/lichtblick_lanelet2_map", qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
   ll2if_ = std::make_shared<LL2MapInterface>(*this, "ll2_map_server");
 
-  // Periodically check for map updates
+  // periodically check for map updates
   timer_ = this->create_wall_timer(std::chrono::milliseconds(2000), std::bind(&Lanelet2LichtblickDisplay::checkMapStatus, this));
 
 }
@@ -189,6 +193,105 @@ geometry_msgs::msg::Point Lanelet2LichtblickDisplay::toRos(const Eigen::Vector3d
 }
 
 
+void Lanelet2LichtblickDisplay::clearAllMarkers() {
+    visualization_msgs::msg::MarkerArray marker_array_msg;
+    visualization_msgs::msg::Marker delete_marker;
+    
+    delete_marker.header.frame_id = map_frame_id;
+    delete_marker.header.stamp = this->now();
+    delete_marker.action = visualization_msgs::msg::Marker::DELETEALL;
+    
+    marker_array_msg.markers.push_back(delete_marker);
+    marker_array_publisher_->publish(marker_array_msg);
+}
+
+
+void Lanelet2LichtblickDisplay::addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
+                                                  int& current_marker_id,
+                                                  const std::string& ns,
+                                                  float line_width,
+                                                  const std::string& color_hex,
+                                                  float opacity,
+                                                  const std_msgs::msg::Header& header,
+                                                  const std::vector<geometry_msgs::msg::Point>& points) {
+    if (points.empty()) {return;}
+
+    visualization_msgs::msg::Marker marker;
+    marker.header = header;
+    marker.ns = ns;
+    marker.id = current_marker_id++; // give every marker a unique ID
+    marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
+    marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+    marker.scale.x = line_width;
+
+    float r, g, b;
+    hexToRgb(color_hex, r, g, b);
+    marker.color.r = r;
+    marker.color.g = g;
+    marker.color.b = b;
+    marker.color.a = opacity;
+    marker.points = points;
+
+    marker_array_msg.markers.push_back(marker);
+}
+
+
+void Lanelet2LichtblickDisplay::addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
+                                            int& current_marker_id,
+                                            const std::string& ns,
+                                            const std::string& mesh_resource,
+                                            const geometry_msgs::msg::Point& position,
+                                            double scale,
+                                            double z_offset,
+                                            double opacity,
+                                            const std_msgs::msg::Header& header,
+                                            double yaw_ref_line,
+                                            const geometry_msgs::msg::Point& middle_point) {
+    
+    visualization_msgs::msg::Marker marker;
+    marker.header = header;
+    marker.ns = ns;
+    marker.id = current_marker_id++; // give every marker a unique ID
+    marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
+    marker.action = visualization_msgs::msg::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+    marker.mesh_resource = mesh_resource;
+    // uniform scale
+    marker.scale.x = scale;
+    marker.scale.y = scale;
+    marker.scale.z = scale;
+
+    // set the position of the mesh marker (depends on scale and model)
+    geometry_msgs::msg::Point adjusted_position = position;
+    adjusted_position.z = z_offset;
+    marker.pose.position = adjusted_position;
+
+    // calculate orientation orthogonal to the reference line
+    // 1. need vector from traffic sign to the reference line
+    double dx_to_ref = middle_point.x - position.x;
+    double dy_to_ref = middle_point.y - position.y;
+    double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
+    // 2. two possible perpendicular orientations to the reference line
+    double cand1 = yaw_ref_line + M_PI_2; // +90°
+    double cand2 = yaw_ref_line - M_PI_2; // -90°
+    // measure angular difference (normalized) using atan2(sin,cos)
+    double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
+    double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
+    double final_yaw = (d1 < d2) ? cand1 : cand2;
+
+    tf2::Quaternion q;
+    q.setRPY(0, 0, final_yaw + M_PI_2);
+    marker.pose.orientation = tf2::toMsg(q);
+
+    marker.mesh_use_embedded_materials = true;
+    marker.color.a = opacity;
+
+    marker_array_msg.markers.push_back(marker);
+}
+
+
+
 std::optional<std::array<geometry_msgs::msg::Point, 2>> Lanelet2LichtblickDisplay::regulatoryElementReferenceLine(
     const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element) {
   const std::vector<lanelet::ConstLineString3d> reference_lines =
@@ -227,7 +330,10 @@ void Lanelet2LichtblickDisplay::checkMapStatus() {
   // Check if the map has been loaded or if a new map has been received
   if (current_map_ptr && current_map_ptr != last_map_ptr_) {
       RCLCPP_INFO(this->get_logger(), "New Lanelet2 map detected. Publishing markers...");
+
       map_frame_id = ll2if_->map_frame_id_;
+      this->clearAllMarkers();
+
       this->publishMarker(current_map_ptr);
       last_map_ptr_ = current_map_ptr;
       need_republish_.store(false); // cleared after publish
@@ -248,218 +354,88 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
     RCLCPP_WARN(this->get_logger(), "Lanelet2 map is empty.");
     return;
   }
-
-  float r, g, b;
-
   visualization_msgs::msg::MarkerArray marker_array_msg;
   int current_marker_id = 0;
-
   rclcpp::Time current_timestamp = this->now();
+
+  std_msgs::msg::Header header;
+  header.frame_id = map_frame_id;
+  header.stamp = current_timestamp;
+  float r,g,b;
 
   // Iterate through all lanelets in the map
   for (const auto& lanelet : lanelet_map->laneletLayer) {
-    // --- Visualize Left Boundary ---
-    visualization_msgs::msg::Marker left_bound_marker;
-    left_bound_marker.header.frame_id = map_frame_id;
-    left_bound_marker.header.stamp = current_timestamp;
-    left_bound_marker.ns = "lanelet_left_boundaries";
-    left_bound_marker.id = current_marker_id++;
-    left_bound_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-    left_bound_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    left_bound_marker.action = visualization_msgs::msg::Marker::ADD;
-    left_bound_marker.scale.x = left_bound_line_width_;
+    // --- Visualize Lines ---
+    std::vector<geometry_msgs::msg::Point> left_points, right_points, centerline_points;
+    for (const auto& p : lanelet.leftBound()) left_points.push_back(toRos(p.basicPoint()));
+    for (const auto& p : lanelet.rightBound()) right_points.push_back(toRos(p.basicPoint()));
+    for (const auto& p : lanelet.centerline()) centerline_points.push_back(toRos(p.basicPoint()));
 
-    hexToRgb(left_bound_color_hex_, r, g, b);
-    left_bound_marker.color.r = r;
-    left_bound_marker.color.g = g;
-    left_bound_marker.color.b = b;
-    left_bound_marker.color.a = left_bound_line_opacity_;
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_left_boundaries", left_bound_line_width_, left_bound_color_hex_, left_bound_line_opacity_, header, left_points);
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_right_boundaries", right_bound_line_width_, right_bound_color_hex_, right_bound_line_opacity_, header, right_points);
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_centerlines", centerline_line_width_, centerline_color_hex_, centerline_line_opacity_, header, centerline_points);
 
-    // Convert lanelet points to geometry_msgs::msg::Point
-    for (const auto& p : lanelet.leftBound()) {
-      left_bound_marker.points.push_back(toRos(p.basicPoint()));
-    }
-    marker_array_msg.markers.push_back(left_bound_marker);
-
-    // --- Visualize Right Boundary ---
-    visualization_msgs::msg::Marker right_bound_marker;
-    right_bound_marker.header.frame_id = map_frame_id;
-    right_bound_marker.header.stamp = current_timestamp;
-    right_bound_marker.ns = "lanelet_right_boundaries";
-    right_bound_marker.id = current_marker_id++;
-    right_bound_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-    right_bound_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    right_bound_marker.action = visualization_msgs::msg::Marker::ADD;
-    right_bound_marker.scale.x = right_bound_line_width_;
-
-    hexToRgb(right_bound_color_hex_, r, g, b);
-    right_bound_marker.color.r = r;
-    right_bound_marker.color.g = g;
-    right_bound_marker.color.b = b;
-    right_bound_marker.color.a = right_bound_line_opacity_;
-
-    for (const auto& p : lanelet.rightBound()) {
-      right_bound_marker.points.push_back(toRos(p.basicPoint()));
-    }
-    marker_array_msg.markers.push_back(right_bound_marker);
-
-    // --- Visualize Centerline ---
+    // --- Visualize Lanelet ID Text ---
     if (!lanelet.centerline().empty()) {
-      visualization_msgs::msg::Marker centerline_marker;
-      centerline_marker.header.frame_id = map_frame_id;
-      centerline_marker.header.stamp = current_timestamp;
-      centerline_marker.ns = "lanelet_centerlines";
-      centerline_marker.id = current_marker_id++;
-      centerline_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-      centerline_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-      centerline_marker.action = visualization_msgs::msg::Marker::ADD;
-      centerline_marker.scale.x = centerline_line_width_;
+      visualization_msgs::msg::Marker text_marker;
+      text_marker.header.frame_id = map_frame_id;
+      text_marker.header.stamp = current_timestamp;
+      text_marker.ns = "lanelet_ids";
+      text_marker.id = current_marker_id++;
+      text_marker.action = visualization_msgs::msg::Marker::ADD;
+      text_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0));
+      text_marker.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
 
-      hexToRgb(centerline_color_hex_, r, g, b);
-      centerline_marker.color.r = r;
-      centerline_marker.color.g = g;
-      centerline_marker.color.b = b;
-      centerline_marker.color.a = centerline_line_opacity_;
-
+      // position the text at the geometric center of the lanelet's centerline
+      geometry_msgs::msg::Point centerline_center;
+      double sum_x = 0.0, sum_y = 0.0, sum_z = 0.0;
       for (const auto& p : lanelet.centerline()) {
-        centerline_marker.points.push_back(toRos(p.basicPoint()));
+          sum_x += p.x();
+          sum_y += p.y();
+          sum_z += p.z();
       }
-      marker_array_msg.markers.push_back(centerline_marker);
+      if (!lanelet.centerline().empty()) {
+          centerline_center.x = sum_x / lanelet.centerline().size();
+          centerline_center.y = sum_y / lanelet.centerline().size();
+          centerline_center.z = sum_z / lanelet.centerline().size();
+      }
+      text_marker.pose.position = centerline_center;
+      text_marker.scale.z = lanelet_text_scale_; // For TEXT_VIEW_FACING, scale.z controls the character height
+
+      hexToRgb(lanelet_text_color_hex_, r, g, b);
+      text_marker.color.r = r;
+      text_marker.color.g = g;
+      text_marker.color.b = b;
+      text_marker.color.a = lanelet_text_opacity_;
+      
+      text_marker.text = std::to_string(lanelet.id());
+
+      marker_array_msg.markers.push_back(text_marker);
     }
 
     const auto& regulatory_elements = lanelet.regulatoryElements();
     for (const auto& regulatory_element: regulatory_elements) {
       // Check if the element is a reference line
       if (auto reference_line = regulatoryElementReferenceLine(regulatory_element)) {
-        // reference_line are LineStrings, so we can visualize them with a LINE_STRIP marker
-        visualization_msgs::msg::Marker reference_line_marker;
-        reference_line_marker.header.frame_id = map_frame_id;
-        reference_line_marker.header.stamp = current_timestamp;
-        reference_line_marker.ns = "reference_lines";
-        reference_line_marker.id = current_marker_id++;
-        reference_line_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-        reference_line_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-        reference_line_marker.action = visualization_msgs::msg::Marker::ADD;
-        reference_line_marker.scale.x = reference_line_width_;
+        std::vector<geometry_msgs::msg::Point> ref_points = {reference_line->at(0), reference_line->at(1)};
+        addLineStripMarker(marker_array_msg, current_marker_id, "reference_lines", reference_line_width_, reference_line_color_hex_, reference_line_opacity_, header, ref_points);
 
-        hexToRgb(reference_line_color_hex_, r, g, b);
-        reference_line_marker.color.r = r;
-        reference_line_marker.color.g = g;
-        reference_line_marker.color.b = b;
-        reference_line_marker.color.a = reference_line_opacity_;
+        // Common regulatory element logic
+        // https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/RegulatoryElementTagging.md
+        std::string subtype = regulatory_element->attribute("subtype").value();
+        double dx = reference_line->at(1).x - reference_line->at(0).x;
+        double dy = reference_line->at(1).y - reference_line->at(0).y;
+        double yaw_ref_line = std::atan2(dy, dx);
+        geometry_msgs::msg::Point middle_point;
+        middle_point.x = (reference_line->at(0).x + reference_line->at(1).x) / 2.0;
+        middle_point.y = (reference_line->at(0).y + reference_line->at(1).y) / 2.0;
 
-        // Extract and add the points
-        reference_line_marker.points.push_back(reference_line->at(0));
-        reference_line_marker.points.push_back(reference_line->at(1));
-
-        marker_array_msg.markers.push_back(reference_line_marker);
-      }
-
-      // https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/RegulatoryElementTagging.md
-      std::string subtype = regulatory_element->attribute("subtype").value();
-      if (subtype == "traffic_light" || subtype == "right_of_way") {
-        // Get the positions of the traffic lights from the "refers" attribute
         std::vector<geometry_msgs::msg::Point> positions = regulatoryElementPositions(regulatory_element);
-
-        // Retrieve the reference line points to calculate yaw
-        if (auto ref_line_pts = regulatoryElementReferenceLine(regulatory_element)) {
-          // Calculate yaw from the reference line direction
-          double dx = ref_line_pts->at(1).x - ref_line_pts->at(0).x;
-          double dy = ref_line_pts->at(1).y - ref_line_pts->at(0).y;
-          double yaw_ref_line = std::atan2(dy, dx);
-
-          geometry_msgs::msg::Point middle_point;
-          middle_point.x = (ref_line_pts->at(0).x + ref_line_pts->at(1).x) / 2.0;
-          middle_point.y = (ref_line_pts->at(0).y + ref_line_pts->at(1).y) / 2.0;
-
-          // Create a marker for each position
-          for (auto& p : positions) {
-            if (subtype == "traffic_light") {
-              visualization_msgs::msg::Marker tl_marker;
-              tl_marker.header.frame_id = map_frame_id;
-              tl_marker.header.stamp = current_timestamp;
-              tl_marker.ns = "traffic_lights";
-              tl_marker.id = current_marker_id++;
-              tl_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-              tl_marker.action = visualization_msgs::msg::Marker::ADD;
-              tl_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
-              tl_marker.mesh_resource = traffic_light_mesh_resource_;
-              tl_marker.scale.x = traffic_light_scale_;
-              tl_marker.scale.y = traffic_light_scale_;
-              tl_marker.scale.z = traffic_light_scale_;
-
-              // Set the position of the traffic sign (depends on scale and model)
-              p.z = traffic_light_z_offset_;
-              tl_marker.pose.position = p;
-
-              // Set the orientation to be orthogonal to the reference line
-              // Calculate the vector from traffic sign to the reference line
-              double dx_to_ref = middle_point.x - p.x;
-              double dy_to_ref = middle_point.y - p.y;
-              double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
-
-              // Two possible perpendicular orientations to the ref line:
-              double cand1 = yaw_ref_line + M_PI_2; // +90°
-              double cand2 = yaw_ref_line - M_PI_2; // -90°
-
-              // measure angular difference (normalized) using atan2(sin,cos)
-              double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
-              double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
-
-              double final_yaw = (d1 < d2) ? cand1 : cand2;
-
-              tf2::Quaternion q;
-              q.setRPY(0, 0, final_yaw + M_PI_2);
-              tl_marker.pose.orientation = tf2::toMsg(q);
-
-              tl_marker.mesh_use_embedded_materials = true;
-              tl_marker.color.a = traffic_light_opacity_;
-
-              marker_array_msg.markers.push_back(tl_marker);
-            }
-            if (subtype == "right_of_way") {
-              visualization_msgs::msg::Marker yield_marker;
-              yield_marker.header.frame_id = map_frame_id;
-              yield_marker.header.stamp = current_timestamp;
-              yield_marker.ns = "yield_signs";
-              yield_marker.id = current_marker_id++;
-              yield_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-              yield_marker.action = visualization_msgs::msg::Marker::ADD;
-              yield_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
-              yield_marker.mesh_resource = yield_sign_mesh_resource_;
-              yield_marker.scale.x = yield_sign_scale_;
-              yield_marker.scale.y = yield_sign_scale_;
-              yield_marker.scale.z = yield_sign_scale_;
-
-              // Set the position of the traffic sign (depends on scale and model)
-              p.z = yield_sign_z_offset_;
-              yield_marker.pose.position = p;
-
-              // Set the orientation to be orthogonal to the reference line
-              // Calculate the vector from traffic sign to the reference line
-              double dx_to_ref = middle_point.x - p.x;
-              double dy_to_ref = middle_point.y - p.y;
-              double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
-
-              // Two possible perpendicular orientations to the ref line:
-              double cand1 = yaw_ref_line + M_PI_2; // +90°
-              double cand2 = yaw_ref_line - M_PI_2; // -90°
-
-              // measure angular difference (normalized) using atan2(sin,cos)
-              double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
-              double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
-
-              double final_yaw = (d1 < d2) ? cand1 : cand2;
-
-              tf2::Quaternion q;
-              q.setRPY(0, 0, final_yaw + M_PI_2);
-              yield_marker.pose.orientation = tf2::toMsg(q);
-
-              yield_marker.mesh_use_embedded_materials = true;
-              yield_marker.color.a = yield_sign_opacity_;
-
-              marker_array_msg.markers.push_back(yield_marker);
-            }
+        for (const auto& p : positions) {
+          if (subtype == "traffic_light") {
+            addMeshMarker(marker_array_msg, current_marker_id, "traffic_lights", traffic_light_mesh_resource_, p, traffic_light_scale_, traffic_light_z_offset_, traffic_light_opacity_, header, yaw_ref_line, middle_point);
+          } else if (subtype == "right_of_way") {
+            addMeshMarker(marker_array_msg, current_marker_id, "yield_signs", yield_sign_mesh_resource_, p, yield_sign_scale_, yield_sign_z_offset_, yield_sign_opacity_, header, yaw_ref_line, middle_point);
           }
         }
       }
