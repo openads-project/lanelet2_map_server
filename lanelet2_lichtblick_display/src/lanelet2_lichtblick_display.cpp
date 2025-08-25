@@ -6,8 +6,6 @@ namespace lanelet2_lichtblick_display {
 
 Lanelet2LichtblickDisplay::Lanelet2LichtblickDisplay() : Node("lanelet2_lichtblick_display") {
 
-  this->declareAndLoadParameter("output_topic", output_topic_, "Name of the output topic which displays the lanelet2 map", true, false, false);
-
   this->declareAndLoadParameter("left_bound_line_width", left_bound_line_width_, "Width of the left boundary lines", true, false, false);
   this->declareAndLoadParameter("left_bound_color_hex", left_bound_color_hex_, "Color of the left boundary lines", true, false, false);
   this->declareAndLoadParameter("left_bound_line_opacity", left_bound_line_opacity_, "Opacity of the left boundary lines", true, false, false);
@@ -229,6 +227,7 @@ void Lanelet2LichtblickDisplay::checkMapStatus() {
   // Check if the map has been loaded or if a new map has been received
   if (current_map_ptr && current_map_ptr != last_map_ptr_) {
       RCLCPP_INFO(this->get_logger(), "New Lanelet2 map detected. Publishing markers...");
+      map_frame_id = ll2if_->map_frame_id_;
       this->publishMarker(current_map_ptr);
       last_map_ptr_ = current_map_ptr;
       need_republish_.store(false); // cleared after publish
@@ -255,13 +254,13 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
   visualization_msgs::msg::MarkerArray marker_array_msg;
   int current_marker_id = 0;
 
-  current_timestamp = this->now();
+  rclcpp::Time current_timestamp = this->now();
 
   // Iterate through all lanelets in the map
   for (const auto& lanelet : lanelet_map->laneletLayer) {
     // --- Visualize Left Boundary ---
     visualization_msgs::msg::Marker left_bound_marker;
-    left_bound_marker.header.frame_id = "map";
+    left_bound_marker.header.frame_id = map_frame_id;
     left_bound_marker.header.stamp = current_timestamp;
     left_bound_marker.ns = "lanelet_left_boundaries";
     left_bound_marker.id = current_marker_id++;
@@ -284,7 +283,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
 
     // --- Visualize Right Boundary ---
     visualization_msgs::msg::Marker right_bound_marker;
-    right_bound_marker.header.frame_id = "map";
+    right_bound_marker.header.frame_id = map_frame_id;
     right_bound_marker.header.stamp = current_timestamp;
     right_bound_marker.ns = "lanelet_right_boundaries";
     right_bound_marker.id = current_marker_id++;
@@ -307,7 +306,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
     // --- Visualize Centerline ---
     if (!lanelet.centerline().empty()) {
       visualization_msgs::msg::Marker centerline_marker;
-      centerline_marker.header.frame_id = "map";
+      centerline_marker.header.frame_id = map_frame_id;
       centerline_marker.header.stamp = current_timestamp;
       centerline_marker.ns = "lanelet_centerlines";
       centerline_marker.id = current_marker_id++;
@@ -334,7 +333,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
       if (auto reference_line = regulatoryElementReferenceLine(regulatory_element)) {
         // reference_line are LineStrings, so we can visualize them with a LINE_STRIP marker
         visualization_msgs::msg::Marker reference_line_marker;
-        reference_line_marker.header.frame_id = "map";
+        reference_line_marker.header.frame_id = map_frame_id;
         reference_line_marker.header.stamp = current_timestamp;
         reference_line_marker.ns = "reference_lines";
         reference_line_marker.id = current_marker_id++;
@@ -377,7 +376,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
           for (auto& p : positions) {
             if (subtype == "traffic_light") {
               visualization_msgs::msg::Marker tl_marker;
-              tl_marker.header.frame_id = "map";
+              tl_marker.header.frame_id = map_frame_id;
               tl_marker.header.stamp = current_timestamp;
               tl_marker.ns = "traffic_lights";
               tl_marker.id = current_marker_id++;
@@ -420,7 +419,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
             }
             if (subtype == "right_of_way") {
               visualization_msgs::msg::Marker yield_marker;
-              yield_marker.header.frame_id = "map";
+              yield_marker.header.frame_id = map_frame_id;
               yield_marker.header.stamp = current_timestamp;
               yield_marker.ns = "yield_signs";
               yield_marker.id = current_marker_id++;

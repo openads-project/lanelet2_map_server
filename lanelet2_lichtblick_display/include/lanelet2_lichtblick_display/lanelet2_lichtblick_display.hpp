@@ -161,13 +161,13 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
 
   std::atomic<bool> need_republish_{false};
 
-  // Store the last map pointer to detect changes
+  std::shared_ptr<LL2MapInterface> ll2if_;
   lanelet::LaneletMapConstPtr last_map_ptr_; 
+  std::string map_frame_id;
 
-  // A counter to give unique IDs to markers
   int marker_id_counter_ = 0;
 
-  std::shared_ptr<LL2MapInterface> ll2if_;
+  rclcpp::Time current_timestamp;
 
 
   // Parameters
