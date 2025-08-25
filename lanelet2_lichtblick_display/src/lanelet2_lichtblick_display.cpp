@@ -6,6 +6,8 @@ namespace lanelet2_lichtblick_display {
 
 Lanelet2LichtblickDisplay::Lanelet2LichtblickDisplay() : Node("lanelet2_lichtblick_display") {
 
+  this->declareAndLoadParameter("output_topic", output_topic_, "Name of the output topic which displays the lanelet2 map", true, false, false);
+
   this->declareAndLoadParameter("left_bound_line_width", left_bound_line_width_, "Width of the left boundary lines", true, false, false);
   this->declareAndLoadParameter("left_bound_color_hex", left_bound_color_hex_, "Color of the left boundary lines", true, false, false);
   this->declareAndLoadParameter("left_bound_line_opacity", left_bound_line_opacity_, "Opacity of the left boundary lines", true, false, false);
@@ -140,7 +142,7 @@ void Lanelet2LichtblickDisplay::setup() {
 
   // Publisher for visualization markers
   auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(); 
-  marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("/lichtblick_lanelet2_map", qos);
+  marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(output_topic_, qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
   ll2if_ = std::make_shared<LL2MapInterface>(*this, "ll2_map_server");
@@ -253,14 +255,17 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
   visualization_msgs::msg::MarkerArray marker_array_msg;
   int current_marker_id = 0;
 
+  current_timestamp = this->now();
+
   // Iterate through all lanelets in the map
   for (const auto& lanelet : lanelet_map->laneletLayer) {
     // --- Visualize Left Boundary ---
     visualization_msgs::msg::Marker left_bound_marker;
     left_bound_marker.header.frame_id = "map";
-    left_bound_marker.header.stamp = this->now();
+    left_bound_marker.header.stamp = current_timestamp;
     left_bound_marker.ns = "lanelet_left_boundaries";
     left_bound_marker.id = current_marker_id++;
+    left_bound_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
     left_bound_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     left_bound_marker.action = visualization_msgs::msg::Marker::ADD;
     left_bound_marker.scale.x = left_bound_line_width_;
@@ -280,9 +285,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
     // --- Visualize Right Boundary ---
     visualization_msgs::msg::Marker right_bound_marker;
     right_bound_marker.header.frame_id = "map";
-    right_bound_marker.header.stamp = this->now();
+    right_bound_marker.header.stamp = current_timestamp;
     right_bound_marker.ns = "lanelet_right_boundaries";
     right_bound_marker.id = current_marker_id++;
+    right_bound_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
     right_bound_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     right_bound_marker.action = visualization_msgs::msg::Marker::ADD;
     right_bound_marker.scale.x = right_bound_line_width_;
@@ -302,9 +308,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
     if (!lanelet.centerline().empty()) {
       visualization_msgs::msg::Marker centerline_marker;
       centerline_marker.header.frame_id = "map";
-      centerline_marker.header.stamp = this->now();
+      centerline_marker.header.stamp = current_timestamp;
       centerline_marker.ns = "lanelet_centerlines";
       centerline_marker.id = current_marker_id++;
+      centerline_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
       centerline_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
       centerline_marker.action = visualization_msgs::msg::Marker::ADD;
       centerline_marker.scale.x = centerline_line_width_;
@@ -328,9 +335,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
         // reference_line are LineStrings, so we can visualize them with a LINE_STRIP marker
         visualization_msgs::msg::Marker reference_line_marker;
         reference_line_marker.header.frame_id = "map";
-        reference_line_marker.header.stamp = this->now();
+        reference_line_marker.header.stamp = current_timestamp;
         reference_line_marker.ns = "reference_lines";
         reference_line_marker.id = current_marker_id++;
+        reference_line_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
         reference_line_marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
         reference_line_marker.action = visualization_msgs::msg::Marker::ADD;
         reference_line_marker.scale.x = reference_line_width_;
@@ -370,9 +378,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
             if (subtype == "traffic_light") {
               visualization_msgs::msg::Marker tl_marker;
               tl_marker.header.frame_id = "map";
-              tl_marker.header.stamp = this->now();
+              tl_marker.header.stamp = current_timestamp;
               tl_marker.ns = "traffic_lights";
               tl_marker.id = current_marker_id++;
+              tl_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
               tl_marker.action = visualization_msgs::msg::Marker::ADD;
               tl_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
               tl_marker.mesh_resource = traffic_light_mesh_resource_;
@@ -412,9 +421,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
             if (subtype == "right_of_way") {
               visualization_msgs::msg::Marker yield_marker;
               yield_marker.header.frame_id = "map";
-              yield_marker.header.stamp = this->now();
+              yield_marker.header.stamp = current_timestamp;
               yield_marker.ns = "yield_signs";
               yield_marker.id = current_marker_id++;
+              yield_marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
               yield_marker.action = visualization_msgs::msg::Marker::ADD;
               yield_marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
               yield_marker.mesh_resource = yield_sign_mesh_resource_;
@@ -455,11 +465,6 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
         }
       }
     }
-  }
-
-  // Set the lifetime for all markers in the array to indefinite since the QoS is set to transient local.
-  for (auto& marker : marker_array_msg.markers) {
-      marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0));
   }
 
   // Publish the marker array
