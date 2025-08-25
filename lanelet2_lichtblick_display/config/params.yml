@@ -1,6 +1,5 @@
 /**/*:
   ros__parameters:
-    output_topic: "/lichtblick_lanelet2_map"
 
     left_bound_line_width: 0.08
     left_bound_color_hex: "#000000"

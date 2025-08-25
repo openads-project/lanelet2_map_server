@@ -142,7 +142,7 @@ void Lanelet2LichtblickDisplay::setup() {
 
   // Publisher for visualization markers
   auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(); 
-  marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(output_topic_, qos);
+  marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/lichtblick_lanelet2_map", qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
   ll2if_ = std::make_shared<LL2MapInterface>(*this, "ll2_map_server");

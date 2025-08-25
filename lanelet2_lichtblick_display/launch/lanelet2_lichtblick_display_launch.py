@@ -12,7 +12,7 @@ from launch_ros.actions import Node, SetParameter
 def generate_launch_description():
 
     remappable_topics = [
-        DeclareLaunchArgument("output_topic", default_value="~/output"),
+        DeclareLaunchArgument("output_topic", default_value="~/lichtblick_lanelet2_map"),
     ]
 
     args = [
@@ -30,7 +30,7 @@ def generate_launch_description():
             executable="lanelet2_lichtblick_display",
             namespace=LaunchConfiguration("namespace"),
             name=LaunchConfiguration("name"),
-            parameters=[LaunchConfiguration("params"), {"output_topic": LaunchConfiguration("output_topic")}],
+            parameters=[LaunchConfiguration("params")],
             arguments=["--ros-args", "--log-level", LaunchConfiguration("log_level")],
             remappings=[(la.default_value[0].text, LaunchConfiguration(la.name)) for la in remappable_topics],
             output="screen",

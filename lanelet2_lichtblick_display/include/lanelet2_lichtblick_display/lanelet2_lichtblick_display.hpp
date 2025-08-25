@@ -171,8 +171,6 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
 
 
   // Parameters
-  std::string output_topic_ = "/lichtblick_lanelet2_map";
-
   double left_bound_line_width_ = 0.1;
   std::string left_bound_color_hex_ = "#0000FF";
   double left_bound_line_opacity_ = 0.5;
