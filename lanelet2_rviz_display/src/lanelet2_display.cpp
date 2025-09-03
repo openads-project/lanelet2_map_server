@@ -110,6 +110,26 @@ Lanelet2Display::Lanelet2Display() {
       new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
                        viz_parking_property_, SLOT(updateStyle()), this);
 
+  // Lane fills (road surface)
+  viz_lane_fill_property_ = new BoolProperty("Fill Lanelets (Road)", true,
+                                            "Render road surface as filled polygons.", this,
+                                            SLOT(updateLaneFillRendering()));
+  lane_fill_col_property_ = new ColorProperty("Road Color", QColor{56, 56, 56},
+                                             "Color of road fill.", viz_lane_fill_property_, SLOT(updateColor()), this);
+
+  // Pedestrian features
+  viz_sidewalk_property_ = new BoolProperty("Visualize Sidewalks", true,
+                                            "Render sidewalk areas as filled polygons.", this,
+                                            SLOT(updateSidewalkRendering()));
+  sidewalk_col_property_ = new ColorProperty("Sidewalk Color", QColor{191, 191, 191},
+                                             "Color of sidewalks.", viz_sidewalk_property_, SLOT(updateColor()), this);
+
+  viz_crosswalk_property_ = new BoolProperty("Visualize Crosswalks", true,
+                                             "Render crosswalk areas as filled polygons.", this,
+                                             SLOT(updateCrosswalkRendering()));
+  crosswalk_col_property_ = new ColorProperty("Crosswalk Color", QColor{255, 255, 255},
+                                              "Color of crosswalks.", viz_crosswalk_property_, SLOT(updateColor()), this);
+
   viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.",
                                       this, SLOT(updateIdRendering()));
 
@@ -240,6 +260,30 @@ void Lanelet2Display::updateParkingRendering() {
   updateVisibility();
 }
 
+void Lanelet2Display::updateLaneFillRendering() {
+  rendering_options_.renderLaneletFills = viz_lane_fill_property_->getBool();
+  for (uint16_t i = 0; i < viz_lane_fill_property_->numChildren(); i++) {
+    viz_lane_fill_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderLaneletFills);
+  }
+  updateVisibility();
+}
+
+void Lanelet2Display::updateSidewalkRendering() {
+  rendering_options_.renderSidewalks = viz_sidewalk_property_->getBool();
+  for (uint16_t i = 0; i < viz_sidewalk_property_->numChildren(); i++) {
+    viz_sidewalk_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderSidewalks);
+  }
+  updateVisibility();
+}
+
+void Lanelet2Display::updateCrosswalkRendering() {
+  rendering_options_.renderCrosswalks = viz_crosswalk_property_->getBool();
+  for (uint16_t i = 0; i < viz_crosswalk_property_->numChildren(); i++) {
+    viz_crosswalk_property_->childAtUnchecked(i)->setHidden(!rendering_options_.renderCrosswalks);
+  }
+  updateVisibility();
+}
+
 void Lanelet2Display::updateIdRendering() {
   rendering_options_.renderLaneletIds = viz_id_property_->getBool();
   for (uint16_t i = 0; i < viz_id_property_->numChildren(); i++) {
@@ -281,6 +325,21 @@ void Lanelet2Display::updateColor() {
   QColor color_parking = parking_col_property_->getColor();
   color_parking.setAlphaF(alpha_property_->getFloat());
   rendering_options_.colorParking = qtToOgre(color_parking);
+
+  // Lane fill (road)
+  QColor color_lane_fill = lane_fill_col_property_->getColor();
+  color_lane_fill.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorLaneFill = qtToOgre(color_lane_fill);
+
+  // Sidewalk
+  QColor color_sidewalk = sidewalk_col_property_->getColor();
+  color_sidewalk.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorSidewalk = qtToOgre(color_sidewalk);
+
+  // Crosswalk
+  QColor color_crosswalk = crosswalk_col_property_->getColor();
+  color_crosswalk.setAlphaF(alpha_property_->getFloat());
+  rendering_options_.colorCrosswalk = qtToOgre(color_crosswalk);
 
   // IDs
   QColor color_id = id_col_property_->getColor();
