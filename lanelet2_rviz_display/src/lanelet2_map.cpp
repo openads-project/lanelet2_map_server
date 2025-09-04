@@ -641,6 +641,7 @@ void Lanelet2Map::drawMonoPolygon(const std::vector<Ogre::Vector3> &poly, Ogre::
 
   auto itLeft = poly.begin();
   auto itRight = --poly.end();
+  const auto startIndex = obj->getCurrentVertexCount();
   auto count = 0u;
   //    std::raise(SIGINT);
   //    obj->begin("osm_material", Ogre::RenderOperation::OT_TRIANGLE_LIST);
@@ -673,7 +674,6 @@ void Lanelet2Map::drawLaneFillStrip(const std::vector<Ogre::Vector3> &left,
   if (left.size() < 2 || right.size() < 2) return;
   const size_t nL = left.size();
   const size_t nR = right.size();
-  const auto startIndex = obj->getCurrentVertexCount();
 
   // We build a triangle strip by pairing points based on relative progress along each side.
   // Use index-based proportional mapping for efficiency.
