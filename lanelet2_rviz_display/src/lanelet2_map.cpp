@@ -35,23 +35,45 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
 
   scene_node_ = parent_node->createChildSceneNode();
 
-  std::string map_material_name = ll_map_name + "Material";
+  // Create two materials: one for surfaces (fills), one for lines/overlays
+  const std::string mat_surface_name = ll_map_name + "SurfaceMaterial";
+  const std::string mat_line_name = ll_map_name + "LineMaterial";
 
-  auto retrieve_result = Ogre::MaterialManager::getSingleton().createOrRetrieve(map_material_name, "rviz_rendering");
-  auto material = std::dynamic_pointer_cast<Ogre::Material>(retrieve_result.first);
-  if (material) {
-    material_ = material;
-    material_->setReceiveShadows(false);
-    material_->getTechnique(0)->setLightingEnabled(false);
-    material_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-    material_->getTechnique(0)->setDepthWriteEnabled(true);
-    material_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
-    material_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);  // No culling
-    // Slight depth bias to reduce z-fighting against ground and among layers
-    material_->getTechnique(0)->getPass(0)->setDepthBias(1.0f, 1.0f);
-    create(map_ptr);
-    updateVisibility(rend_opts_);
+  {
+    auto res = Ogre::MaterialManager::getSingleton().createOrRetrieve(mat_surface_name, "rviz_rendering");
+    auto mat = std::dynamic_pointer_cast<Ogre::Material>(res.first);
+    if (mat) {
+      material_surface_ = mat;
+      material_surface_->setReceiveShadows(false);
+      material_surface_->getTechnique(0)->setLightingEnabled(false);
+      material_surface_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+      material_surface_->getTechnique(0)->setDepthWriteEnabled(true);
+      material_surface_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
+      material_surface_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
+      // mild bias for surfaces against ground plane
+      material_surface_->getTechnique(0)->getPass(0)->setDepthBias(1.0f, 1.0f);
+    }
   }
+
+  {
+    auto res = Ogre::MaterialManager::getSingleton().createOrRetrieve(mat_line_name, "rviz_rendering");
+    auto mat = std::dynamic_pointer_cast<Ogre::Material>(res.first);
+    if (mat) {
+      material_line_ = mat;
+      material_line_->setReceiveShadows(false);
+      material_line_->getTechnique(0)->setLightingEnabled(false);
+      material_line_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+      material_line_->getTechnique(0)->setDepthWriteEnabled(false);  // overlays, do not write depth
+      material_line_->getTechnique(0)->setDepthCheckEnabled(true);   // but still test depth
+      material_line_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
+      material_line_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
+      // stronger bias so borders sit clearly above surfaces
+      material_line_->getTechnique(0)->getPass(0)->setDepthBias(2.0f, 1.0f);
+    }
+  }
+
+  create(map_ptr);
+  updateVisibility(rend_opts_);
 }
 
 Lanelet2Map::~Lanelet2Map() {
@@ -64,7 +86,9 @@ Lanelet2Map::~Lanelet2Map() {
   // delete sceneNode_
   scene_manager_->destroySceneNode(scene_node_);
 
-  material_->unload();
+  
+  if (material_surface_) material_surface_->unload();
+  if (material_line_) material_line_->unload();
 }
 
 // https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L66
@@ -220,14 +244,25 @@ void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
 
   if (map_ptr != nullptr) {
-    // Attach Lanelet to manual object
-    mapManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    seperatorManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    areaManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    parkingManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    laneFillManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    sidewalkManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    crosswalkManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    // Attach begin with correct materials
+    mapManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    seperatorManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    areaManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    parkingManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    laneFillManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    sidewalkManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+    crosswalkManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+
+    // Order the queue: surfaces first, overlays (lines) later
+    const uint8_t q_surfaces = Ogre::RENDER_QUEUE_MAIN;          // default group
+    const uint8_t q_lines = Ogre::RENDER_QUEUE_MAIN + 5;         // later in the queue
+    laneFillManualObject->setRenderQueueGroup(q_surfaces);
+    areaManualObject->setRenderQueueGroup(q_surfaces);
+    parkingManualObject->setRenderQueueGroup(q_surfaces);
+    sidewalkManualObject->setRenderQueueGroup(q_surfaces);
+    crosswalkManualObject->setRenderQueueGroup(q_surfaces);
+    mapManualObject->setRenderQueueGroup(q_lines);
+    seperatorManualObject->setRenderQueueGroup(q_lines);
     // Iterate through all lanelets in map-graph
     for (const lanelet::ConstLanelet &lanelet : map_ptr->laneletLayer) {
       addLaneletToManualObject(lanelet, mapManualObject);
@@ -433,7 +468,8 @@ void Lanelet2Map::attachRefLinesToSceneNode(std::vector<lanelet::ConstLineString
   // ogre_helper::drawLine helper function
   Ogre::ManualObject *stopLinesManualObject =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  stopLinesManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  stopLinesManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  stopLinesManualObject->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN + 6);
   for (auto &&stopLine : stopLines) {
     auto line = Lanelet2Map::ogreLineFromLLetLineString(stopLine);
     drawLine(line, stopLinesManualObject, rend_opts_.colorStopLine, rend_opts_.stopLineWidth, rend_opts_.zStopLine);
@@ -453,7 +489,8 @@ void Lanelet2Map::attachTrafficLightsToSceneNode(std::vector<lanelet::ConstPolyg
   // ogre_helper::drawLine helper function
   Ogre::ManualObject *trafficLightManualObject =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  trafficLightManualObject->begin(material_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  trafficLightManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  trafficLightManualObject->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN + 4);
   for (auto &&trafficLight : trafficLights) {
     std::vector<Ogre::Vector3> line = Lanelet2Map::ogreLineFromLLetTrafficLight(trafficLight);
     drawArea(line, trafficLightManualObject, rend_opts_.colorTrafficLight, rend_opts_.zStopLine);

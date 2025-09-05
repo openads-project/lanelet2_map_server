@@ -106,14 +106,15 @@ class Lanelet2Map {
     double characterHeight = 1.0;
 
     // Z offsets (meters) to avoid z-fighting, increasing = rendered above
-    double zLaneFill = 0.01;
-    double zRoadLines = 0.02;
-    double zParking = 0.009;
-    double zAreas = 0.012;
-    double zSidewalk = 0.015;
-    double zCrosswalk = 0.022;
-    double zStopLine = 0.03;
-    double zSeparator = 0.031;
+    // Bumped to stronger defaults for stability across camera ranges
+    double zLaneFill = 0.02;
+    double zSidewalk = 0.03;
+    double zAreas = 0.032;
+    double zParking = 0.034;
+    double zCrosswalk = 0.05;
+    double zRoadLines = 0.06;
+    double zStopLine = 0.08;
+    double zSeparator = 0.085;
   };
 
   Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node, Lanelet2Map::RenderingOptions rend_opts,
@@ -139,7 +140,8 @@ class Lanelet2Map {
   Ogre::SceneNode *scene_node_;  // The scene node that this ll2-map is attached to
   std::vector<ClassifiedMovableObject> objects_;
 
-  std::shared_ptr<Ogre::Material> material_;
+  std::shared_ptr<Ogre::Material> material_surface_;
+  std::shared_ptr<Ogre::Material> material_line_;
 
   void create(lanelet::LaneletMapConstPtr map_ptr);
 
