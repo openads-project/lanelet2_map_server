@@ -29,7 +29,19 @@
 
 namespace rviz_rendering {
 
-enum class ObjectClassification { UNKOWN, MAP, LANELETID, AREA, PARKINGAREA, SEPERATOR, STOPLINE, TRAFFICLIGHT };
+enum class ObjectClassification {
+  UNKOWN,
+  MAP,
+  LANELETID,
+  AREA,
+  PARKINGAREA,
+  SEPERATOR,
+  STOPLINE,
+  TRAFFICLIGHT,
+  LANEFILL,
+  SIDEWALK,
+  CROSSWALK
+};
 
 using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObject *>;
 /**
@@ -66,6 +78,10 @@ class Lanelet2Map {
     Ogre::ColourValue colorTrafficLight{Ogre::ColourValue(0.4, 0.4, 0.4, 1.0)};  // gray
     double trafficLightHeightAboveGround = 3.0;
 
+    // Lane fills
+    bool renderLaneletFills = true;
+    Ogre::ColourValue colorLaneFill{Ogre::ColourValue(0.22, 0.22, 0.22, 0.95)};  // dark gray
+
     // Areas
     bool renderAreas = true;
     Ogre::ColourValue colorArea{Ogre::ColourValue(0.9, 0.5, 0.1, 1.0)};  // orange
@@ -78,10 +94,27 @@ class Lanelet2Map {
     double parkingWidth = 0.3;
     bool fillParking = true;
 
+    // Pedestrian features
+    bool renderSidewalks = true;
+    Ogre::ColourValue colorSidewalk{Ogre::ColourValue(0.75, 0.75, 0.75, 0.7)};  // light gray
+    bool renderCrosswalks = true;
+    Ogre::ColourValue colorCrosswalk{Ogre::ColourValue(1.0, 1.0, 1.0, 0.85)};  // white
+
     // IDs
     bool renderLaneletIds = false;
     Ogre::ColourValue colorLaneletId{Ogre::ColourValue(1.0, 1.0, 1.0, 1.0)};  // white
     double characterHeight = 1.0;
+
+    // Z offsets (meters) to avoid z-fighting, increasing = rendered above
+    // Bumped to stronger defaults for stability across camera ranges
+    double zLaneFill = 0.02;
+    double zSidewalk = 0.03;
+    double zAreas = 0.032;
+    double zParking = 0.034;
+    double zCrosswalk = 0.05;
+    double zRoadLines = 0.06;
+    double zStopLine = 0.08;
+    double zSeparator = 0.085;
   };
 
   Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node, Lanelet2Map::RenderingOptions rend_opts,
@@ -107,7 +140,8 @@ class Lanelet2Map {
   Ogre::SceneNode *scene_node_;  // The scene node that this ll2-map is attached to
   std::vector<ClassifiedMovableObject> objects_;
 
-  std::shared_ptr<Ogre::Material> material_;
+  std::shared_ptr<Ogre::Material> material_surface_;
+  std::shared_ptr<Ogre::Material> material_line_;
 
   void create(lanelet::LaneletMapConstPtr map_ptr);
 
@@ -115,6 +149,9 @@ class Lanelet2Map {
   void addSeperatorToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual);
   void addAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
   void addParkingAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
+  void addLaneFillToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual);
+  void addSidewalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
+  void addCrosswalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
 
   void addRegulatoryElements(const lanelet::ConstLanelet &lanelet, Ogre::SceneNode *parentNode);
 
@@ -136,11 +173,17 @@ class Lanelet2Map {
   template <typename Iter>
   Ogre::Vector3 getNormal(Iter it, Iter begin, Iter end);
   void drawLine(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White, double width = 0.1);
+                Ogre::ColourValue color = Ogre::ColourValue::White, double width = 0.1, double zOffset = 0.0);
   void drawArea(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White);
+                Ogre::ColourValue color = Ogre::ColourValue::White, double zOffset = 0.0);
   void drawMonoPolygon(const std::vector<Ogre::Vector3> &poly, Ogre::ManualObject *obj,
                        Ogre::ColourValue color = Ogre::ColourValue::White);
+
+  void drawLaneFillStrip(const std::vector<Ogre::Vector3> &left,
+                         const std::vector<Ogre::Vector3> &right,
+                         Ogre::ManualObject *obj,
+                         Ogre::ColourValue color,
+                         double zOffset = 0.0);
 };
 
 }  // namespace rviz_rendering
