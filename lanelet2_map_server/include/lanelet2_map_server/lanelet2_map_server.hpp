@@ -12,6 +12,15 @@
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 
+struct Lanelet2MapMeta {
+    std::string map_path;
+    double min_lat = 0.0;
+    double min_lon = 0.0;
+    double max_lat = 0.0;
+    double max_lon = 0.0;
+    double diagonal_length = -1.0;
+};
+
 class LL2MapServer : public rclcpp::Node
 {
     public:
@@ -24,6 +33,8 @@ class LL2MapServer : public rclcpp::Node
         void loadParameters();
 
         void setup();
+        void find_available_maps();
+        void derive_map_bounds(Lanelet2MapMeta& map_meta);
 
         rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter>& parameters);
 
@@ -37,7 +48,12 @@ class LL2MapServer : public rclcpp::Node
         OnSetParametersCallbackHandle::SharedPtr parameters_callback_;
 
         rclcpp::TimerBase::SharedPtr one_shot_timer_;
+        
+        bool use_automatic_map_selection_ = true;
+        bool use_manual_origin_ = false;
 
+        std::string map_directory_;
+        std::vector<Lanelet2MapMeta> available_maps_;
         std::string map_filepath_;
         std::string map_frame_id_ = "map";
         std::string map_contents_;

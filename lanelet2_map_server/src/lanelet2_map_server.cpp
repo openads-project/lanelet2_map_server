@@ -1,4 +1,10 @@
 #include "lanelet2_map_server/lanelet2_map_server.hpp"
+#include <GeographicLib/Geodesic.hpp>
+#include <algorithm>
+#include <cmath>
+#include <filesystem>
+#include <limits>
+#include <pugixml.hpp>
 
 LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
   this->declareParameters();
@@ -9,6 +15,15 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
 void LL2MapServer::declareParameters() {
 
   rcl_interfaces::msg::ParameterDescriptor param_desc;
+
+  param_desc.description = "Automatic map selection";
+  this->declare_parameter("use_automatic_map_selection", use_automatic_map_selection_, param_desc);
+
+  param_desc.description = "Manual origin specification";
+  this->declare_parameter("use_manual_origin", use_manual_origin_, param_desc);
+
+  param_desc.description = "Directory to search for Lanelet2 map";
+  this->declare_parameter("map_directory", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
 
   param_desc.description = "Path to Lanelet2 map";
   this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
@@ -29,26 +44,52 @@ void LL2MapServer::declareParameters() {
 void LL2MapServer::loadParameters() {
 
   try {
-    map_filepath_ = this->get_parameter("map_filepath").as_string();
+    use_automatic_map_selection_ = this->get_parameter("use_automatic_map_selection").as_bool();
   } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_filepath");
-    exit(EXIT_FAILURE);
+    RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: true", "use_automatic_map_selection");
+    use_automatic_map_selection_ = true;
+  }
+
+  try {
+    use_manual_origin_ = this->get_parameter("use_manual_origin").as_bool();
+  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+    RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: false", "use_manual_origin");
+    use_manual_origin_ = false;
+  }
+
+  if(use_automatic_map_selection_) {
+    try {
+      map_directory_ = this->get_parameter("map_directory").as_string();
+    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_directory");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  if(!use_automatic_map_selection_) {
+    try {
+      map_filepath_ = this->get_parameter("map_filepath").as_string();
+    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+        RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_filepath");
+        exit(EXIT_FAILURE);
+    }
   }
 
   map_frame_id_ = this->get_parameter("map_frame_id").as_string();
 
-  try {
-    origin_lat_ = this->get_parameter("origin_lat").as_double();
-  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lat");
-    exit(EXIT_FAILURE);
-  }
-
-  try {
-    origin_lon_ = this->get_parameter("origin_lon").as_double();
-  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-    RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lon");
-    exit(EXIT_FAILURE);
+  if(use_manual_origin_) {
+    try {
+      origin_lat_ = this->get_parameter("origin_lat").as_double();
+    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lat");
+      exit(EXIT_FAILURE);
+    }
+    try {
+      origin_lon_ = this->get_parameter("origin_lon").as_double();
+    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lon");
+      exit(EXIT_FAILURE);
+    }
   }
 }
 
@@ -58,10 +99,109 @@ void LL2MapServer::setup() {
 
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
-  if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
-    this->loadMapContents();
-    this->pub_tf();
+  if(use_automatic_map_selection_) {
+    find_available_maps();
+    for (auto & map_meta : available_maps_) {
+      derive_map_bounds(map_meta);
+    }
+    RCLCPP_INFO(this->get_logger(), "Discovered %zu Lanelet2 maps in '%s'", available_maps_.size(), map_directory_.c_str());
+    if(available_maps_.empty()) {
+      RCLCPP_FATAL(this->get_logger(), "No Lanelet2 maps found in '%s'", map_directory_.c_str());
+      exit(EXIT_FAILURE);
+    }
+    for (const auto& map_meta : available_maps_) {
+      RCLCPP_INFO(
+        this->get_logger(),
+        "Map '%s': min_lat=%.9f, min_lon=%.9f, max_lat=%.9f, max_lon=%.9f, diagonal_length=%.3f",
+        map_meta.map_path.c_str(),
+        map_meta.min_lat,
+        map_meta.min_lon,
+        map_meta.max_lat,
+        map_meta.max_lon,
+        map_meta.diagonal_length);
+    }
   }
+
+  if(!use_automatic_map_selection_) {
+    if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+      this->loadMapContents();
+      this->pub_tf();
+    }
+  } else {
+    // TODO: setup a subscriber to an NavSatFix Message to get the current GPS position
+  }
+}
+
+void LL2MapServer::find_available_maps() {
+  Lanelet2MapMeta map_meta;
+  try {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(map_directory_)) {
+      if (!entry.is_regular_file()) {
+        continue;
+      }
+      if (entry.path().extension() == ".osm") {
+        map_meta.map_path = entry.path().string();
+        available_maps_.emplace_back(map_meta);
+      }
+    }
+  } catch (const std::filesystem::filesystem_error& e) {
+    RCLCPP_ERROR_STREAM(get_logger(), "Failed to scan '" << map_directory_ << "': " << e.what());
+  }
+}
+
+void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) {
+  map_meta.diagonal_length = -1.0;
+  pugi::xml_document document;
+  const pugi::xml_parse_result result = document.load_file(map_meta.map_path.c_str());
+  if (!result) {
+    RCLCPP_ERROR_STREAM(get_logger(), "Unable to parse map '" << map_meta.map_path << "': " << result.description());
+    return;
+  }
+
+  pugi::xml_node root = document.child("osm");
+  if (!root) {
+    root = document.document_element();
+  }
+  if (!root) {
+    RCLCPP_WARN_STREAM(get_logger(), "No root element found when deriving bounds for '" << map_meta.map_path << "'");
+    return;
+  }
+
+  const double kDoubleMax = std::numeric_limits<double>::max();
+  const double kDoubleLowest = std::numeric_limits<double>::lowest();
+  double min_lat = kDoubleMax;
+  double min_lon = kDoubleMax;
+  double max_lat = kDoubleLowest;
+  double max_lon = kDoubleLowest;
+  bool found_node = false;
+
+  for (pugi::xml_node node : root.children("node")) {
+    const double lat = node.attribute("lat").as_double(std::numeric_limits<double>::quiet_NaN());
+    const double lon = node.attribute("lon").as_double(std::numeric_limits<double>::quiet_NaN());
+    if (std::isnan(lat) || std::isnan(lon)) {
+      continue;
+    }
+
+    min_lat = std::min(min_lat, lat);
+    max_lat = std::max(max_lat, lat);
+    min_lon = std::min(min_lon, lon);
+    max_lon = std::max(max_lon, lon);
+    found_node = true;
+  }
+
+  if (!found_node) {
+    RCLCPP_WARN_STREAM(get_logger(), "No node elements found while deriving bounds for '" << map_meta.map_path << "'");
+    return;
+  }
+
+  map_meta.min_lat = min_lat;
+  map_meta.max_lat = max_lat;
+  map_meta.min_lon = min_lon;
+  map_meta.max_lon = max_lon;
+
+  double distance = 0.0;
+  GeographicLib::Geodesic::WGS84().Inverse(min_lat, min_lon, max_lat, max_lon, distance);
+  map_meta.diagonal_length = distance;
 }
 
 rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
