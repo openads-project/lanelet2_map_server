@@ -3,6 +3,7 @@
 #include <string.h>
 #include <fstream>
 #include <limits>
+#include <vector>
 
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_io/Projection.h>
