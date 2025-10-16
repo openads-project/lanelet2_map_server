@@ -128,7 +128,10 @@ void LL2MapServer::setup() {
       this->pub_tf();
     }
   } else {
-    // TODO: setup a subscriber to an NavSatFix Message to get the current GPS position
+    navsat_subscription_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
+      "~/gps/fix", 10, std::bind(&LL2MapServer::navSatFixCallback, this, std::placeholders::_1));
+    automatic_map_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+      std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
   }
 }
 
@@ -202,6 +205,50 @@ void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) {
   double distance = 0.0;
   GeographicLib::Geodesic::WGS84().Inverse(min_lat, min_lon, max_lat, max_lon, distance);
   map_meta.diagonal_length = distance;
+}
+
+void LL2MapServer::navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
+  current_latitude_ = msg->latitude;
+  current_longitude_ = msg->longitude;
+  gps_fix_received_ = true;
+}
+
+void LL2MapServer::automaticMapUpdateTimerCallback() {
+  if (!gps_fix_received_) {
+    return;
+  }
+
+  const Lanelet2MapMeta* selected_map = nullptr;
+  for (const auto& map_meta : available_maps_) {
+    if (current_latitude_ < map_meta.min_lat || current_latitude_ > map_meta.max_lat ||
+        current_longitude_ < map_meta.min_lon || current_longitude_ > map_meta.max_lon) {
+      continue;
+    }
+    if (!selected_map || map_meta.diagonal_length < selected_map->diagonal_length) {
+      if(map_sanity_check(map_meta.map_path, map_meta.min_lat, map_meta.min_lon)) {
+        RCLCPP_DEBUG(this->get_logger(), "Map sanity check passed for '%s'", map_meta.map_path.c_str());
+        selected_map = &map_meta;
+      } else {
+        RCLCPP_WARN(this->get_logger(), "Map sanity check failed for '%s'", map_meta.map_path.c_str());
+        continue;
+      }
+    }
+  }
+
+  if (!selected_map) {
+    return;
+  }
+
+  if (map_filepath_ == selected_map->map_path) {
+    return;
+  } else {
+    map_filepath_ = selected_map->map_path;
+    origin_lat_ = selected_map->min_lat;
+    origin_lon_ = selected_map->min_lon;
+    this->loadMapContents();
+    this->pub_tf();
+    RCLCPP_INFO(this->get_logger(), "Automatically selected map '%s'", selected_map->map_path.c_str());
+  }
 }
 
 rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {

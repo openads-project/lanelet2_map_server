@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <fstream>
+#include <limits>
 
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_io/Projection.h>
@@ -11,6 +12,7 @@
 
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "sensor_msgs/msg/nav_sat_fix.hpp"
 
 struct Lanelet2MapMeta {
     std::string map_path;
@@ -43,11 +45,14 @@ class LL2MapServer : public rclcpp::Node
         bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon);
         void pub_tf();
         void derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp);
+        void navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg);
+        void automaticMapUpdateTimerCallback();
 
     private:
         OnSetParametersCallbackHandle::SharedPtr parameters_callback_;
 
         rclcpp::TimerBase::SharedPtr one_shot_timer_;
+        rclcpp::TimerBase::SharedPtr automatic_map_timer_;
         
         bool use_automatic_map_selection_ = true;
         bool use_manual_origin_ = false;
@@ -60,4 +65,8 @@ class LL2MapServer : public rclcpp::Node
         double origin_lat_, origin_lon_;
 
         std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
+        rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr navsat_subscription_;
+        double current_latitude_ = std::numeric_limits<double>::quiet_NaN();
+        double current_longitude_ = std::numeric_limits<double>::quiet_NaN();
+        bool gps_fix_received_ = false;
 };
