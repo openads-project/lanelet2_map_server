@@ -247,7 +247,6 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
     origin_lon_ = selected_map->min_lon;
     this->loadMapContents();
     this->pub_tf();
-    RCLCPP_INFO(this->get_logger(), "Automatically selected map '%s'", selected_map->map_path.c_str());
   }
 }
 
