@@ -36,8 +36,8 @@ class LL2MapServer : public rclcpp::Node
         void loadParameters();
 
         void setup();
-        void find_available_maps();
-        void derive_map_bounds(Lanelet2MapMeta& map_meta);
+        void find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const;
+        void derive_map_bounds(Lanelet2MapMeta& map_meta) const;
 
         rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter>& parameters);
 

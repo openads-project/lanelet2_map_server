@@ -4,6 +4,7 @@
 #include <cmath>
 #include <filesystem>
 #include <limits>
+#include <utility>
 #include <pugixml.hpp>
 
 LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
@@ -99,7 +100,7 @@ void LL2MapServer::setup() {
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
   if(use_automatic_map_selection_) {
-    find_available_maps();
+    find_available_maps(map_directory_, available_maps_);
     for (auto & map_meta : available_maps_) {
       derive_map_bounds(map_meta);
     }
@@ -134,24 +135,25 @@ void LL2MapServer::setup() {
   }
 }
 
-void LL2MapServer::find_available_maps() {
-  Lanelet2MapMeta map_meta;
+void LL2MapServer::find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const {
+  maps.clear();
   try {
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(map_directory_)) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(directory)) {
       if (!entry.is_regular_file()) {
         continue;
       }
       if (entry.path().extension() == ".osm") {
+        Lanelet2MapMeta map_meta;
         map_meta.map_path = entry.path().string();
-        available_maps_.emplace_back(map_meta);
+        maps.emplace_back(map_meta);
       }
     }
   } catch (const std::filesystem::filesystem_error& e) {
-    RCLCPP_ERROR_STREAM(get_logger(), "Failed to scan '" << map_directory_ << "': " << e.what());
+    RCLCPP_ERROR_STREAM(get_logger(), "Failed to scan '" << directory << "': " << e.what());
   }
 }
 
-void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) {
+void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) const {
   map_meta.diagonal_length = -1.0;
   pugi::xml_document document;
   const pugi::xml_parse_result result = document.load_file(map_meta.map_path.c_str());
