@@ -61,8 +61,7 @@ void LL2MapServer::loadParameters() {
     try {
       map_directory_ = this->get_parameter("map_directory").as_string();
     } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_directory");
-      exit(EXIT_FAILURE);
+      RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: %s", "map_directory", map_directory_.c_str());
     }
   }
 
