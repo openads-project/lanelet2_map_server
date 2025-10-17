@@ -80,3 +80,5 @@ Set `use_automatic_map_selection` to `false` to switch to manual mode. In this c
 - Keep the `map_directory` up to date with the maps that should be available; the directory is scanned recursively on node startup and whenever the `map_directory` parameter is updated.
 - On successful map load the node publishes a static transform from the corresponding UTM frame to `map_frame_id`.
 - When running in manual mode the node validates the provided map on each parameter update before broadcasting the transform.
+- If no suitable map is available (missing GPS fix or no match) the node clears `map_filepath`, `map_contents`, `origin_lat`, and `origin_lon` so consumers can detect that no map is currently loaded.
+- Missuse of setting parameters like `map_contents` e.g. via cli (or `map_filepath` in automatic mode) will be reverted by the node.
