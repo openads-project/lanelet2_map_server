@@ -1,8 +1,11 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include <string.h>
+#include <string>
 #include <fstream>
+#include <functional>
 #include <limits>
+#include <optional>
+#include <tuple>
 #include <vector>
 
 #include <lanelet2_core/LaneletMap.h>
@@ -68,8 +71,6 @@ class LL2MapServer : public rclcpp::Node
          * @return parameter change result
          */
         rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter>& parameters);
-
-        void declareParameters();
 
         void loadMapContents();
         void unsetMapParameters();
