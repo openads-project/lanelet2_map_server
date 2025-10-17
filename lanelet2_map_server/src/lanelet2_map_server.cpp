@@ -8,130 +8,160 @@
 #include <pugixml.hpp>
 
 LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
-  this->declareParameters();
-  this->loadParameters();
+
+  // General parameters
+  this->declareAndLoadParameter("map_frame_id", map_frame_id_, "Frame ID of Lanelet2 map", true, false, false);
+  // Automatic map selection parameters
+  this->declareAndLoadParameter("use_automatic_map_selection", use_automatic_map_selection_, "Automatic map selection", false, false, true);
+  this->declareAndLoadParameter("map_directory", map_directory_, "Directory containing Lanelet2 maps", true, false, false);
+  // Map-Server parameters (are reconfigurable, required and not read-only if automatic map selection is disabled)
+  this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, use_automatic_map_selection_);
+  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, use_automatic_map_selection_);
+  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, use_automatic_map_selection_);
+  // Map-Contents is never required, never reconfigurable, and always read-only
+  this->declareAndLoadParameter("map_contents", map_contents_, "Contents of Lanelet2 map", false, false, true);
+
   this->setup();
 }
 
-void LL2MapServer::declareParameters() {
+template <typename T>
+void LL2MapServer::declareAndLoadParameter(const std::string& name,
+                                                         T& param,
+                                                         const std::string& description,
+                                                         const bool add_to_auto_reconfigurable_params,
+                                                         const bool is_required,
+                                                         const bool read_only,
+                                                         const std::optional<double>& from_value,
+                                                         const std::optional<double>& to_value,
+                                                         const std::optional<double>& step_value,
+                                                         const std::string& additional_constraints) {
 
   rcl_interfaces::msg::ParameterDescriptor param_desc;
+  param_desc.description = description;
+  param_desc.additional_constraints = additional_constraints;
+  param_desc.read_only = read_only;
 
-  param_desc.description = "Automatic map selection";
-  this->declare_parameter("use_automatic_map_selection", use_automatic_map_selection_, param_desc);
+  auto type = rclcpp::ParameterValue(param).get_type();
 
-  param_desc.description = "Manual origin specification";
-  this->declare_parameter("use_manual_origin", use_manual_origin_, param_desc);
+  if (from_value.has_value() && to_value.has_value()) {
+    if constexpr(std::is_integral_v<T>) {
+      rcl_interfaces::msg::IntegerRange range;
+      range.set__from_value(static_cast<T>(from_value.value())).set__to_value(static_cast<T>(to_value.value()));
+      if (step_value.has_value()) range.set__step(static_cast<T>(step_value.value()));
+      param_desc.integer_range = {range};
+    } else if constexpr(std::is_floating_point_v<T>) {
+      rcl_interfaces::msg::FloatingPointRange range;
+      range.set__from_value(static_cast<T>(from_value.value())).set__to_value(static_cast<T>(to_value.value()));
+      if (step_value.has_value()) range.set__step(static_cast<T>(step_value.value()));
+      param_desc.floating_point_range = {range};
+    } else {
+      RCLCPP_WARN(this->get_logger(), "Parameter type of parameter '%s' does not support specifying a range", name.c_str());
+    }
+  }
 
-  param_desc.description = "Directory to search for Lanelet2 map";
-  this->declare_parameter("map_directory", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+  this->declare_parameter(name, type, param_desc);
 
-  param_desc.description = "Path to Lanelet2 map";
-  this->declare_parameter("map_filepath", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
+  try {
+    param = this->get_parameter(name).get_value<T>();
+    std::stringstream ss;
+    ss << "Loaded parameter '" << name << "': ";
+    if constexpr(is_vector_v<T>) {
+      ss << "[";
+      for (const auto& element : param) ss << element << (&element != &param.back() ? ", " : "");
+      ss << "]";
+    } else {
+      ss << param;
+    }
+    RCLCPP_INFO_STREAM(this->get_logger(), ss.str());
+  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
+    if (is_required) {
+      RCLCPP_FATAL_STREAM(this->get_logger(), "Missing required parameter '" << name << "', exiting");
+      exit(EXIT_FAILURE);
+    } else {
+      std::stringstream ss;
+      ss << "Missing parameter '" << name << "', using default value: ";
+      if constexpr(is_vector_v<T>) {
+        ss << "[";
+        for (const auto& element : param) ss << element << (&element != &param.back() ? ", " : "");
+        ss << "]";
+      } else {
+        ss << param;
+      }
+      RCLCPP_WARN_STREAM(this->get_logger(), ss.str());
+      this->set_parameters({rclcpp::Parameter(name, rclcpp::ParameterValue(param))});
+    }
+  }
 
-  param_desc.description = "Frame ID of Lanelet2 map";
-  this->declare_parameter("map_frame_id", map_frame_id_, param_desc);
-
-  param_desc.description = "Raw contents of Lanelet2 map file";
-  this->declare_parameter("map_contents", rclcpp::ParameterType::PARAMETER_STRING, param_desc);
-
-  param_desc.description = "Latitude of origin of Lanelet2 map";
-  this->declare_parameter("origin_lat", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
-
-  param_desc.description = "Longitude of origin of Lanelet2 map";
-  this->declare_parameter("origin_lon", rclcpp::ParameterType::PARAMETER_DOUBLE, param_desc);
+  if (add_to_auto_reconfigurable_params) {
+    std::function<void(const rclcpp::Parameter&)> setter = [&param](const rclcpp::Parameter& p) {
+      param = p.get_value<T>();
+    };
+    auto_reconfigurable_params_.push_back(std::make_tuple(name, setter));
+  }
 }
 
-void LL2MapServer::loadParameters() {
 
-  try {
-    use_automatic_map_selection_ = this->get_parameter("use_automatic_map_selection").as_bool();
-  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-    RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: true", "use_automatic_map_selection");
-    use_automatic_map_selection_ = true;
-  }
+rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
 
-  try {
-    use_manual_origin_ = this->get_parameter("use_manual_origin").as_bool();
-  } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-    RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: false", "use_manual_origin");
-    use_manual_origin_ = false;
-  }
-
-  if(use_automatic_map_selection_) {
-    try {
-      map_directory_ = this->get_parameter("map_directory").as_string();
-    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-      RCLCPP_INFO(this->get_logger(), "Parameter '%s' is not set. Using default: %s", "map_directory", map_directory_.c_str());
+  for (const auto& param : parameters) {
+    for (auto& auto_reconfigurable_param : auto_reconfigurable_params_) {
+      if (param.get_name() == std::get<0>(auto_reconfigurable_param)) {
+        std::get<1>(auto_reconfigurable_param)(param);
+        RCLCPP_INFO(this->get_logger(), "Reconfigured parameter '%s' to: %s", param.get_name().c_str(), param.value_to_string().c_str());
+        break;
+      }
     }
-  }
-
-  if(!use_automatic_map_selection_) {
-    try {
-      map_filepath_ = this->get_parameter("map_filepath").as_string();
-    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-        RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "map_filepath");
+    // handle special cases
+    if (param.get_name() == "map_directory" && use_automatic_map_selection_) {
+      find_available_maps(map_directory_, available_maps_);
+      if(available_maps_.empty()) {
+        RCLCPP_FATAL(this->get_logger(), "No Lanelet2 maps found in '%s'", map_directory_.c_str());
         exit(EXIT_FAILURE);
+      }
+    }
+    if ((param.get_name() == "map_filepath" || param.get_name() == "origin_lat" || param.get_name() == "origin_lon") && !use_automatic_map_selection_) {
+      if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+        this->loadMapContents();
+        this->pub_tf();
+      } else {
+        RCLCPP_FATAL(this->get_logger(), "Map sanity check failed for map '%s' with origin (lat=%.9f, lon=%.9f)", map_filepath_.c_str(), origin_lat_, origin_lon_);
+        exit(EXIT_FAILURE);
+      }
     }
   }
 
-  map_frame_id_ = this->get_parameter("map_frame_id").as_string();
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = true;
 
-  if(use_manual_origin_) {
-    try {
-      origin_lat_ = this->get_parameter("origin_lat").as_double();
-    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lat");
-      exit(EXIT_FAILURE);
-    }
-    try {
-      origin_lon_ = this->get_parameter("origin_lon").as_double();
-    } catch (rclcpp::exceptions::ParameterUninitializedException&) {
-      RCLCPP_FATAL(this->get_logger(), "Parameter '%s' is required", "origin_lon");
-      exit(EXIT_FAILURE);
-    }
-  }
+  return result;
 }
 
 void LL2MapServer::setup() {
 
+  // callback for dynamic parameter configuration
   parameters_callback_ = this->add_on_set_parameters_callback(std::bind(&LL2MapServer::parametersCallback, this, std::placeholders::_1));
-
+ 
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
   if(use_automatic_map_selection_) {
     find_available_maps(map_directory_, available_maps_);
-    for (auto & map_meta : available_maps_) {
-      derive_map_bounds(map_meta);
-    }
-    RCLCPP_INFO(this->get_logger(), "Discovered %zu Lanelet2 maps in '%s'", available_maps_.size(), map_directory_.c_str());
     if(available_maps_.empty()) {
       RCLCPP_FATAL(this->get_logger(), "No Lanelet2 maps found in '%s'", map_directory_.c_str());
       exit(EXIT_FAILURE);
     }
-    for (const auto& map_meta : available_maps_) {
-      RCLCPP_INFO(
-        this->get_logger(),
-        "Map '%s': min_lat=%.9f, min_lon=%.9f, max_lat=%.9f, max_lon=%.9f, diagonal_length=%.3f",
-        map_meta.map_path.c_str(),
-        map_meta.min_lat,
-        map_meta.min_lon,
-        map_meta.max_lat,
-        map_meta.max_lon,
-        map_meta.diagonal_length);
-    }
-  }
-
-  if(!use_automatic_map_selection_) {
-    if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
-      this->loadMapContents();
-      this->pub_tf();
-    }
-  } else {
+    // Create NavSatFix subscription and automatic map update timer
     navsat_subscription_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
       "~/gps/fix", 10, std::bind(&LL2MapServer::navSatFixCallback, this, std::placeholders::_1));
     automatic_map_timer_ = this->create_wall_timer(std::chrono::seconds(1),
       std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
+  } else {
+    if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+      this->loadMapContents();
+      this->pub_tf();
+    } else {
+      RCLCPP_FATAL(this->get_logger(), "Map sanity check failed for map '%s' with origin (lat=%.9f, lon=%.9f)", map_filepath_.c_str(), origin_lat_, origin_lon_);
+      exit(EXIT_FAILURE);
+    }
   }
 }
 
@@ -151,9 +181,24 @@ void LL2MapServer::find_available_maps(const std::string& directory, std::vector
   } catch (const std::filesystem::filesystem_error& e) {
     RCLCPP_ERROR_STREAM(get_logger(), "Failed to scan '" << directory << "': " << e.what());
   }
+  for (auto & map_meta : maps) {
+    derive_map_meta(map_meta);
+  }
+  RCLCPP_INFO(this->get_logger(), "Discovered %zu Lanelet2 maps in '%s'", maps.size(), directory.c_str());
+  for (const auto& map_meta : available_maps_) {
+    RCLCPP_INFO(
+      this->get_logger(),
+      "Map '%s': min_lat=%.9f, min_lon=%.9f, max_lat=%.9f, max_lon=%.9f, diagonal_length=%.3f",
+      map_meta.map_path.c_str(),
+      map_meta.min_lat,
+      map_meta.min_lon,
+      map_meta.max_lat,
+      map_meta.max_lon,
+      map_meta.diagonal_length);
+  }
 }
 
-void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) const {
+void LL2MapServer::derive_map_meta(Lanelet2MapMeta& map_meta) const {
   map_meta.diagonal_length = -1.0;
   pugi::xml_document document;
   const pugi::xml_parse_result result = document.load_file(map_meta.map_path.c_str());
@@ -167,7 +212,7 @@ void LL2MapServer::derive_map_bounds(Lanelet2MapMeta& map_meta) const {
     root = document.document_element();
   }
   if (!root) {
-    RCLCPP_WARN_STREAM(get_logger(), "No root element found when deriving bounds for '" << map_meta.map_path << "'");
+    RCLCPP_WARN_STREAM(get_logger(), "No root element found when deriving meta for '" << map_meta.map_path << "'");
     return;
   }
 
@@ -216,11 +261,17 @@ void LL2MapServer::navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPt
 
 void LL2MapServer::automaticMapUpdateTimerCallback() {
   if (!gps_fix_received_) {
+    RCLCPP_WARN(this->get_logger(), "No initial GPS fix received, unable to select map");
     return;
   }
 
   const Lanelet2MapMeta* selected_map = nullptr;
   for (const auto& map_meta : available_maps_) {
+    // check for invalid map
+    if (map_meta.diagonal_length <= 0.0) {
+      continue;
+    }
+    // check for maps outside current GPS location
     if (current_latitude_ < map_meta.min_lat || current_latitude_ > map_meta.max_lat ||
         current_longitude_ < map_meta.min_lon || current_longitude_ > map_meta.max_lon) {
       continue;
@@ -237,10 +288,12 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
   }
 
   if (!selected_map) {
+    RCLCPP_WARN(this->get_logger(), "No suitable map found for current GPS location (lat=%.9f, lon=%.9f)", current_latitude_, current_longitude_);
     return;
   }
 
   if (map_filepath_ == selected_map->map_path) {
+    RCLCPP_DEBUG(this->get_logger(), "Currently loaded map '%s' is still valid", map_filepath_.c_str());
     return;
   } else {
     map_filepath_ = selected_map->map_path;
@@ -251,63 +304,6 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
   }
 }
 
-rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
-
-  rcl_interfaces::msg::SetParametersResult result;
-
-  bool param_is_updated = false;
-  bool map_is_updated = false;
-  std::string map_filepath = map_filepath_;
-  std::string map_frame_id = map_frame_id_;
-  double origin_lat = origin_lat_;
-  double origin_lon = origin_lon_;
-  for (const auto& param : parameters) {
-    if (param.get_name() == "map_filepath") {
-      map_filepath = param.as_string();
-      param_is_updated = true;
-      map_is_updated = true;
-    } else if (param.get_name() == "map_frame_id") {
-      map_frame_id = param.as_string();
-      param_is_updated = true;
-    } else if (param.get_name() == "origin_lat") {
-      origin_lat = param.as_double();
-      param_is_updated = true;
-    } else if (param.get_name() == "origin_lon") {
-      origin_lon = param.as_double();
-      param_is_updated = true;
-    }
-  }
-
-  // short-circuit if no relevant parameters are updated
-  if (!param_is_updated) {
-    result.successful = true;
-    return result;
-  }
-
-  // perform map sanity check
-  result.successful = this->map_sanity_check(map_filepath, origin_lat, origin_lon);
-  if (!result.successful) {
-    result.reason = "Map sanity check failed";
-    return result;
-  }
-
-  map_filepath_ = map_filepath;
-  map_frame_id_ = map_frame_id;
-  origin_lat_ = origin_lat;
-  origin_lon_ = origin_lon;
-
-  if (map_is_updated) {
-    // reload map in timer callback since parameters cannot be updated in this callback
-    one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
-      this->one_shot_timer_->cancel();
-      this->loadMapContents();
-      this->pub_tf();
-    });
-  }
-
-  return result;
-}
-
 void LL2MapServer::loadMapContents() {
 
   std::ifstream file(map_filepath_);
@@ -316,7 +312,7 @@ void LL2MapServer::loadMapContents() {
   RCLCPP_INFO(this->get_logger(), "Loaded map contents from '%s' to parameter 'map_contents'", map_filepath_.c_str());
 }
 
-bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) {
+bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const {
 
   lanelet::projection::UtmProjector proj(lanelet::Origin({origin_lat, origin_lon}));
   try {
@@ -329,8 +325,7 @@ bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat,
   return true;
 }
 
-void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp)
-{
+void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const {
   if(latitude>=0.0) northp = true;
   else northp = false;
 
@@ -338,38 +333,37 @@ void LL2MapServer::derive_utm_zone(const double latitude, const double longitude
   return;
 }
 
-void LL2MapServer::pub_tf()
-{
-    geometry_msgs::msg::TransformStamped t;
+void LL2MapServer::pub_tf() const {
+  geometry_msgs::msg::TransformStamped t;
 
-    // Create Projector without offset
-    lanelet::projection::UtmProjector proj_utm(lanelet::Origin({origin_lat_, origin_lon_}), false);
-    lanelet::BasicPoint3d origin_utm = proj_utm.forward(lanelet::GPSPoint({origin_lat_,origin_lon_,0.0}));
+  // Create Projector without offset
+  lanelet::projection::UtmProjector proj_utm(lanelet::Origin({origin_lat_, origin_lon_}), false);
+  lanelet::BasicPoint3d origin_utm = proj_utm.forward(lanelet::GPSPoint({origin_lat_,origin_lon_,0.0}));
 
-    t.transform.translation.x = origin_utm.x();
-    t.transform.translation.y = origin_utm.y();
-    t.transform.translation.z = origin_utm.z();
+  t.transform.translation.x = origin_utm.x();
+  t.transform.translation.y = origin_utm.y();
+  t.transform.translation.z = origin_utm.z();
 
-    t.transform.rotation.x = 0;
-    t.transform.rotation.y = 0;
-    t.transform.rotation.z = 0;
-    t.transform.rotation.w = 1;
+  t.transform.rotation.x = 0;
+  t.transform.rotation.y = 0;
+  t.transform.rotation.z = 0;
+  t.transform.rotation.w = 1;
 
-    bool northp;
-    int zone;
-    derive_utm_zone(origin_lat_, origin_lon_, zone, northp);
+  bool northp;
+  int zone;
+  derive_utm_zone(origin_lat_, origin_lon_, zone, northp);
 
-    std::string hemisphere;
-    if(northp) hemisphere="N";
-    else hemisphere="S";
+  std::string hemisphere;
+  if(northp) hemisphere="N";
+  else hemisphere="S";
 
-    t.header.frame_id ="utm_"+std::to_string(zone)+hemisphere;
-    t.child_frame_id = map_frame_id_;
-    t.header.stamp = this->get_clock()->now();
+  t.header.frame_id ="utm_"+std::to_string(zone)+hemisphere;
+  t.child_frame_id = map_frame_id_;
+  t.header.stamp = now();
 
-    // Send the transformation
-    tf_static_broadcaster_->sendTransform(t);
-    RCLCPP_INFO(get_logger(), "Broadcast static transform from '%s' to '%s'", t.header.frame_id.c_str(), t.child_frame_id.c_str());
+  // Send the transformation
+  tf_static_broadcaster_->sendTransform(t);
+  RCLCPP_INFO(get_logger(), "Broadcast static transform from '%s' to '%s'", t.header.frame_id.c_str(), t.child_frame_id.c_str());
 }
 
 int main(int argc, char ** argv)
