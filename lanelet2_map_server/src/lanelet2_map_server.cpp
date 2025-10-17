@@ -14,11 +14,12 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
   // Automatic map selection parameters
   this->declareAndLoadParameter("use_automatic_map_selection", use_automatic_map_selection_, "Automatic map selection", false, false, true);
   this->declareAndLoadParameter("map_directory", map_directory_, "Directory containing Lanelet2 maps", true, false, false);
-  // Map-Server parameters (are reconfigurable and required if automatic map selection is disabled)
-  this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  // Map-Contents is never required and never reconfigurable
+  // Map-Server parameters (are required if automatic map selection is disabled)
+  // We keep them as auto-reconfigurable even if automatic map selection is disabled to intercept missused parameter changes during automatic map selection
+  this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", true, !use_automatic_map_selection_, false);
+  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", true, !use_automatic_map_selection_, false);
+  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", true, !use_automatic_map_selection_, false);
+  // Map-Contents is never required
   this->declareAndLoadParameter("map_contents", map_contents_, "Contents of Lanelet2 map", false, false, false);
 
   this->setup();
@@ -102,6 +103,10 @@ void LL2MapServer::declareAndLoadParameter(const std::string& name,
 
 
 rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
+  std::string previous_map_filepath = map_filepath_;
+  double previous_origin_lat = origin_lat_;
+  double previous_origin_lon = origin_lon_;
+  bool relevant_change = false;
 
   for (const auto& param : parameters) {
     for (auto& auto_reconfigurable_param : auto_reconfigurable_params_) {
@@ -110,23 +115,43 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
         RCLCPP_INFO(this->get_logger(), "Reconfigured parameter '%s' to: %s", param.get_name().c_str(), param.value_to_string().c_str());
         break;
       }
-    }
+    } 
     // handle special cases
+    if (param.get_name() == "map_filepath" || param.get_name() == "origin_lat" || param.get_name() == "origin_lon") {
+      relevant_change = previous_map_filepath != map_filepath_ || 
+                        previous_origin_lat != origin_lat_ || 
+                        previous_origin_lon != origin_lon_;
+    }
+
     if (param.get_name() == "map_directory" && use_automatic_map_selection_) {
       find_available_maps(map_directory_, available_maps_);
       if(available_maps_.empty()) {
         RCLCPP_ERROR(this->get_logger(), "No Lanelet2 maps found in '%s'", map_directory_.c_str());
-        unsetMapParameters();
+        // reload parameters in timer callback since parameters cannot be updated in this callback
+        one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
+          this->one_shot_timer_->cancel();
+          unsetMapParameters();
+        });
       }
-    }
-    if ((param.get_name() == "map_filepath" || param.get_name() == "origin_lat" || param.get_name() == "origin_lon") && !use_automatic_map_selection_) {
-      if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+    }   
+  }
+
+  if(relevant_change && !use_automatic_map_selection_) {
+    if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+      // reload parameters in timer callback since parameters cannot be updated in this callback
+      one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
+        this->one_shot_timer_->cancel();
+        this->loadMapContents();
         this->updateMapParameters();
         this->pub_tf();
-      } else {
-        RCLCPP_ERROR(this->get_logger(), "Map sanity check failed for map '%s' with origin (lat=%.9f, lon=%.9f)", map_filepath_.c_str(), origin_lat_, origin_lon_);
+      });
+    } else {
+      RCLCPP_ERROR(this->get_logger(), "Map sanity check failed for map '%s' with origin (lat=%.9f, lon=%.9f)", map_filepath_.c_str(), origin_lat_, origin_lon_);
+      // reload parameters in timer callback since parameters cannot be updated in this callback
+      one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
+        this->one_shot_timer_->cancel();
         unsetMapParameters();
-      }
+      });
     }
   }
 
@@ -156,6 +181,7 @@ void LL2MapServer::setup() {
       std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
   } else {
     if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
+      this->loadMapContents();
       this->updateMapParameters();
       this->pub_tf();
     } else {
@@ -262,6 +288,7 @@ void LL2MapServer::navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPt
 void LL2MapServer::automaticMapUpdateTimerCallback() {
   if (!gps_fix_received_) {
     RCLCPP_WARN(this->get_logger(), "No initial GPS fix received, unable to select map");
+    unsetMapParameters();
     return;
   }
 
@@ -300,27 +327,35 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
     map_filepath_ = selected_map->map_path;
     origin_lat_ = selected_map->min_lat;
     origin_lon_ = selected_map->min_lon;
+    this->loadMapContents();
     this->updateMapParameters();
     this->pub_tf();
   }
 }
 
-void LL2MapServer::updateMapParameters() {
+void LL2MapServer::loadMapContents() {
+  if(map_filepath_.empty()) {
+    map_contents_ = "";
+    return;
+  }
   std::ifstream file(map_filepath_);
   map_contents_ = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+  RCLCPP_INFO(this->get_logger(), "Loaded map contents from '%s' to parameter 'map_contents'", map_filepath_.c_str());
+}
+
+void LL2MapServer::updateMapParameters() {
   this->set_parameter(rclcpp::Parameter("map_filepath", map_filepath_));
   this->set_parameter(rclcpp::Parameter("map_contents", map_contents_));
   this->set_parameter(rclcpp::Parameter("origin_lat", origin_lat_));
   this->set_parameter(rclcpp::Parameter("origin_lon", origin_lon_));
-  RCLCPP_INFO(this->get_logger(), "Loaded map contents from '%s' to parameter 'map_contents'", map_filepath_.c_str());
 }
 
 void LL2MapServer::unsetMapParameters() {
-  this->set_parameter(rclcpp::Parameter("map_filepath", ""));
-  this->set_parameter(rclcpp::Parameter("map_contents", ""));
-  this->set_parameter(rclcpp::Parameter("origin_lat", 0.0));
-  this->set_parameter(rclcpp::Parameter("origin_lon", 0.0));
-  RCLCPP_INFO(this->get_logger(), "Unset map parameters");
+  map_filepath_ = "";
+  map_contents_ = "";
+  origin_lat_ = 0.0;
+  origin_lon_ = 0.0;
+  updateMapParameters();
 }
 
 bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const {
