@@ -71,7 +71,8 @@ class LL2MapServer : public rclcpp::Node
 
         void declareParameters();
 
-        void loadParameters();
+        void updateMapParameters();
+        void unsetMapParameters();
 
         void setup();
         void find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const;
