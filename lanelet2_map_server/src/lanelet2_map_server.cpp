@@ -1,9 +1,12 @@
 #include "lanelet2_map_server/lanelet2_map_server.hpp"
 #include <GeographicLib/Geodesic.hpp>
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <limits>
+#include <sstream>
+#include <type_traits>
 #include <utility>
 #include <pugixml.hpp>
 
