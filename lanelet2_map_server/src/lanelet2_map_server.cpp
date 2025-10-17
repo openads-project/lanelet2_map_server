@@ -14,12 +14,11 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
   // Automatic map selection parameters
   this->declareAndLoadParameter("use_automatic_map_selection", use_automatic_map_selection_, "Automatic map selection", false, false, true);
   this->declareAndLoadParameter("map_directory", map_directory_, "Directory containing Lanelet2 maps", true, false, false);
-  // Map-Server parameters (are required if automatic map selection is disabled)
-  // We keep them as auto-reconfigurable even if automatic map selection is disabled to intercept missused parameter changes during automatic map selection
-  this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", true, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", true, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", true, !use_automatic_map_selection_, false);
-  // Map-Contents is never required
+  // Map-Server parameters (are not reconfigurable and not required if automatic map selection is enabled)
+  this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
+  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
+  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
+  // Map-Contents is never required and never reconfigurable
   this->declareAndLoadParameter("map_contents", map_contents_, "Contents of Lanelet2 map", false, false, false);
 
   this->setup();
@@ -104,6 +103,8 @@ void LL2MapServer::declareAndLoadParameter(const std::string& name,
 
 rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
   std::string previous_map_filepath = map_filepath_;
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = false;
   double previous_origin_lat = origin_lat_;
   double previous_origin_lon = origin_lon_;
   bool relevant_change = false;
@@ -117,12 +118,31 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
       }
     } 
     // handle special cases
-    if (param.get_name() == "map_filepath" || param.get_name() == "origin_lat" || param.get_name() == "origin_lon") {
-      relevant_change = previous_map_filepath != map_filepath_ || 
-                        previous_origin_lat != origin_lat_ || 
-                        previous_origin_lon != origin_lon_;
+    if (param.get_name() == "map_filepath") {
+      if (param.get_value<std::string>() != map_filepath_) {
+        result.reason = "Parameter 'map_filepath' is not reconfigurable when automatic map selection is enabled.";
+        return result;
+      }
+      relevant_change = relevant_change || previous_map_filepath != map_filepath_;
     }
-
+    if (param.get_name() == "origin_lat") {
+      if (param.get_value<double>() != origin_lat_) {
+        result.reason = "Parameter 'origin_lat' is not reconfigurable when automatic map selection is enabled.";
+        return result;
+      }
+      relevant_change = relevant_change || previous_origin_lat != origin_lat_;
+    }
+    if (param.get_name() == "origin_lon") {
+      if (param.get_value<double>() != origin_lon_) {
+        result.reason = "Parameter 'origin_lon' is not reconfigurable when automatic map selection is enabled.";
+        return result;
+      }
+      relevant_change = relevant_change || previous_origin_lon != origin_lon_;
+    }
+    if (param.get_name() == "map_contents" && param.get_value<std::string>() != map_contents_) {
+      result.reason = "Parameter 'map_contents' is not reconfigurable.";
+      return result;
+    }
     if (param.get_name() == "map_directory" && use_automatic_map_selection_) {
       find_available_maps(map_directory_, available_maps_);
       if(available_maps_.empty()) {
@@ -133,9 +153,9 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
           unsetMapParameters();
         });
       }
-    }   
+    }
   }
-
+  
   if(relevant_change && !use_automatic_map_selection_) {
     if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
       // reload parameters in timer callback since parameters cannot be updated in this callback
@@ -154,10 +174,7 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
       });
     }
   }
-
-  rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
-
   return result;
 }
 
@@ -380,6 +397,9 @@ void LL2MapServer::derive_utm_zone(const double latitude, const double longitude
 }
 
 void LL2MapServer::pub_tf() const {
+  if(map_filepath_.empty()) {
+    return;
+  }
   geometry_msgs::msg::TransformStamped t;
 
   // Create Projector without offset
