@@ -42,7 +42,11 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
       std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm";
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.description = "Local filepath to where map from map server is written to (relative to $ROS_HOME)";
-  parent_node_.declare_parameter("map_filepath", map_filepath_, param_desc);
+  try {
+    parent_node_.declare_parameter("map_filepath", map_filepath_, param_desc);
+  } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException& ex) {
+    RCLCPP_WARN(parent_node_.get_logger(), "Parameter 'map_filepath' already declared: %s", ex.what());
+  }
   map_filepath_ = parent_node_.get_parameter("map_filepath").as_string();
   map_filepath_ = resolveFilepath(map_filepath_).string();
   RCLCPP_INFO(parent_node_.get_logger(), "Loaded parameter 'map_filepath': %s", map_filepath_.c_str());
@@ -53,6 +57,14 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
 
   // Periodically check if the parameter server is available
   startup_timer_ = parent_node_.create_wall_timer(1s, std::bind(&LL2MapInterface::findMapServer, this));
+}
+
+LL2MapInterface::~LL2MapInterface() {
+  try {
+    parent_node_.undeclare_parameter("map_filepath");
+  } catch (const rclcpp::exceptions::ParameterNotDeclaredException& ex) {
+    RCLCPP_WARN(parent_node_.get_logger(), "Parameter 'map_filepath' already undeclared: %s", ex.what());
+  }
 }
 
 void LL2MapInterface::findMapServer() {
