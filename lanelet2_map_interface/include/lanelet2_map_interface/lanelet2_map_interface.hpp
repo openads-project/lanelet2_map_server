@@ -14,7 +14,6 @@ using namespace std::chrono_literals;
 class LL2MapInterface {
  public:
   LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name);
-  ~LL2MapInterface();
   lanelet::LaneletMapConstPtr getMapPtr();
   lanelet::LaneletMapPtr getNonConstMapPtr();
   std::shared_ptr<lanelet::Projector> getProjectorPtr();

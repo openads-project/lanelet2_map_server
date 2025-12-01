@@ -59,14 +59,6 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
   startup_timer_ = parent_node_.create_wall_timer(1s, std::bind(&LL2MapInterface::findMapServer, this));
 }
 
-LL2MapInterface::~LL2MapInterface() {
-  try {
-    parent_node_.undeclare_parameter("map_filepath");
-  } catch (const rclcpp::exceptions::ParameterNotDeclaredException& ex) {
-    RCLCPP_WARN(parent_node_.get_logger(), "Parameter 'map_filepath' already undeclared: %s", ex.what());
-  }
-}
-
 void LL2MapInterface::findMapServer() {
   if (!parameter_client_->wait_for_service(0.01s)) {
     RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...",
