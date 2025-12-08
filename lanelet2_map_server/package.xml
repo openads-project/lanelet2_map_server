@@ -4,15 +4,16 @@
   <name>lanelet2_map_server</name>
   <version>1.0.0</version>
   <description>This package is responsible to manage the lanelet2 maps within the current ROS2 environment.</description>
-  <maintainer email="guido.kueppers@ika.rwth-aachen.de">Guido Küppers</maintainer>
+  <maintainer email="guido.linden@ika.rwth-aachen.de">Guido Linden</maintainer>
   <license>TODO: License declaration</license>
 
-  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
   <depend>lanelet2_core</depend>
   <depend>lanelet2_io</depend>
   <depend>lanelet2_projection</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
   <depend>tf2_ros</depend>
-  <depend>geometry_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -15,6 +15,7 @@ find_package(lanelet2_core REQUIRED)
 find_package(lanelet2_io REQUIRED)
 find_package(lanelet2_projection REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 
 add_executable(lanelet2_map_server src/lanelet2_map_server.cpp)
@@ -24,6 +25,7 @@ ament_target_dependencies(lanelet2_map_server
   lanelet2_io
   lanelet2_projection
   rclcpp
+  sensor_msgs
   tf2_ros
 )
 
