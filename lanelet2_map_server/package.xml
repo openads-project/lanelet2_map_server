@@ -3,7 +3,7 @@
 <package format="3">
   <name>lanelet2_map_server</name>
   <version>1.0.0</version>
-  <description>This package is responsible to manage the lanelet2 maps within the current ROS2 environment.</description>
+  <description>Provides Lanelet2 maps to other modules</description>
   <maintainer email="guido.linden@ika.rwth-aachen.de">Guido Linden</maintainer>
   <license>TODO: License declaration</license>
 
