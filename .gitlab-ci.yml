@@ -8,4 +8,3 @@ variables:
   PLATFORM: amd64
   ENABLE_INDUSTRIAL_CI: 'true'
   NOT_TEST_BUILD: 'true'
-  ADDITIONAL_FILES_DIR: locations
