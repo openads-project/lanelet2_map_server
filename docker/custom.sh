@@ -2,7 +2,7 @@
 mkdir -p /data/lanelet2-maps
 
 curl --fail --location \
-    --header "JOB-TOKEN:$CI_JOB_TOKEN" \
+    --header "JOB-TOKEN:$GIT_HTTPS_PASSWORD" \
     "https://gitlab.ika.rwth-aachen.de/api/v4/projects/2173/packages/generic/lanelet2-maps/update-structure/lanelet2-maps.tar.gz" \
     --output /data/lanelet2-maps/package.tar.gz
     
