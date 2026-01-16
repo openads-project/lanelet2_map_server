@@ -102,7 +102,7 @@ class LL2MapServer : public rclcpp::Node
         
         bool use_automatic_map_selection_ = true;
 
-        std::string map_directory_ = "/data/maps/locations";
+        std::string map_directory_ = "/data/lanelet2-maps/default-maps";
         std::vector<Lanelet2MapMeta> available_maps_;
         std::string map_filepath_;
         std::string map_frame_id_ = "map";

@@ -4,6 +4,3 @@
 [submodule ".devcontainer"]
 	path = .devcontainer
 	url = ../../../dev-environment/devcontainer.git
-[submodule "locations"]
-	path = locations
-	url = ../../../assets/locations.git
