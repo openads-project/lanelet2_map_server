@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>lanelet2_rviz_display</name>
-  <version>12.2.0</version>
+  <version>1.0.0</version>
   <description>
     Plugin for RViz to visualize a lanelet2 map.
   </description>

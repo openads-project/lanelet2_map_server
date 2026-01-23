@@ -3,7 +3,7 @@
 <package format="3">
 
   <name>lanelet2_lichtblick_display</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>Visualizes Lanelet2 maps by converting lanelet elements into visualization markersv(marker arrays) suitable for Lichtblick</description>
 
   <maintainer email="silas.damaschke@ika.rwth-aachen.de">Silas Damaschke</maintainer>
