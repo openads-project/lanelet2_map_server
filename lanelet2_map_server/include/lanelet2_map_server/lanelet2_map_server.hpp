@@ -107,8 +107,10 @@ class LL2MapServer : public rclcpp::Node
         std::string map_filepath_;
         std::string map_frame_id_ = "map";
         std::string map_contents_;
-        double origin_lat_, origin_lon_;
-        bool origin_initialized_ = false;
+        double origin_lat_ = 0.0;
+        double origin_lon_ = 0.0;
+        bool origin_lat_initialized_ = false;
+        bool origin_lon_initialized_ = false;
 
         std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
         rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr navsat_subscription_;
