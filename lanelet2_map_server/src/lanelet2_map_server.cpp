@@ -115,6 +115,11 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
   bool origin_lat_in_request = false;
   bool origin_lon_in_request = false;
 
+  RCLCPP_INFO(this->get_logger(), "Received request to change %zu parameter(s)", parameters.size());
+  for (const auto & p : parameters) {
+    RCLCPP_INFO(this->get_logger(), "Incoming param: %s = %s", p.get_name().c_str(), p.value_to_string().c_str());
+  }
+  
   for (const auto& param : parameters) {
     for (auto& auto_reconfigurable_param : auto_reconfigurable_params_) {
       if (param.get_name() == std::get<0>(auto_reconfigurable_param)) {
