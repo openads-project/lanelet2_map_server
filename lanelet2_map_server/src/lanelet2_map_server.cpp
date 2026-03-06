@@ -215,8 +215,6 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
         one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
           this->one_shot_timer_->cancel();
 
-          origin_lat_initialized_ = true;
-          origin_lon_initialized_ = true;
           this->loadMapContents();
           this->updateMapParameters();
           this->pub_tf();
