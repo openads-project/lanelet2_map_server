@@ -173,13 +173,15 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
 
   if(!use_automatic_map_selection_ && relevant_change) {
     if (origin_lat_changed) {
-      origin_lat_initialized_ = true;
+      origin_lat_init_ = true;
+      origin_lat_dyn_set_ = true;
     }
     if (origin_lon_changed) {
-      origin_lon_initialized_ = true;
+      origin_lon_init_ = true;
+      origin_lon_dyn_set_ = true;
     }
 
-    if (!origin_lat_initialized_ && !origin_lon_initialized_) {
+    if (!origin_lat_dyn_set_ && !origin_lon_dyn_set_) {
 
       if (map_filepath_.empty()) {
         result.reason = "No map filepath provided, cannot derive origin from map.";
@@ -198,8 +200,8 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
 
       origin_lat_ = map_meta.min_lat;
       origin_lon_ = map_meta.min_lon;
-      origin_lat_initialized_ = true;
-      origin_lon_initialized_ = true;
+      origin_lat_init_ = true;
+      origin_lon_init_ = true;
 
       RCLCPP_INFO(
         this->get_logger(),
@@ -209,7 +211,7 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
         origin_lon_);
     }
 
-    if(origin_lat_initialized_ && origin_lon_initialized_) {
+    if(origin_lat_init_ && origin_lon_init_ && (origin_lat_dyn_set_ == origin_lon_dyn_set_)) {
       if (this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
         // reload parameters in timer callback since parameters cannot be updated in this callback
         one_shot_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), [this]() {
@@ -229,8 +231,8 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
     }
     else {
       this->updateMapParameters();
-      RCLCPP_WARN(this->get_logger(), "Waiting for both origin_lat and origin_lon to be set before loading map in manual mode.");
-      result.reason = "Waiting for both origin_lat and origin_lon to be set before loading map in manual mode.";
+      RCLCPP_WARN(this->get_logger(), "Waiting for origin readiness in manual mode: origin must be fully initialized and user origin parameters must be either none or both.");
+      result.reason = "Waiting for origin readiness in manual mode: origin must be fully initialized and user origin parameters must be either none or both.";
       result.successful = true;
       return result;
     }
@@ -259,8 +261,8 @@ void LL2MapServer::setup() {
       std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
   } else {
     if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
-      origin_lat_initialized_ = true;
-      origin_lon_initialized_ = true;
+      origin_lat_init_ = true;
+      origin_lon_init_ = true;
       this->loadMapContents();
       this->updateMapParameters();
       this->pub_tf();
@@ -407,8 +409,10 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
     map_filepath_ = selected_map->map_path;
     origin_lat_ = selected_map->min_lat;
     origin_lon_ = selected_map->min_lon;
-    origin_lat_initialized_ = true;
-    origin_lon_initialized_ = true;
+    origin_lat_init_ = true;
+    origin_lon_init_ = true;
+    origin_lat_dyn_set_ = false;
+    origin_lon_dyn_set_ = false;
     this->loadMapContents();
     this->updateMapParameters();
     this->pub_tf();
@@ -437,8 +441,10 @@ void LL2MapServer::unsetMapParameters() {
   map_contents_ = "";
   origin_lat_ = 0.0;
   origin_lon_ = 0.0;
-  origin_lat_initialized_ = false;
-  origin_lon_initialized_ = false;
+  origin_lat_init_ = false;
+  origin_lon_init_ = false;
+  origin_lat_dyn_set_ = false;
+  origin_lon_dyn_set_ = false;
   updateMapParameters();
 }
 
