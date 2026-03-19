@@ -79,6 +79,7 @@ class LL2MapServer : public rclcpp::Node
         void setup();
         void find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const;
         void derive_map_meta(Lanelet2MapMeta& map_meta) const;
+        bool deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const;
 
         bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon) const;
         void pub_tf() const;

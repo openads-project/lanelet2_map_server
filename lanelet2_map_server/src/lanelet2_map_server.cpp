@@ -11,6 +11,12 @@
 #include <pugixml.hpp>
 
 LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
+  const auto& parameter_overrides = this->get_node_options().parameter_overrides();
+  const auto has_parameter_override = [&parameter_overrides](const std::string& name) {
+    return std::any_of(parameter_overrides.begin(), parameter_overrides.end(), [&name](const auto& parameter) {
+      return parameter.get_name() == name;
+    });
+  };
 
   // General parameters
   this->declareAndLoadParameter("map_frame_id", map_frame_id_, "Frame ID of Lanelet2 map", true, false, false);
@@ -19,8 +25,10 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
   this->declareAndLoadParameter("map_directory", map_directory_, "Directory containing Lanelet2 maps", true, false, false);
   // Map-Server parameters (are not reconfigurable and not required if automatic map selection is enabled)
   this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
+  origin_lat_init_ = has_parameter_override("origin_lat");
+  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
+  origin_lon_init_ = has_parameter_override("origin_lon");
+  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
   // Map-Contents is never required and never reconfigurable
   this->declareAndLoadParameter("map_contents", map_contents_, "Contents of Lanelet2 map", false, false, false);
 
@@ -183,23 +191,11 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
 
     if (!origin_lat_dyn_set_ && !origin_lon_dyn_set_) {
 
-      if (map_filepath_.empty()) {
-        result.reason = "No map filepath provided, cannot derive origin from map.";
-        result.successful = false;
-        return result;
-      }
-
-      Lanelet2MapMeta map_meta;
-      map_meta.map_path = map_filepath_;
-      derive_map_meta(map_meta);
-      if (map_meta.diagonal_length <= 0.0) {
+      if (!deriveOriginFromMap(map_filepath_, origin_lat_, origin_lon_)) {
         result.reason = "Could not derive lower-left origin from map in manual mode.";
         result.successful = false;
         return result;
       }
-
-      origin_lat_ = map_meta.min_lat;
-      origin_lon_ = map_meta.min_lon;
       origin_lat_init_ = true;
       origin_lon_init_ = true;
 
@@ -260,6 +256,30 @@ void LL2MapServer::setup() {
     automatic_map_timer_ = this->create_wall_timer(std::chrono::seconds(1),
       std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
   } else {
+    if (!origin_lat_init_ && !origin_lon_init_) {
+      if (!deriveOriginFromMap(map_filepath_, origin_lat_, origin_lon_)) {
+        RCLCPP_ERROR(this->get_logger(), "Could not derive lower-left origin from map '%s' in manual mode.", map_filepath_.c_str());
+        unsetMapParameters();
+        return;
+      }
+      origin_lat_init_ = true;
+      origin_lon_init_ = true;
+      RCLCPP_INFO(
+        this->get_logger(),
+        "Derived manual origin from lower-left map corner for '%s' (lat=%.9f, lon=%.9f)",
+        map_filepath_.c_str(),
+        origin_lat_,
+        origin_lon_);
+    } else if (origin_lat_init_ != origin_lon_init_) {
+      RCLCPP_ERROR(
+        this->get_logger(),
+        "Manual mode requires both 'origin_lat' and 'origin_lon' when either is provided. Received origin_lat initialized=%s, origin_lon initialized=%s.",
+        origin_lat_init_ ? "true" : "false",
+        origin_lon_init_ ? "true" : "false");
+      unsetMapParameters();
+      return;
+    }
+
     if(this->map_sanity_check(map_filepath_, origin_lat_, origin_lon_)) {
       origin_lat_init_ = true;
       origin_lon_init_ = true;
@@ -271,6 +291,24 @@ void LL2MapServer::setup() {
       unsetMapParameters();
     }
   }
+}
+
+bool LL2MapServer::deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const {
+  if (map_filepath.empty()) {
+    RCLCPP_ERROR(this->get_logger(), "No map filepath provided, cannot derive origin from map.");
+    return false;
+  }
+
+  Lanelet2MapMeta map_meta;
+  map_meta.map_path = map_filepath;
+  derive_map_meta(map_meta);
+  if (map_meta.diagonal_length <= 0.0) {
+    return false;
+  }
+
+  origin_lat = map_meta.min_lat;
+  origin_lon = map_meta.min_lon;
+  return true;
 }
 
 void LL2MapServer::find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const {
