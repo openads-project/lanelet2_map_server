@@ -51,9 +51,10 @@ class LL2MapServer : public rclcpp::Node
          * @param to_value parameter range maximum
          * @param step_value parameter range step
          * @param additional_constraints additional constraints description
+         * @return true if the parameter was already initialized from an external source
          */
         template <typename T>
-        void declareAndLoadParameter(const std::string &name,
+        bool declareAndLoadParameter(const std::string &name,
                                     T &param,
                                     const std::string &description,
                                     const bool add_to_auto_reconfigurable_params = true,
@@ -108,8 +109,8 @@ class LL2MapServer : public rclcpp::Node
         std::string map_filepath_;
         std::string map_frame_id_ = "map";
         std::string map_contents_;
-        double origin_lat_ = 0.0;
-        double origin_lon_ = 0.0;
+        double origin_lat_;
+        double origin_lon_;
         bool origin_lat_set_ = false;
         bool origin_lon_set_ = false;
 

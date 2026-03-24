@@ -12,15 +12,6 @@
 
 LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
 
-  // check if origin parameters were provided as overrides at startup
-  const auto& parameter_overrides = this->get_node_options().parameter_overrides();
-  for (const auto& parameter : parameter_overrides) {
-    if (parameter.get_name() == "origin_lat") {
-      origin_lat_set_ = true;
-    } else if (parameter.get_name() == "origin_lon") {
-      origin_lon_set_ = true;
-    }
-  }
 
   // General parameters
   this->declareAndLoadParameter("map_frame_id", map_frame_id_, "Frame ID of Lanelet2 map", true, false, false);
@@ -29,8 +20,8 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
   this->declareAndLoadParameter("map_directory", map_directory_, "Directory containing Lanelet2 maps", true, false, false);
   // Map-Server parameters (are not reconfigurable and not required if automatic map selection is enabled)
   this->declareAndLoadParameter("map_filepath", map_filepath_, "Path to Lanelet2 map", !use_automatic_map_selection_, !use_automatic_map_selection_, false);
-  this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
-  this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
+  origin_lat_set_ = this->declareAndLoadParameter("origin_lat", origin_lat_, "Latitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
+  origin_lon_set_ = this->declareAndLoadParameter("origin_lon", origin_lon_, "Longitude of origin of Lanelet2 map", !use_automatic_map_selection_, false, false);
   // Map-Contents is never required and never reconfigurable
   this->declareAndLoadParameter("map_contents", map_contents_, "Contents of Lanelet2 map", false, false, false);
 
@@ -38,7 +29,7 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
 }
 
 template <typename T>
-void LL2MapServer::declareAndLoadParameter(const std::string& name,
+bool LL2MapServer::declareAndLoadParameter(const std::string& name,
                                                          T& param,
                                                          const std::string& description,
                                                          const bool add_to_auto_reconfigurable_params,
@@ -86,6 +77,7 @@ void LL2MapServer::declareAndLoadParameter(const std::string& name,
       ss << param;
     }
     RCLCPP_INFO_STREAM(this->get_logger(), ss.str());
+    return true;
   } catch (rclcpp::exceptions::ParameterUninitializedException&) {
     if (is_required) {
       RCLCPP_FATAL_STREAM(this->get_logger(), "Missing required parameter '" << name << "', exiting");
@@ -111,6 +103,8 @@ void LL2MapServer::declareAndLoadParameter(const std::string& name,
     };
     auto_reconfigurable_params_.push_back(std::make_tuple(name, setter));
   }
+
+  return false;
 }
 
 
