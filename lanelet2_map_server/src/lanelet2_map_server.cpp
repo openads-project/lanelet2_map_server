@@ -64,6 +64,7 @@ bool LL2MapServer::declareAndLoadParameter(const std::string& name,
   }
 
   this->declare_parameter(name, type, param_desc);
+  bool initial_set = false;
 
   try {
     param = this->get_parameter(name).get_value<T>();
@@ -77,7 +78,7 @@ bool LL2MapServer::declareAndLoadParameter(const std::string& name,
       ss << param;
     }
     RCLCPP_INFO_STREAM(this->get_logger(), ss.str());
-    return true;
+    initial_set = true;
   } catch (rclcpp::exceptions::ParameterUninitializedException&) {
     if (is_required) {
       RCLCPP_FATAL_STREAM(this->get_logger(), "Missing required parameter '" << name << "', exiting");
@@ -104,7 +105,7 @@ bool LL2MapServer::declareAndLoadParameter(const std::string& name,
     auto_reconfigurable_params_.push_back(std::make_tuple(name, setter));
   }
 
-  return false;
+  return initial_set;
 }
 
 
