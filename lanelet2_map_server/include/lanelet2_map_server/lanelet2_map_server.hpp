@@ -51,9 +51,10 @@ class LL2MapServer : public rclcpp::Node
          * @param to_value parameter range maximum
          * @param step_value parameter range step
          * @param additional_constraints additional constraints description
+         * @return true if the parameter was already initialized from an external source
          */
         template <typename T>
-        void declareAndLoadParameter(const std::string &name,
+        bool declareAndLoadParameter(const std::string &name,
                                     T &param,
                                     const std::string &description,
                                     const bool add_to_auto_reconfigurable_params = true,
@@ -79,6 +80,7 @@ class LL2MapServer : public rclcpp::Node
         void setup();
         void find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const;
         void derive_map_meta(Lanelet2MapMeta& map_meta) const;
+        bool deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const;
 
         bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon) const;
         void pub_tf() const;
@@ -107,12 +109,10 @@ class LL2MapServer : public rclcpp::Node
         std::string map_filepath_;
         std::string map_frame_id_ = "map";
         std::string map_contents_;
-        double origin_lat_ = 0.0;
-        double origin_lon_ = 0.0;
-        bool origin_lat_init_ = false;
-        bool origin_lon_init_ = false;
-        bool origin_lat_dyn_set_ = false;
-        bool origin_lon_dyn_set_ = false;
+        double origin_lat_;
+        double origin_lon_;
+        bool origin_lat_set_ = false;
+        bool origin_lon_set_ = false;
 
         std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
         rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr navsat_subscription_;
