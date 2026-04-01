@@ -1,6 +1,0 @@
-[submodule ".vscode"]
-	path = .vscode
-	url = ../../../dev-environment/vscode.git
-[submodule ".devcontainer"]
-	path = .devcontainer
-	url = ../../../dev-environment/devcontainer.git
