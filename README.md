@@ -1,7 +1,14 @@
-# lanelet2_map_server
+# lanelet2_localization
 
 <p align="center">
+  <a href="https://github.com/openads-project"><img src="https://img.shields.io/badge/OpenADS-f5ff01"/></a>
   <a href="https://www.ros.org"><img src="https://img.shields.io/badge/ROS 2-jazzy-22314e"/></a>
+  <a href="https://github.com/openads-project/lanelet2_localization/releases/latest"><img src="https://img.shields.io/github/v/release/openads-project/lanelet2_localization"/></a>
+  <a href="https://github.com/openads-project/lanelet2_localization/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_localization"/></a>
+  <br>
+  <a href="https://github.com/openads-project/lanelet2_localization/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/docker-ros.yml/badge.svg"/></a>
+  <a href="https://openads-project.github.io/lanelet2_localization"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/docs.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml/badge.svg"/></a>
 </p>
 
 **TODO: Repository tagline/description**
@@ -50,11 +57,11 @@ TODO: High-level repository introduction paragraph
 
 1. Clone the repository.
     ```bash
-    git clone https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_server.git
+    git clone https://github.com/openads-project/lanelet2_localization.git
     ```
 1. Initialize the [`.openads-dev-environment`](https://github.com/openads-project/openads-dev-environment) submodule containing development environment configuration.
     ```bash
-    cd lanelet2_map_server
+    cd lanelet2_localization
     git submodule update --init --recursive
     ```
 1. Open the repository in [Visual Studio Code](https://code.visualstudio.com).
@@ -87,7 +94,7 @@ colcon test-result --verbose
 
 ## 📝 Documentation
 
-Package and node interfaces are documented in the respective package READMEs listed below. Implementation details are found in the [Source Code Documentation](https://openads-project.github.io/lanelet2_map_server).
+Package and node interfaces are documented in the respective package READMEs listed below. Implementation details are found in the [Source Code Documentation](https://openads-project.github.io/lanelet2_localization).
 
 | Package | Description |
 | --- | --- |
