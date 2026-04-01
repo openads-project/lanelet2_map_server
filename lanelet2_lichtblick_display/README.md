@@ -2,6 +2,8 @@
 
 Converts Lanelet2 maps to MarkerArrays for visualization in Lichtblick
 
+![Visualization Example](./assets/visualization_example.png)
+
 ## Nodes
 
 ### `lanelet2_lichtblick_display`
@@ -17,7 +19,7 @@ flowchart LR
 
 | Topic | Type | Description |
 | --- | --- | --- |
-| `~/lichtblick_lanelet2_map` | `visualization_msgs/msg/MarkerArray` | TODO |
+| `~/lichtblick_lanelet2_map` | `visualization_msgs/msg/MarkerArray` | marker visualization of map |
 
 #### Parameters
 
@@ -53,9 +55,9 @@ flowchart LR
 
 | Argument | Default | Description |
 | --- | --- | --- |
-| `output_topic` | `"~/lichtblick_lanelet2_map"` | TODO |
-| `name` | `"lanelet2_lichtblick_display"` | TODO |
-| `namespace` | `""` | TODO |
-| `params` | `os.path.join(get_package_share_directory("lanelet2_lichtblick_display"), "config", "params.yml")` | TODO |
-| `log_level` | `"info"` | TODO |
-| `use_sim_time` | `"false"` | TODO |
+| `output_topic` | `"~/lichtblick_lanelet2_map"` | marker visualization of map |
+| `name` | `"lanelet2_lichtblick_display"` | node name |
+| `namespace` | `""` | node namespace |
+| `params` | `os.path.join(get_package_share_directory("lanelet2_lichtblick_display"), "config", "params.yml")` | path to parameter file |
+| `log_level` | `"info"` | ROS logging level (debug, info, warn, error, fatal) |
+| `use_sim_time` | `"false"` | use simulation clock |

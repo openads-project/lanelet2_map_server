@@ -1,0 +1,10 @@
+- quick start
+- if params have no default, it should not report TODO (see map server README)
+- default command in docker-ros to TODO and check in consistency checks
+- copyright 2-liner in openads scripts
+- copyright notices in lanelet2_map.hpp and lanelet2_map.cpp
+- lanelet2_rviz_display had BSD license?
+- README is not updated after package.xml description changes
+- check package.xml authors (GLI only?)
+- screenshot of rviz display in package readme
+- screenshot of lanelet map in rviz in top-level readme

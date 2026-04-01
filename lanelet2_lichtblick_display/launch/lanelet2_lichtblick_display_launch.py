@@ -15,7 +15,7 @@ from launch_ros.actions import Node, SetParameter
 def generate_launch_description():
 
     remappable_topics = [
-        DeclareLaunchArgument("output_topic", default_value="~/lichtblick_lanelet2_map"),
+        DeclareLaunchArgument("output_topic", default_value="~/lichtblick_lanelet2_map", description="marker visualization of map"),
     ]
 
     args = [
