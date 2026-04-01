@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #include "lanelet2_rviz_display/lanelet2_display.hpp"
 
 #include <cstdint>

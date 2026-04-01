@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <atomic>
@@ -147,7 +150,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   /**
  * @brief Creates and adds a MESH_RESOURCE marker for regulatory elements.
  * * Streamlines the process of visualizing 3D models of traffic signs. It handles the common
- * logic for setting marker properties, including calculating the orientation to be orthogonal to 
+ * logic for setting marker properties, including calculating the orientation to be orthogonal to
  * a reference line.
  * * @param marker_array_msg The marker array message to which the new marker will be added.
  * @param current_marker_id A reference to the marker ID counter, which will be incremented.

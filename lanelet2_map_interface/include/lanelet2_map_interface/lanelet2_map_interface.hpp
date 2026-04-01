@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #include "rclcpp/rclcpp.hpp"
 
 #include <lanelet2_core/LaneletMap.h>

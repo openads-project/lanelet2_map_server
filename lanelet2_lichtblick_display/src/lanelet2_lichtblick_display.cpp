@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #include <lanelet2_lichtblick_display/lanelet2_lichtblick_display.hpp>
 
 namespace lanelet2_lichtblick_display {
