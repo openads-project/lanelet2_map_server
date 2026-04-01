@@ -1,7 +1,0 @@
-include:
-  - project: fb-fi/ops/templates/ci-templates
-    ref: main
-    file: .industrial_ci.template.yml
-variables:
-  ROS_DISTRO: humble
-  NOT_TEST_BUILD: 'true'
