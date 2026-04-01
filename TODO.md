@@ -8,3 +8,17 @@
 - check package.xml authors (GLI only?)
 - screenshot of rviz display in package readme
 - screenshot of lanelet map in rviz in top-level readme
+
+- lanelet2_utilities in lanelet2_route_planning
+  - laneletSorting (60 lines)
+    - getLaneletLineHeading (20 lines)
+      - fromArcCoordinates_fast (50 lines)
+- lanelet2_utilities in lanelet2_object_list_prediction
+  - laneletSorting
+  - internalLine2llLine
+  - internalPath2llPath
+  - llPath2internalPath
+  - llPath2internalLine
+  - llPath2llLineDistanceBased
+  - llPath2llLineTimeBased
+  - computeCurvature
