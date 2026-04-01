@@ -1,57 +1,72 @@
 #include <lanelet2_lichtblick_display/lanelet2_lichtblick_display.hpp>
 
-
 namespace lanelet2_lichtblick_display {
 
-
 Lanelet2LichtblickDisplay::Lanelet2LichtblickDisplay() : Node("lanelet2_lichtblick_display") {
+  this->declareAndLoadParameter("left_bound_line_width", left_bound_line_width_, "Width of the left boundary lines", true, false,
+                                false);
+  this->declareAndLoadParameter("left_bound_color_hex", left_bound_color_hex_, "Color of the left boundary lines", true, false,
+                                false);
+  this->declareAndLoadParameter("left_bound_line_opacity", left_bound_line_opacity_, "Opacity of the left boundary lines", true,
+                                false, false);
 
-  this->declareAndLoadParameter("left_bound_line_width", left_bound_line_width_, "Width of the left boundary lines", true, false, false);
-  this->declareAndLoadParameter("left_bound_color_hex", left_bound_color_hex_, "Color of the left boundary lines", true, false, false);
-  this->declareAndLoadParameter("left_bound_line_opacity", left_bound_line_opacity_, "Opacity of the left boundary lines", true, false, false);
-
-  this->declareAndLoadParameter("right_bound_line_width", right_bound_line_width_, "Width of the right boundary lines", true, false, false);
-  this->declareAndLoadParameter("right_bound_color_hex", right_bound_color_hex_, "Color of the right boundary lines", true, false, false);
-  this->declareAndLoadParameter("right_bound_line_opacity", right_bound_line_opacity_, "Opacity of the right boundary lines", true, false, false);
+  this->declareAndLoadParameter("right_bound_line_width", right_bound_line_width_, "Width of the right boundary lines", true,
+                                false, false);
+  this->declareAndLoadParameter("right_bound_color_hex", right_bound_color_hex_, "Color of the right boundary lines", true, false,
+                                false);
+  this->declareAndLoadParameter("right_bound_line_opacity", right_bound_line_opacity_, "Opacity of the right boundary lines",
+                                true, false, false);
 
   this->declareAndLoadParameter("centerline_line_width", centerline_line_width_, "Width of the centerlines", true, false, false);
   this->declareAndLoadParameter("centerline_color_hex", centerline_color_hex_, "Color of the centerlines", true, false, false);
-  this->declareAndLoadParameter("centerline_line_opacity", centerline_line_opacity_, "Opacity of the centerlines", true, false, false);
+  this->declareAndLoadParameter("centerline_line_opacity", centerline_line_opacity_, "Opacity of the centerlines", true, false,
+                                false);
 
   this->declareAndLoadParameter("lanelet_text_scale", lanelet_text_scale_, "Scale of the lanelet ID text", true, false, false);
-  this->declareAndLoadParameter("lanelet_text_color", lanelet_text_color_hex_,"Color of the lanelet ID text", true, false, false);
-  this->declareAndLoadParameter("lanelet_text_opacity", lanelet_text_opacity_, "Opacity of the lanelet ID text", true, false, false);
+  this->declareAndLoadParameter("lanelet_text_color", lanelet_text_color_hex_, "Color of the lanelet ID text", true, false,
+                                false);
+  this->declareAndLoadParameter("lanelet_text_opacity", lanelet_text_opacity_, "Opacity of the lanelet ID text", true, false,
+                                false);
 
-  this->declareAndLoadParameter("reference_line_width", reference_line_width_, "Width of the reference lines", true, false, false);
-  this->declareAndLoadParameter("reference_line_color_hex", reference_line_color_hex_, "Color of the reference lines", true, false, false);
-  this->declareAndLoadParameter("reference_line_opacity", reference_line_opacity_, "Opacity of the reference lines", true, false, false);
+  this->declareAndLoadParameter("reference_line_width", reference_line_width_, "Width of the reference lines", true, false,
+                                false);
+  this->declareAndLoadParameter("reference_line_color_hex", reference_line_color_hex_, "Color of the reference lines", true,
+                                false, false);
+  this->declareAndLoadParameter("reference_line_opacity", reference_line_opacity_, "Opacity of the reference lines", true, false,
+                                false);
 
-  this->declareAndLoadParameter("traffic_light_mesh_resource", traffic_light_mesh_resource_, "Link to the traffic light model to use", true, false, false);
-  this->declareAndLoadParameter("traffic_light_scale", traffic_light_scale_, "Scale of the traffic lights models", true, false, false);
-  this->declareAndLoadParameter("traffic_light_z_offset", traffic_light_z_offset_, "Offset in z-direction of the traffic lights models (depends on model and scale)", true, false, false);
-  this->declareAndLoadParameter("traffic_light_opacity", traffic_light_opacity_, "Opacity of the traffic lights", true, false, false);
+  this->declareAndLoadParameter("traffic_light_mesh_resource", traffic_light_mesh_resource_,
+                                "Link to the traffic light model to use", true, false, false);
+  this->declareAndLoadParameter("traffic_light_scale", traffic_light_scale_, "Scale of the traffic lights models", true, false,
+                                false);
+  this->declareAndLoadParameter("traffic_light_z_offset", traffic_light_z_offset_,
+                                "Offset in z-direction of the traffic lights models (depends on model and scale)", true, false,
+                                false);
+  this->declareAndLoadParameter("traffic_light_opacity", traffic_light_opacity_, "Opacity of the traffic lights", true, false,
+                                false);
 
-  this->declareAndLoadParameter("yield_sign_mesh_resource", yield_sign_mesh_resource_, "Link to the yield sign model to use", true, false, false);
+  this->declareAndLoadParameter("yield_sign_mesh_resource", yield_sign_mesh_resource_, "Link to the yield sign model to use",
+                                true, false, false);
   this->declareAndLoadParameter("yield_sign_scale", yield_sign_scale_, "Scale of the yield sign models", true, false, false);
-  this->declareAndLoadParameter("yield_sign_z_offset", yield_sign_z_offset_, "Offset in z-direction of the yield sign models (depends on model and scale)", true, false, false);
+  this->declareAndLoadParameter("yield_sign_z_offset", yield_sign_z_offset_,
+                                "Offset in z-direction of the yield sign models (depends on model and scale)", true, false,
+                                false);
   this->declareAndLoadParameter("yield_sign_opacity", yield_sign_opacity_, "Opacity of the yield signs", true, false, false);
 
   this->setup();
 }
 
-
 template <typename T>
 void Lanelet2LichtblickDisplay::declareAndLoadParameter(const std::string& name,
-                                                         T& param,
-                                                         const std::string& description,
-                                                         const bool add_to_auto_reconfigurable_params,
-                                                         const bool is_required,
-                                                         const bool read_only,
-                                                         const std::optional<double>& from_value,
-                                                         const std::optional<double>& to_value,
-                                                         const std::optional<double>& step_value,
-                                                         const std::string& additional_constraints) {
-
+                                                        T& param,
+                                                        const std::string& description,
+                                                        const bool add_to_auto_reconfigurable_params,
+                                                        const bool is_required,
+                                                        const bool read_only,
+                                                        const std::optional<double>& from_value,
+                                                        const std::optional<double>& to_value,
+                                                        const std::optional<double>& step_value,
+                                                        const std::string& additional_constraints) {
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.description = description;
   param_desc.additional_constraints = additional_constraints;
@@ -60,12 +75,12 @@ void Lanelet2LichtblickDisplay::declareAndLoadParameter(const std::string& name,
   auto type = rclcpp::ParameterValue(param).get_type();
 
   if (from_value.has_value() && to_value.has_value()) {
-    if constexpr(std::is_integral_v<T>) {
+    if constexpr (std::is_integral_v<T>) {
       rcl_interfaces::msg::IntegerRange range;
       T step = static_cast<T>(step_value.has_value() ? step_value.value() : 1);
       range.set__from_value(static_cast<T>(from_value.value())).set__to_value(static_cast<T>(to_value.value())).set__step(step);
       param_desc.integer_range = {range};
-    } else if constexpr(std::is_floating_point_v<T>) {
+    } else if constexpr (std::is_floating_point_v<T>) {
       rcl_interfaces::msg::FloatingPointRange range;
       T step = static_cast<T>(step_value.has_value() ? step_value.value() : 1.0);
       range.set__from_value(static_cast<T>(from_value.value())).set__to_value(static_cast<T>(to_value.value())).set__step(step);
@@ -81,7 +96,7 @@ void Lanelet2LichtblickDisplay::declareAndLoadParameter(const std::string& name,
     param = this->get_parameter(name).get_value<T>();
     std::stringstream ss;
     ss << "Loaded parameter '" << name << "': ";
-    if constexpr(is_vector_v<T>) {
+    if constexpr (is_vector_v<T>) {
       ss << "[";
       for (const auto& element : param) ss << element << (&element != &param.back() ? ", " : "");
       ss << "]";
@@ -96,7 +111,7 @@ void Lanelet2LichtblickDisplay::declareAndLoadParameter(const std::string& name,
     } else {
       std::stringstream ss;
       ss << "Missing parameter '" << name << "', using default value: ";
-      if constexpr(is_vector_v<T>) {
+      if constexpr (is_vector_v<T>) {
         ss << "[";
         for (const auto& element : param) ss << element << (&element != &param.back() ? ", " : "");
         ss << "]";
@@ -109,16 +124,13 @@ void Lanelet2LichtblickDisplay::declareAndLoadParameter(const std::string& name,
   }
 
   if (add_to_auto_reconfigurable_params) {
-    std::function<void(const rclcpp::Parameter&)> setter = [&param](const rclcpp::Parameter& p) {
-      param = p.get_value<T>();
-    };
+    std::function<void(const rclcpp::Parameter&)> setter = [&param](const rclcpp::Parameter& p) { param = p.get_value<T>(); };
     auto_reconfigurable_params_.push_back(std::make_tuple(name, setter));
   }
 }
 
-
-rcl_interfaces::msg::SetParametersResult Lanelet2LichtblickDisplay::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
-
+rcl_interfaces::msg::SetParametersResult Lanelet2LichtblickDisplay::parametersCallback(
+    const std::vector<rclcpp::Parameter>& parameters) {
   for (const auto& param : parameters) {
     for (auto& auto_reconfigurable_param : auto_reconfigurable_params_) {
       if (param.get_name() == std::get<0>(auto_reconfigurable_param)) {
@@ -136,14 +148,13 @@ rcl_interfaces::msg::SetParametersResult Lanelet2LichtblickDisplay::parametersCa
   return result;
 }
 
-
 void Lanelet2LichtblickDisplay::setup() {
-
   // callback for dynamic parameter configuration
-  parameters_callback_ = this->add_on_set_parameters_callback(std::bind(&Lanelet2LichtblickDisplay::parametersCallback, this, std::placeholders::_1));
+  parameters_callback_ = this->add_on_set_parameters_callback(
+      std::bind(&Lanelet2LichtblickDisplay::parametersCallback, this, std::placeholders::_1));
 
   // publisher for visualization markers
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(); 
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
   marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/lichtblick_lanelet2_map", qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
@@ -151,40 +162,37 @@ void Lanelet2LichtblickDisplay::setup() {
 
   // periodically check for map updates
   timer_ = this->create_wall_timer(std::chrono::milliseconds(2000), std::bind(&Lanelet2LichtblickDisplay::checkMapStatus, this));
-
 }
-
 
 void Lanelet2LichtblickDisplay::hexToRgb(const std::string& hex, float& r, float& g, float& b) {
-    std::string clean_hex = hex;
-    if (clean_hex.rfind("0x", 0) == 0) {
-        clean_hex = clean_hex.substr(2);
-    } else if (clean_hex.rfind("#", 0) == 0) {
-        clean_hex = clean_hex.substr(1);
-    }
-    if (clean_hex.length() != 6) {
-      RCLCPP_WARN(this->get_logger(), "Invalid hex color string: %s. Defaulting to black.", hex.c_str());
-      r = g = b = 0.0f;
-      return;
-    }
-    
-    unsigned int r_int, g_int, b_int;
+  std::string clean_hex = hex;
+  if (clean_hex.rfind("0x", 0) == 0) {
+    clean_hex = clean_hex.substr(2);
+  } else if (clean_hex.rfind("#", 0) == 0) {
+    clean_hex = clean_hex.substr(1);
+  }
+  if (clean_hex.length() != 6) {
+    RCLCPP_WARN(this->get_logger(), "Invalid hex color string: %s. Defaulting to black.", hex.c_str());
+    r = g = b = 0.0f;
+    return;
+  }
 
-    std::istringstream rs(clean_hex.substr(0, 2));
-    rs >> std::hex >> r_int;
-    r = static_cast<float>(r_int) / 255.0f;
+  unsigned int r_int, g_int, b_int;
 
-    std::istringstream gs(clean_hex.substr(2, 2));
-    gs >> std::hex >> g_int;
-    g = static_cast<float>(g_int) / 255.0f;
+  std::istringstream rs(clean_hex.substr(0, 2));
+  rs >> std::hex >> r_int;
+  r = static_cast<float>(r_int) / 255.0f;
 
-    std::istringstream bs(clean_hex.substr(4, 2));
-    bs >> std::hex >> b_int;
-    b = static_cast<float>(b_int) / 255.0f;
+  std::istringstream gs(clean_hex.substr(2, 2));
+  gs >> std::hex >> g_int;
+  g = static_cast<float>(g_int) / 255.0f;
+
+  std::istringstream bs(clean_hex.substr(4, 2));
+  bs >> std::hex >> b_int;
+  b = static_cast<float>(b_int) / 255.0f;
 }
 
-
-geometry_msgs::msg::Point Lanelet2LichtblickDisplay::toRos(const Eigen::Vector3d &point) {
+geometry_msgs::msg::Point Lanelet2LichtblickDisplay::toRos(const Eigen::Vector3d& point) {
   geometry_msgs::msg::Point ros_point;
   ros_point.x = point.x();
   ros_point.y = point.y();
@@ -192,105 +200,101 @@ geometry_msgs::msg::Point Lanelet2LichtblickDisplay::toRos(const Eigen::Vector3d
   return ros_point;
 }
 
-
 void Lanelet2LichtblickDisplay::clearAllMarkers() {
-    visualization_msgs::msg::MarkerArray marker_array_msg;
-    visualization_msgs::msg::Marker delete_marker;
-    
-    delete_marker.header.frame_id = map_frame_id;
-    delete_marker.header.stamp = this->now();
-    delete_marker.action = visualization_msgs::msg::Marker::DELETEALL;
-    
-    marker_array_msg.markers.push_back(delete_marker);
-    marker_array_publisher_->publish(marker_array_msg);
-}
+  visualization_msgs::msg::MarkerArray marker_array_msg;
+  visualization_msgs::msg::Marker delete_marker;
 
+  delete_marker.header.frame_id = map_frame_id;
+  delete_marker.header.stamp = this->now();
+  delete_marker.action = visualization_msgs::msg::Marker::DELETEALL;
+
+  marker_array_msg.markers.push_back(delete_marker);
+  marker_array_publisher_->publish(marker_array_msg);
+}
 
 void Lanelet2LichtblickDisplay::addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
-                                                  int& current_marker_id,
-                                                  const std::string& ns,
-                                                  float line_width,
-                                                  const std::string& color_hex,
-                                                  float opacity,
-                                                  const std_msgs::msg::Header& header,
-                                                  const std::vector<geometry_msgs::msg::Point>& points) {
-    if (points.empty()) {return;}
+                                                   int& current_marker_id,
+                                                   const std::string& ns,
+                                                   float line_width,
+                                                   const std::string& color_hex,
+                                                   float opacity,
+                                                   const std_msgs::msg::Header& header,
+                                                   const std::vector<geometry_msgs::msg::Point>& points) {
+  if (points.empty()) {
+    return;
+  }
 
-    visualization_msgs::msg::Marker marker;
-    marker.header = header;
-    marker.ns = ns;
-    marker.id = current_marker_id++; // give every marker a unique ID
-    marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-    marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = line_width;
+  visualization_msgs::msg::Marker marker;
+  marker.header = header;
+  marker.ns = ns;
+  marker.id = current_marker_id++;                                   // give every marker a unique ID
+  marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0));  // indefinite since QoS is set to transient local
+  marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
+  marker.action = visualization_msgs::msg::Marker::ADD;
+  marker.scale.x = line_width;
 
-    float r, g, b;
-    hexToRgb(color_hex, r, g, b);
-    marker.color.r = r;
-    marker.color.g = g;
-    marker.color.b = b;
-    marker.color.a = opacity;
-    marker.points = points;
+  float r, g, b;
+  hexToRgb(color_hex, r, g, b);
+  marker.color.r = r;
+  marker.color.g = g;
+  marker.color.b = b;
+  marker.color.a = opacity;
+  marker.points = points;
 
-    marker_array_msg.markers.push_back(marker);
+  marker_array_msg.markers.push_back(marker);
 }
-
 
 void Lanelet2LichtblickDisplay::addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
-                                            int& current_marker_id,
-                                            const std::string& ns,
-                                            const std::string& mesh_resource,
-                                            const geometry_msgs::msg::Point& position,
-                                            double scale,
-                                            double z_offset,
-                                            double opacity,
-                                            const std_msgs::msg::Header& header,
-                                            double yaw_ref_line,
-                                            const geometry_msgs::msg::Point& middle_point) {
-    
-    visualization_msgs::msg::Marker marker;
-    marker.header = header;
-    marker.ns = ns;
-    marker.id = current_marker_id++; // give every marker a unique ID
-    marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0)); // indefinite since QoS is set to transient local
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
-    marker.mesh_resource = mesh_resource;
-    // uniform scale
-    marker.scale.x = scale;
-    marker.scale.y = scale;
-    marker.scale.z = scale;
+                                              int& current_marker_id,
+                                              const std::string& ns,
+                                              const std::string& mesh_resource,
+                                              const geometry_msgs::msg::Point& position,
+                                              double scale,
+                                              double z_offset,
+                                              double opacity,
+                                              const std_msgs::msg::Header& header,
+                                              double yaw_ref_line,
+                                              const geometry_msgs::msg::Point& middle_point) {
+  visualization_msgs::msg::Marker marker;
+  marker.header = header;
+  marker.ns = ns;
+  marker.id = current_marker_id++;                                   // give every marker a unique ID
+  marker.lifetime = rclcpp::Duration(std::chrono::milliseconds(0));  // indefinite since QoS is set to transient local
+  marker.action = visualization_msgs::msg::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+  marker.mesh_resource = mesh_resource;
+  // uniform scale
+  marker.scale.x = scale;
+  marker.scale.y = scale;
+  marker.scale.z = scale;
 
-    // set the position of the mesh marker (depends on scale and model)
-    geometry_msgs::msg::Point adjusted_position = position;
-    adjusted_position.z = z_offset;
-    marker.pose.position = adjusted_position;
+  // set the position of the mesh marker (depends on scale and model)
+  geometry_msgs::msg::Point adjusted_position = position;
+  adjusted_position.z = z_offset;
+  marker.pose.position = adjusted_position;
 
-    // calculate orientation orthogonal to the reference line
-    // 1. need vector from traffic sign to the reference line
-    double dx_to_ref = middle_point.x - position.x;
-    double dy_to_ref = middle_point.y - position.y;
-    double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
-    // 2. two possible perpendicular orientations to the reference line
-    double cand1 = yaw_ref_line + M_PI_2; // +90°
-    double cand2 = yaw_ref_line - M_PI_2; // -90°
-    // measure angular difference (normalized) using atan2(sin,cos)
-    double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
-    double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
-    double final_yaw = (d1 < d2) ? cand1 : cand2;
+  // calculate orientation orthogonal to the reference line
+  // 1. need vector from traffic sign to the reference line
+  double dx_to_ref = middle_point.x - position.x;
+  double dy_to_ref = middle_point.y - position.y;
+  double yaw_to_ref = std::atan2(dy_to_ref, dx_to_ref);
+  // 2. two possible perpendicular orientations to the reference line
+  double cand1 = yaw_ref_line + M_PI_2;  // +90°
+  double cand2 = yaw_ref_line - M_PI_2;  // -90°
+  // measure angular difference (normalized) using atan2(sin,cos)
+  double d1 = std::abs(std::atan2(std::sin(yaw_to_ref - cand1), std::cos(yaw_to_ref - cand1)));
+  double d2 = std::abs(std::atan2(std::sin(yaw_to_ref - cand2), std::cos(yaw_to_ref - cand2)));
+  double final_yaw = (d1 < d2) ? cand1 : cand2;
 
-    tf2::Quaternion q;
-    q.setRPY(0, 0, final_yaw + M_PI_2);
-    marker.pose.orientation = tf2::toMsg(q);
+  tf2::Quaternion q;
+  q.setRPY(0, 0, final_yaw + M_PI_2);
+  marker.pose.orientation = tf2::toMsg(q);
 
-    marker.mesh_use_embedded_materials = true;
-    marker.color.a = opacity;
+  marker.mesh_use_embedded_materials = true;
+  marker.color.a = opacity;
 
-    marker_array_msg.markers.push_back(marker);
+  marker_array_msg.markers.push_back(marker);
 }
-
-
 
 std::optional<std::array<geometry_msgs::msg::Point, 2>> Lanelet2LichtblickDisplay::regulatoryElementReferenceLine(
     const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element) {
@@ -303,11 +307,9 @@ std::optional<std::array<geometry_msgs::msg::Point, 2>> Lanelet2LichtblickDispla
   if (reference_line.size() < 2) {
     return std::nullopt;
   }
-  std::array<geometry_msgs::msg::Point, 2> reference_line_ros = {toRos(reference_line.front()),
-                                                                 toRos(reference_line.back())};
+  std::array<geometry_msgs::msg::Point, 2> reference_line_ros = {toRos(reference_line.front()), toRos(reference_line.back())};
   return reference_line_ros;
 }
-
 
 std::vector<geometry_msgs::msg::Point> Lanelet2LichtblickDisplay::regulatoryElementPositions(
     const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element) {
@@ -323,20 +325,19 @@ std::vector<geometry_msgs::msg::Point> Lanelet2LichtblickDisplay::regulatoryElem
   return positions;
 }
 
-
 void Lanelet2LichtblickDisplay::checkMapStatus() {
   lanelet::LaneletMapConstPtr current_map_ptr = ll2if_->getMapPtr();
-    
+
   // Check if the map has been loaded or if a new map has been received
   if (current_map_ptr && current_map_ptr != last_map_ptr_) {
-      RCLCPP_INFO(this->get_logger(), "New Lanelet2 map detected. Publishing markers...");
+    RCLCPP_INFO(this->get_logger(), "New Lanelet2 map detected. Publishing markers...");
 
-      map_frame_id = ll2if_->map_frame_id_;
-      this->clearAllMarkers();
+    map_frame_id = ll2if_->map_frame_id_;
+    this->clearAllMarkers();
 
-      this->publishMarker(current_map_ptr);
-      last_map_ptr_ = current_map_ptr;
-      need_republish_.store(false); // cleared after publish
+    this->publishMarker(current_map_ptr);
+    last_map_ptr_ = current_map_ptr;
+    need_republish_.store(false);  // cleared after publish
   }
 
   // Check if parameters changed
@@ -347,9 +348,7 @@ void Lanelet2LichtblickDisplay::checkMapStatus() {
   }
 }
 
-
 void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr& lanelet_map) {
-
   if (lanelet_map->laneletLayer.empty()) {
     RCLCPP_WARN(this->get_logger(), "Lanelet2 map is empty.");
     return;
@@ -361,7 +360,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
   std_msgs::msg::Header header;
   header.frame_id = map_frame_id;
   header.stamp = current_timestamp;
-  float r,g,b;
+  float r, g, b;
 
   // Iterate through all lanelets in the map
   for (const auto& lanelet : lanelet_map->laneletLayer) {
@@ -371,9 +370,12 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
     for (const auto& p : lanelet.rightBound()) right_points.push_back(toRos(p.basicPoint()));
     for (const auto& p : lanelet.centerline()) centerline_points.push_back(toRos(p.basicPoint()));
 
-    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_left_boundaries", left_bound_line_width_, left_bound_color_hex_, left_bound_line_opacity_, header, left_points);
-    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_right_boundaries", right_bound_line_width_, right_bound_color_hex_, right_bound_line_opacity_, header, right_points);
-    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_centerlines", centerline_line_width_, centerline_color_hex_, centerline_line_opacity_, header, centerline_points);
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_left_boundaries", left_bound_line_width_,
+                       left_bound_color_hex_, left_bound_line_opacity_, header, left_points);
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_right_boundaries", right_bound_line_width_,
+                       right_bound_color_hex_, right_bound_line_opacity_, header, right_points);
+    addLineStripMarker(marker_array_msg, current_marker_id, "lanelet_centerlines", centerline_line_width_, centerline_color_hex_,
+                       centerline_line_opacity_, header, centerline_points);
 
     // --- Visualize Lanelet ID Text ---
     if (!lanelet.centerline().empty()) {
@@ -390,35 +392,36 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
       geometry_msgs::msg::Point centerline_center;
       double sum_x = 0.0, sum_y = 0.0, sum_z = 0.0;
       for (const auto& p : lanelet.centerline()) {
-          sum_x += p.x();
-          sum_y += p.y();
-          sum_z += p.z();
+        sum_x += p.x();
+        sum_y += p.y();
+        sum_z += p.z();
       }
       if (!lanelet.centerline().empty()) {
-          centerline_center.x = sum_x / lanelet.centerline().size();
-          centerline_center.y = sum_y / lanelet.centerline().size();
-          centerline_center.z = sum_z / lanelet.centerline().size();
+        centerline_center.x = sum_x / lanelet.centerline().size();
+        centerline_center.y = sum_y / lanelet.centerline().size();
+        centerline_center.z = sum_z / lanelet.centerline().size();
       }
       text_marker.pose.position = centerline_center;
-      text_marker.scale.z = lanelet_text_scale_; // For TEXT_VIEW_FACING, scale.z controls the character height
+      text_marker.scale.z = lanelet_text_scale_;  // For TEXT_VIEW_FACING, scale.z controls the character height
 
       hexToRgb(lanelet_text_color_hex_, r, g, b);
       text_marker.color.r = r;
       text_marker.color.g = g;
       text_marker.color.b = b;
       text_marker.color.a = lanelet_text_opacity_;
-      
+
       text_marker.text = std::to_string(lanelet.id());
 
       marker_array_msg.markers.push_back(text_marker);
     }
 
     const auto& regulatory_elements = lanelet.regulatoryElements();
-    for (const auto& regulatory_element: regulatory_elements) {
+    for (const auto& regulatory_element : regulatory_elements) {
       // Check if the element is a reference line
       if (auto reference_line = regulatoryElementReferenceLine(regulatory_element)) {
         std::vector<geometry_msgs::msg::Point> ref_points = {reference_line->at(0), reference_line->at(1)};
-        addLineStripMarker(marker_array_msg, current_marker_id, "reference_lines", reference_line_width_, reference_line_color_hex_, reference_line_opacity_, header, ref_points);
+        addLineStripMarker(marker_array_msg, current_marker_id, "reference_lines", reference_line_width_,
+                           reference_line_color_hex_, reference_line_opacity_, header, ref_points);
 
         // Common regulatory element logic
         // https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/RegulatoryElementTagging.md
@@ -433,9 +436,12 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
         std::vector<geometry_msgs::msg::Point> positions = regulatoryElementPositions(regulatory_element);
         for (const auto& p : positions) {
           if (subtype == "traffic_light") {
-            addMeshMarker(marker_array_msg, current_marker_id, "traffic_lights", traffic_light_mesh_resource_, p, traffic_light_scale_, traffic_light_z_offset_, traffic_light_opacity_, header, yaw_ref_line, middle_point);
+            addMeshMarker(marker_array_msg, current_marker_id, "traffic_lights", traffic_light_mesh_resource_, p,
+                          traffic_light_scale_, traffic_light_z_offset_, traffic_light_opacity_, header, yaw_ref_line,
+                          middle_point);
           } else if (subtype == "right_of_way") {
-            addMeshMarker(marker_array_msg, current_marker_id, "yield_signs", yield_sign_mesh_resource_, p, yield_sign_scale_, yield_sign_z_offset_, yield_sign_opacity_, header, yaw_ref_line, middle_point);
+            addMeshMarker(marker_array_msg, current_marker_id, "yield_signs", yield_sign_mesh_resource_, p, yield_sign_scale_,
+                          yield_sign_z_offset_, yield_sign_opacity_, header, yaw_ref_line, middle_point);
           }
         }
       }
@@ -446,11 +452,9 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
   marker_array_publisher_->publish(marker_array_msg);
 }
 
-} // namespace lanelet2_lichtblick_display
+}  // namespace lanelet2_lichtblick_display
 
-
-int main(int argc, char *argv[]) {
-
+int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<lanelet2_lichtblick_display::Lanelet2LichtblickDisplay>());
   rclcpp::shutdown();

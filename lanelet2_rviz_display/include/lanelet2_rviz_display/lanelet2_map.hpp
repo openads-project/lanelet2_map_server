@@ -43,7 +43,7 @@ enum class ObjectClassification {
   CROSSWALK
 };
 
-using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObject *>;
+using ClassifiedMovableObject = std::pair<ObjectClassification, Ogre::MovableObject*>;
 /**
      * \class Lanelet2Map
      * \brief Displays a Lanelet2Map
@@ -117,7 +117,9 @@ class Lanelet2Map {
     double zSeparator = 0.085;
   };
 
-  Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node, Lanelet2Map::RenderingOptions rend_opts,
+  Lanelet2Map(Ogre::SceneManager* manager,
+              Ogre::SceneNode* parent_node,
+              Lanelet2Map::RenderingOptions rend_opts,
               lanelet::LaneletMapConstPtr map_ptr);
   ~Lanelet2Map();
 
@@ -128,16 +130,16 @@ class Lanelet2Map {
    *
    * @return The Ogre scene node associated with this ll2-map
    */
-  Ogre::SceneNode *getSceneNode() { return scene_node_; }
+  Ogre::SceneNode* getSceneNode() { return scene_node_; }
 
   void updateMap(RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
-  void updateVisibility(const RenderingOptions &rend_opts);
+  void updateVisibility(const RenderingOptions& rend_opts);
 
  private:
   Lanelet2Map::RenderingOptions rend_opts_;  // Rendering options for this ll2-map
 
-  Ogre::SceneManager *scene_manager_;
-  Ogre::SceneNode *scene_node_;  // The scene node that this ll2-map is attached to
+  Ogre::SceneManager* scene_manager_;
+  Ogre::SceneNode* scene_node_;  // The scene node that this ll2-map is attached to
   std::vector<ClassifiedMovableObject> objects_;
 
   std::shared_ptr<Ogre::Material> material_surface_;
@@ -145,43 +147,49 @@ class Lanelet2Map {
 
   void create(lanelet::LaneletMapConstPtr map_ptr);
 
-  void addLaneletToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual);
-  void addSeperatorToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual);
-  void addAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
-  void addParkingAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
-  void addLaneFillToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual);
-  void addSidewalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
-  void addCrosswalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual);
+  void addLaneletToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+  void addSeperatorToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+  void addAreaToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+  void addParkingAreaToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+  void addLaneFillToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+  void addSidewalkToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+  void addCrosswalkToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
 
-  void addRegulatoryElements(const lanelet::ConstLanelet &lanelet, Ogre::SceneNode *parentNode);
+  void addRegulatoryElements(const lanelet::ConstLanelet& lanelet, Ogre::SceneNode* parentNode);
 
-  void attachRefLinesToSceneNode(std::vector<lanelet::ConstLineString3d> &stopLines, Ogre::SceneNode *parentNode);
-  void attachTrafficLightsToSceneNode(std::vector<lanelet::ConstPolygon3d> &trafficLights, Ogre::SceneNode *parentNode);
-  void attachLaneletIdToSceneNode(const lanelet::ConstLanelet &lanelet, Ogre::SceneNode *parentNode);
+  void attachRefLinesToSceneNode(std::vector<lanelet::ConstLineString3d>& stopLines, Ogre::SceneNode* parentNode);
+  void attachTrafficLightsToSceneNode(std::vector<lanelet::ConstPolygon3d>& trafficLights, Ogre::SceneNode* parentNode);
+  void attachLaneletIdToSceneNode(const lanelet::ConstLanelet& lanelet, Ogre::SceneNode* parentNode);
 
-  std::vector<Ogre::Vector3> ogreLineFromLLetLineString(const lanelet::ConstLineString3d &lineString) const;
-  std::vector<Ogre::Vector3> ogreLineFromLLetPolygon(const lanelet::CompoundPolygon3d &polygon) const;
-  std::vector<Ogre::Vector3> ogreLineFromLLetTrafficLight(const lanelet::ConstPolygon3d &polygon3d) const;
-  std::vector<Ogre::Vector3> ogreLineFromLLetPts(const lanelet::ConstPoints3d &ptsVector) const;
+  std::vector<Ogre::Vector3> ogreLineFromLLetLineString(const lanelet::ConstLineString3d& lineString) const;
+  std::vector<Ogre::Vector3> ogreLineFromLLetPolygon(const lanelet::CompoundPolygon3d& polygon) const;
+  std::vector<Ogre::Vector3> ogreLineFromLLetTrafficLight(const lanelet::ConstPolygon3d& polygon3d) const;
+  std::vector<Ogre::Vector3> ogreLineFromLLetPts(const lanelet::ConstPoints3d& ptsVector) const;
   Ogre::Vector3 ogreVec3FromLLetPoint(const lanelet::ConstPoint3d point) const;
   Ogre::Vector3 ogreVec3FromLLetTrafficLight(const lanelet::ConstPoint3d point, const double zOffset) const;
 
   void updateVisibility(ObjectClassification classification, bool visible);
 
   // Helper functions
-  std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3> &line, double buffer_length);
+  std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3>& line, double buffer_length);
   template <typename Iter>
   Ogre::Vector3 getNormal(Iter it, Iter begin, Iter end);
-  void drawLine(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White, double width = 0.1, double zOffset = 0.0);
-  void drawArea(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White, double zOffset = 0.0);
-  void drawMonoPolygon(const std::vector<Ogre::Vector3> &poly, Ogre::ManualObject *obj,
+  void drawLine(const std::vector<Ogre::Vector3>& line,
+                Ogre::ManualObject* obj,
+                Ogre::ColourValue color = Ogre::ColourValue::White,
+                double width = 0.1,
+                double zOffset = 0.0);
+  void drawArea(const std::vector<Ogre::Vector3>& line,
+                Ogre::ManualObject* obj,
+                Ogre::ColourValue color = Ogre::ColourValue::White,
+                double zOffset = 0.0);
+  void drawMonoPolygon(const std::vector<Ogre::Vector3>& poly,
+                       Ogre::ManualObject* obj,
                        Ogre::ColourValue color = Ogre::ColourValue::White);
 
-  void drawLaneFillStrip(const std::vector<Ogre::Vector3> &left,
-                         const std::vector<Ogre::Vector3> &right,
-                         Ogre::ManualObject *obj,
+  void drawLaneFillStrip(const std::vector<Ogre::Vector3>& left,
+                         const std::vector<Ogre::Vector3>& right,
+                         Ogre::ManualObject* obj,
                          Ogre::ColourValue color,
                          double zOffset = 0.0);
 };

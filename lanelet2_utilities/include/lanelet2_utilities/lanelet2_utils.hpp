@@ -48,10 +48,10 @@ struct PathElement {
   bool inverted;
 };
 
-inline bool operator==(const PathElement &lhs, const PathElement &rhs) {
+inline bool operator==(const PathElement& lhs, const PathElement& rhs) {
   return lhs.ll_id == rhs.ll_id && lhs.inverted == rhs.inverted;
 };
-inline bool operator!=(const PathElement &lhs, const PathElement &rhs) { return !(lhs == rhs); };
+inline bool operator!=(const PathElement& lhs, const PathElement& rhs) { return !(lhs == rhs); };
 
 using Path = std::vector<PathElement>;
 
@@ -71,24 +71,22 @@ class Lanelet2Utilities {
    * @param length, length at which to look at - double
    * @return double, angle of Lanelet Line relative to UTM in rad
    */
-  static double getLaneletLineHeading(const ConstLineString3d &laneletLine, const double &length) {
+  static double getLaneletLineHeading(const ConstLineString3d& laneletLine, const double& length) {
     return getLaneletLineHeading(utils::to2D(laneletLine).basicLineString(), length);
   }
 
-  static double getLaneletLineHeading(const ConstLineString2d &laneletLine, const double &length) {
+  static double getLaneletLineHeading(const ConstLineString2d& laneletLine, const double& length) {
     return getLaneletLineHeading(laneletLine.basicLineString(), length);
   }
 
-  static double getLaneletLineHeading(const BasicLineString2d &laneletLine, const double &length) {
+  static double getLaneletLineHeading(const BasicLineString2d& laneletLine, const double& length) {
     double total_length = 0;
-    BasicPoint2d point_x_y_before =
-        fromArcCoordinates_fast(laneletLine, std::max(0.0, length - 0.25), 0., total_length);
+    BasicPoint2d point_x_y_before = fromArcCoordinates_fast(laneletLine, std::max(0.0, length - 0.25), 0., total_length);
     if (total_length > 0) {
       point_x_y_before = fromArcCoordinates_fast(laneletLine, std::max(0.0, total_length - 0.25), 0.);
     }
     BasicPoint2d point_x_y_after = fromArcCoordinates_fast(laneletLine, length + 0.25, 0.);
-    double lanelet_heading =
-        atan2(point_x_y_after.y() - point_x_y_before.y(), point_x_y_after.x() - point_x_y_before.x());
+    double lanelet_heading = atan2(point_x_y_after.y() - point_x_y_before.y(), point_x_y_after.x() - point_x_y_before.x());
 
     // Limit to 2PI
     while (lanelet_heading > M_PI * 2) {
@@ -110,11 +108,11 @@ class Lanelet2Utilities {
    * @param last_lanelet_id(optional), optional last_lanelet_id for better matching over time - long int
    * @return nothing, but input vector of lanelets is sorted
    */
-  static std::vector<double> laneletSorting(const BasicPoint2d &point,
-                                            std::vector<std::pair<double, ConstLanelet>> &lanelets,
-                                            boost::optional<const float &> heading,
-                                            boost::optional<const traffic_rules::TrafficRulesPtr &> trafficRules,
-                                            boost::optional<const int64_t &> last_lanelet_id) {
+  static std::vector<double> laneletSorting(const BasicPoint2d& point,
+                                            std::vector<std::pair<double, ConstLanelet>>& lanelets,
+                                            boost::optional<const float&> heading,
+                                            boost::optional<const traffic_rules::TrafficRulesPtr&> trafficRules,
+                                            boost::optional<const int64_t&> last_lanelet_id) {
     // lanelets[i].first = distance to lanelet
     // lanelets[i].second = lanelet
     std::vector<double> costs;
@@ -133,14 +131,12 @@ class Lanelet2Utilities {
       const ArcCoordinates arccordinates_point = geometry::toArcCoordinates(lanelets[i].second.centerline2d(), point);
       const bool is_inside = lanelet::geometry::inside(lanelets[i].second, point);
 
-      double cost_for_this_lanelet =
-          (is_inside ? 0.5 : 2.0) * arccordinates_point.distance * arccordinates_point.distance;
+      double cost_for_this_lanelet = (is_inside ? 0.5 : 2.0) * arccordinates_point.distance * arccordinates_point.distance;
 
       if (!!heading) {
         double diff_heading;  // rad
 
-        diff_heading =
-            std::abs(*heading - getLaneletLineHeading(lanelets[i].second.centerline(), arccordinates_point.length));
+        diff_heading = std::abs(*heading - getLaneletLineHeading(lanelets[i].second.centerline(), arccordinates_point.length));
 
         if (diff_heading > M_PI) {
           diff_heading = M_PI * 2.0 - diff_heading;
@@ -169,7 +165,7 @@ class Lanelet2Utilities {
     }
 
     std::sort(lanelets_n_costs.begin(), lanelets_n_costs.end(),
-              [](const auto &i, const auto &j) { return i.lanelet_cost < j.lanelet_cost; });
+              [](const auto& i, const auto& j) { return i.lanelet_cost < j.lanelet_cost; });
 
     for (uint i = 0; i < lanelets_n_costs.size(); i++) {
       lanelets.at(i) = lanelets_n_costs[i].lanelet;
@@ -178,9 +174,9 @@ class Lanelet2Utilities {
     return costs;
   }
 
-  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString3d &ll_line) {
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString3d& ll_line) {
     std::vector<geometry_msgs::msg::Point> points;
-    for (auto &p : ll_line) {
+    for (auto& p : ll_line) {
       geometry_msgs::msg::Point point;
       point.x = p.x();
       point.y = p.y();
@@ -190,9 +186,9 @@ class Lanelet2Utilities {
     return points;
   }
 
-  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString2d &ll_line) {
+  static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString2d& ll_line) {
     std::vector<geometry_msgs::msg::Point> points;
-    for (auto &p : ll_line) {
+    for (auto& p : ll_line) {
       geometry_msgs::msg::Point point;
       point.x = p.x();
       point.y = p.y();
@@ -202,8 +198,10 @@ class Lanelet2Utilities {
     return points;
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const double &length,
-                                              const double &distance, boost::optional<double &> line_length = {}) {
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d& line,
+                                              const double& length,
+                                              const double& distance,
+                                              boost::optional<double&> line_length = {}) {
     if (line.size() == 1) {
       return line.at(0);
     }
@@ -253,31 +251,29 @@ class Lanelet2Utilities {
     return BasicPoint2d(p_x + dy * distance, p_y - dx * distance);
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const double &length,
-                                              const double &distance) {
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d& line, const double& length, const double& distance) {
     return fromArcCoordinates_fast(line.basicLineString(), length, distance);
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const double &length,
-                                              const double &distance) {
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d& line, const double& length, const double& distance) {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), length, distance);
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d &line, const ArcCoordinates &arc) {
+  static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(line, arc.length, arc.distance);
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d &line, const ArcCoordinates &arc) {
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(line.basicLineString(), arc.length, arc.distance);
   }
 
-  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d &line, const ArcCoordinates &arc) {
+  static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), arc.length, arc.distance);
   }
 
-  static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d> &boundaries,
-                                 const std::pair<BasicLineString2d, BasicLineString2d> &segments,
-                                 const BasicLineString2d &centerline) {
+  static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d>& boundaries,
+                                 const std::pair<BasicLineString2d, BasicLineString2d>& segments,
+                                 const BasicLineString2d& centerline) {
     // Left
     {
       const BasicPoint2d boundaryEnd = getLastBoundaryPoint(segments.first, centerline, 10.0);
@@ -295,8 +291,9 @@ class Lanelet2Utilities {
     }
   }
 
-  static void delFromBoundarySegment(BasicLineString2d &left_segment, BasicLineString2d &right_segment,
-                                     const BasicLineString2d &centerline) {
+  static void delFromBoundarySegment(BasicLineString2d& left_segment,
+                                     BasicLineString2d& right_segment,
+                                     const BasicLineString2d& centerline) {
     // Left
     {
       const BasicPoint2d boundaryEnd = getLastBoundaryPoint(left_segment, centerline, 10.0);
@@ -314,27 +311,28 @@ class Lanelet2Utilities {
     }
   }
 
-  static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d &boundary_segment,
-                                           const BasicLineString2d &centerline, const double &max_distance) {
-    const BasicPoint2d test_p =
-        geometry::internal::lateralShiftPointAtIndex(centerline, centerline.size() - 1, max_distance);
+  static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d& boundary_segment,
+                                           const BasicLineString2d& centerline,
+                                           const double& max_distance) {
+    const BasicPoint2d test_p = geometry::internal::lateralShiftPointAtIndex(centerline, centerline.size() - 1, max_distance);
     const BasicLineString2d test_line({centerline.back(), test_p});
     BasicPoints2d interpoints;
     boost::geometry::intersection(boundary_segment, test_line, interpoints);
 
     // Sort according to distance
     std::vector<std::pair<double, BasicPoint2d>> all_interpoints;
-    for (const BasicPoint2d &poi : interpoints) {
+    for (const BasicPoint2d& poi : interpoints) {
       all_interpoints.emplace_back(geometry::distance(centerline.back(), poi), poi);
     }
-    std::sort(all_interpoints.begin(), all_interpoints.end(),
-              [](auto const &t1, auto const &t2) { return t1.first < t2.first; });
+    std::sort(all_interpoints.begin(), all_interpoints.end(), [](auto const& t1, auto const& t2) { return t1.first < t2.first; });
 
     return interpoints.size() ? all_interpoints.front().second : BasicPoint2d(boundary_segment.back());
   }
 
-  static void splitLinestring(const BasicLineString2d &ls, const BasicPoint2d &pt, BasicLineString2d &line1,
-                              BasicLineString2d &line2) {
+  static void splitLinestring(const BasicLineString2d& ls,
+                              const BasicPoint2d& pt,
+                              BasicLineString2d& line1,
+                              BasicLineString2d& line2) {
     const ArcCoordinates arc_pt = geometry::toArcCoordinates(ls, pt);
     BasicPoint2d nearestPoint = geometry::nearestPointAtDistance(ls, arc_pt.length);
     const ArcCoordinates arc_nearest_pt = geometry::toArcCoordinates(ls, nearestPoint);
@@ -350,20 +348,19 @@ class Lanelet2Utilities {
     line2.insert(line2.begin() + 1, idx + 1, ls.end());
   }
 
-  static BasicLineString2d smoothByQuadraticBezierCurve(const BasicLineString2d &input_line, uint smooth_factor) {
+  static BasicLineString2d smoothByQuadraticBezierCurve(const BasicLineString2d& input_line, uint smooth_factor) {
     BasicLineString2d output_line;
     output_line.push_back(input_line.at(0));
     // quadratic bezier curve smoothing
-    for (uint p0_idx = 0; p0_idx < input_line.size() - smooth_factor;
-         p0_idx++) {  // https://stackoverflow.com/a/34750777
+    for (uint p0_idx = 0; p0_idx < input_line.size() - smooth_factor; p0_idx++) {  // https://stackoverflow.com/a/34750777
       // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
       // https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
       uint p1_idx = std::min(p0_idx + smooth_factor, uint(input_line.size()) - 1);
       uint p2_idx = std::min(p1_idx + smooth_factor, uint(input_line.size()) - 1);
 
-      const BasicPoint2d &p0 = input_line.at(p0_idx);
-      const BasicPoint2d &p1 = input_line.at(p1_idx);
-      const BasicPoint2d &p2 = input_line.at(p2_idx);
+      const BasicPoint2d& p0 = input_line.at(p0_idx);
+      const BasicPoint2d& p1 = input_line.at(p1_idx);
+      const BasicPoint2d& p2 = input_line.at(p2_idx);
       if (p0 == p1) {
         continue;
       }
@@ -399,20 +396,20 @@ class Lanelet2Utilities {
   }
 
   // Line conversions
-  static void internalLine2llLine(BasicLineString2d &lanelet_line, const LineWithTime &line) {
+  static void internalLine2llLine(BasicLineString2d& lanelet_line, const LineWithTime& line) {
     lanelet_line.clear();
     lanelet_line.reserve(line.size());
 
-    for (const auto &point : line) {
+    for (const auto& point : line) {
       lanelet_line.push_back(BasicPoint2d(point.x, point.y));
     }
   }
 
-  static void llLine2internalLine(const BasicLineString3d &lanelet_line, LineWithTime &line) {
+  static void llLine2internalLine(const BasicLineString3d& lanelet_line, LineWithTime& line) {
     line.clear();
     line.reserve(lanelet_line.size());
 
-    for (auto &lanelet_point : lanelet_line) {
+    for (auto& lanelet_point : lanelet_line) {
       PointWithTime point;
       point.x = lanelet_point.x();
       point.y = lanelet_point.y();
@@ -423,7 +420,7 @@ class Lanelet2Utilities {
   }
 
   // Path conversions
-  static ConstLanelets internalPath2llPath(const Path &ll_id_vec, const LaneletMapConstPtr &ll_map) {
+  static ConstLanelets internalPath2llPath(const Path& ll_id_vec, const LaneletMapConstPtr& ll_map) {
     ConstLanelets ll_route;
     ll_route.reserve(ll_id_vec.size());
 
@@ -437,11 +434,11 @@ class Lanelet2Utilities {
     return ll_route;
   }
 
-  static Path llPath2internalPath(const ConstLanelets &ll_route) {
+  static Path llPath2internalPath(const ConstLanelets& ll_route) {
     Path ll_id_vec;
     ll_id_vec.reserve(ll_route.size());
 
-    for (const auto &ll_id : ll_route) {
+    for (const auto& ll_id : ll_route) {
       ll_id_vec.push_back({ll_id.id(), ll_id.inverted()});
     }
 
@@ -449,12 +446,12 @@ class Lanelet2Utilities {
   }
 
   // Path to line conversions
-  static LineWithTime llPath2internalLine(const ConstLanelets &ll_route) {
+  static LineWithTime llPath2internalLine(const ConstLanelets& ll_route) {
     LineWithTime line;
     line.reserve(ll_route.size());
 
-    for (const auto &ll : ll_route) {
-      for (const auto &p : ll.centerline()) {
+    for (const auto& ll : ll_route) {
+      for (const auto& p : ll.centerline()) {
         PointWithTime point;
         point.x = p.x();
         point.y = p.y();
@@ -466,10 +463,13 @@ class Lanelet2Utilities {
     return line;
   }
 
-  static BasicLineString2d llPath2llLineTimeBased(const ConstLanelets &ll_path, const BasicPoint2d &cur_pos,
-                                                  const double &vel, const double &t_ref, const double &t_max,
-                                                  const double &dt,
-                                                  boost::optional<const BasicPoint2d &> target_point) {
+  static BasicLineString2d llPath2llLineTimeBased(const ConstLanelets& ll_path,
+                                                  const BasicPoint2d& cur_pos,
+                                                  const double& vel,
+                                                  const double& t_ref,
+                                                  const double& t_max,
+                                                  const double& dt,
+                                                  boost::optional<const BasicPoint2d&> target_point) {
     BasicLineString2d path_line;
 
     std::vector<BasicLineString2d> segments;
@@ -533,8 +533,8 @@ class Lanelet2Utilities {
         break;
       }
 
-      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(
-          segments.at(l), s_segment, d));  // Lanelet2Utilities from new lanelet2_utils.hpp
+      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(segments.at(l), s_segment,
+                                                                     d));  // Lanelet2Utilities from new lanelet2_utils.hpp
 
       if (b_offset) {
         // https://www.desmos.com/calculator/erjar0accp
@@ -546,8 +546,8 @@ class Lanelet2Utilities {
 
       if (need_new_segment) {  // lane change
         l++;
-        const BasicPoint2d &p = path_line.back();
-        const BasicLineString2d &line = segments.at(l);
+        const BasicPoint2d& p = path_line.back();
+        const BasicLineString2d& line = segments.at(l);
         w = 0.5 * geometry::signedDistance(line, p) - d / 2;
         len = geometry::length(segments.at(l));
         s_segment = 0.0;
@@ -579,10 +579,15 @@ class Lanelet2Utilities {
 
   // Creates a linestring from a lanelet path, sampled by distane with step size ds, accounting for lane changes with a sine function
   static BasicLineString2d llPath2llLineDistanceBased(
-      const ConstLanelets &ll_path, const BasicPoint2d &cur_pos, const double &vel, const double &t_ref,
-      const double &s_max, const double &ds, boost::optional<const BasicPoint2d &> target_point,
-      boost::optional<std::pair<BasicLineString2d, BasicLineString2d> &> boundaries = {},
-      boost::optional<const routing::RoutingGraph &> routing_graph = {}) {
+      const ConstLanelets& ll_path,
+      const BasicPoint2d& cur_pos,
+      const double& vel,
+      const double& t_ref,
+      const double& s_max,
+      const double& ds,
+      boost::optional<const BasicPoint2d&> target_point,
+      boost::optional<std::pair<BasicLineString2d, BasicLineString2d>&> boundaries = {},
+      boost::optional<const routing::RoutingGraph&> routing_graph = {}) {
     BasicLineString2d path_line;
     path_line.push_back(cur_pos);
 
@@ -617,7 +622,7 @@ class Lanelet2Utilities {
         if (!!routing_graph) {
           ConstLanelets right_lanelets = routing_graph->rights(ll_path.at(l));
           size_t ll_count = 0;
-          for (const auto &ll : right_lanelets) {
+          for (const auto& ll : right_lanelets) {
             if (ll.hasAttribute(AttributeName::Subtype) &&
                 ll.attribute(AttributeName::Subtype) == AttributeValueString::BicycleLane &&
                 ((ll.leftBound().hasAttribute(AttributeName::Subtype) &&
@@ -647,8 +652,8 @@ class Lanelet2Utilities {
           }
           wasBicycleBoundary = true;
         }
-        segments_boundary_right.back().insert(segments_boundary_right.back().end(),
-                                              bicycle_lane_right.begin() + offset_right, bicycle_lane_right.end());
+        segments_boundary_right.back().insert(segments_boundary_right.back().end(), bicycle_lane_right.begin() + offset_right,
+                                              bicycle_lane_right.end());
       }
     }
 
@@ -719,23 +724,23 @@ class Lanelet2Utilities {
       // Lane change
       if (need_new_segment) {
         l++;
-        const BasicPoint2d &p = path_line.back();
-        const BasicLineString2d &line = segments.at(l);
+        const BasicPoint2d& p = path_line.back();
+        const BasicLineString2d& line = segments.at(l);
         w = 0.5 * geometry::signedDistance(line, p) - d / 2;
         len = geometry::length(segments.at(l));
         s_maneuver = 0.0;
         b_offset = true;
         d = w * sin(s_maneuver / s_ref * M_PI + M_PI_2) + w;
 
-        const BasicPoint2d p_tmp = Lanelet2Utilities::fromArcCoordinates_fast(
-            segments.at(l), 0.0, d);  // Lanelet2Utilities from new lanelet2_utils.hpp
+        const BasicPoint2d p_tmp =
+            Lanelet2Utilities::fromArcCoordinates_fast(segments.at(l), 0.0, d);  // Lanelet2Utilities from new lanelet2_utils.hpp
         s_segment = ds - geometry::distance(path_line.back(), p_tmp);
 
         // Last boundary point before lane change
         if (!!boundaries) {
-          Lanelet2Utilities::addBoundarySegment(
-              *boundaries, std::make_pair(segments_boundary_left[l - 1], segments_boundary_right[l - 1]),
-              path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
+          Lanelet2Utilities::addBoundarySegment(*boundaries,
+                                                std::make_pair(segments_boundary_left[l - 1], segments_boundary_right[l - 1]),
+                                                path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
           boundary_dist_left = geometry::distance(path_line.back(), boundaries->first.back());
           boundary_dist_right = geometry::distance(path_line.back(), boundaries->second.back());
         }
@@ -750,8 +755,8 @@ class Lanelet2Utilities {
         b_lane_change_complete = true;
       }
 
-      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(
-          segments.at(l), s_segment, d));  // Lanelet2Utilities from new lanelet2_utils.hpp
+      path_line.push_back(Lanelet2Utilities::fromArcCoordinates_fast(segments.at(l), s_segment,
+                                                                     d));  // Lanelet2Utilities from new lanelet2_utils.hpp
 
       if (!!boundaries) {
         // Lane change completed -> remove original boundaries during lane change and insert our manually created boundaries instead
@@ -777,15 +782,14 @@ class Lanelet2Utilities {
       s_total += ds;
     }
     if (!!boundaries && l < segments_boundary_left.size()) {
-      Lanelet2Utilities::addBoundarySegment(*boundaries,
-                                            std::make_pair(segments_boundary_left[l], segments_boundary_right[l]),
+      Lanelet2Utilities::addBoundarySegment(*boundaries, std::make_pair(segments_boundary_left[l], segments_boundary_right[l]),
                                             path_line);  // Lanelet2Utilities from new lanelet2_utils.hpp
     }
 
     return path_line;
   }
 
-  static double computeCurvature(const BasicPoint2d &p1, const BasicPoint2d &p2, const BasicPoint2d &p3) {
+  static double computeCurvature(const BasicPoint2d& p1, const BasicPoint2d& p2, const BasicPoint2d& p3) {
     // https://en.wikipedia.org/wiki/Menger_curvature#Definition
     const double area = 0.5 * ((p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x()));
     const double side1 = geometry::distance(p1, p2);

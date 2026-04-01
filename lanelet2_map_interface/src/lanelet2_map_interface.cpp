@@ -38,8 +38,7 @@ std::filesystem::path resolveFilepath(const std::string& path_string) {
 LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name)
     : parent_node_(parent_node), map_server_name_(map_server_name) {
   // default map filepath includes node name to avoid race conditions
-  map_filepath_ =
-      std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm";
+  map_filepath_ = std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm";
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.description = "Local filepath to where map from map server is written to (relative to $ROS_HOME)";
   try {
@@ -61,31 +60,25 @@ LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_serv
 
 void LL2MapInterface::findMapServer() {
   if (!parameter_client_->wait_for_service(0.01s)) {
-    RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...",
-                map_server_name_.c_str());
+    RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name_.c_str());
     return;
   } else {
     startup_timer_->cancel();
-    auto parameters_future = parameter_client_->get_parameters(
-        {"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-        std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service",
-                map_server_name_.c_str());
+    auto parameters_future =
+        parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                          std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service", map_server_name_.c_str());
 
     // Only declare parameters once
     if (!params_declared_) {
       frame_id_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       contents_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       params_declared_ = true;
     }
   }
