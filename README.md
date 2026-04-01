@@ -27,7 +27,7 @@ TODO: High-level repository introduction paragraph
 
 1. Start a container of the pre-built runtime image.
     ```bash
-    docker run --rm -it TODO bash
+    docker run --rm -it ghcr.io/openads-project/lanelet2_localization:latest bash
     ```
 1. Inside the container, launch the pre-built nodes.
     ```bash
@@ -98,11 +98,11 @@ Package and node interfaces are documented in the respective package READMEs lis
 
 | Package | Description |
 | --- | --- |
-| [lanelet2_lichtblick_display](lanelet2_lichtblick_display/README.md) | Visualizes Lanelet2 maps by converting lanelet elements into visualization markersv(marker arrays) suitable for Lichtblick |
-| [lanelet2_map_interface](lanelet2_map_interface/README.md) | The lanelet2_map_interface-package provides a library that can be included in other modules that need access to a lanelet2 map. |
+| [lanelet2_lichtblick_display](lanelet2_lichtblick_display/README.md) | Converts Lanelet2 maps to MarkerArrays for visualization in Lichtblick |
+| [lanelet2_map_interface](lanelet2_map_interface/README.md) | Library to receive Lanelet2 maps from lanelet2_map_server |
 | [lanelet2_map_server](lanelet2_map_server/README.md) | Provides Lanelet2 maps to other modules |
-| [lanelet2_rviz_display](lanelet2_rviz_display/README.md) | Plugin for RViz to visualize a lanelet2 map. |
-| [lanelet2_utilities](lanelet2_utilities/README.md) | The lanelet2_utilities package contains lanelet2 specific utility funtions |
+| [lanelet2_rviz_display](lanelet2_rviz_display/README.md) | RViz plugin to visualize Lanelet2 maps |
+| [lanelet2_utilities](lanelet2_utilities/README.md) | Library containing lanelet2 utility functions |
 
 ## ⚖️ Licensing
 

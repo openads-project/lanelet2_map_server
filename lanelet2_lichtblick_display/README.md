@@ -1,6 +1,6 @@
 # `lanelet2_lichtblick_display`
 
-Visualizes Lanelet2 maps by converting lanelet elements into visualization markersv(marker arrays) suitable for Lichtblick
+Converts Lanelet2 maps to MarkerArrays for visualization in Lichtblick
 
 ## Nodes
 
