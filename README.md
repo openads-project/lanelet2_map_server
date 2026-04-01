@@ -114,7 +114,8 @@ Development and maintenance of this repository are supported by the following pr
 
 | Project | Funding Institution | Grant Number |
 | --- | --- | --- |
-| TODO | TODO | TODO |
+| [autotech.agil](https://www.autotechagil.de/) | 🇩🇪 Federal Ministry for Research, Technology and Space (BMFTR) | 01IS22088A |
+| [AIthena](https://aithena.eu/) | 🇪🇺 European Union | 101076754 |
 
 <p>
   <img src="https://www.drought.uni-freiburg.de/stressres/images/bmftr-logo/image" height=70>
