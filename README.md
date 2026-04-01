@@ -11,7 +11,7 @@
   <a href="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml/badge.svg"/></a>
 </p>
 
-**TODO: Repository tagline/description**
+**ROS 2 Localization Utilities for Automated Driving based on Lanelet2**
 
 TODO: High-level repository introduction paragraph
 
