@@ -102,7 +102,6 @@ Package and node interfaces are documented in the respective package READMEs lis
 | [lanelet2_map_interface](lanelet2_map_interface/README.md) | Library to receive Lanelet2 maps from lanelet2_map_server |
 | [lanelet2_map_server](lanelet2_map_server/README.md) | Provides Lanelet2 maps to other modules |
 | [lanelet2_rviz_display](lanelet2_rviz_display/README.md) | RViz plugin to visualize Lanelet2 maps |
-| [lanelet2_utilities](lanelet2_utilities/README.md) | Library containing lanelet2 utility functions |
 
 ## ⚖️ Licensing
 
