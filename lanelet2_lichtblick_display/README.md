@@ -40,11 +40,11 @@ flowchart LR
 | `reference_line_width` | `float` | `0.2` | Width of the reference lines |
 | `reference_line_color_hex` | `string` | `"#FFFF00"` | Color of the reference lines |
 | `reference_line_opacity` | `float` | `0.5` | Opacity of the reference lines |
-| `traffic_light_mesh_resource` | `string` | `TODO` | Link to the traffic light model to use |
+| `traffic_light_mesh_resource` | `string` | - | Link to the traffic light model to use |
 | `traffic_light_scale` | `float` | `1.0` | Scale of the traffic lights models |
 | `traffic_light_z_offset` | `float` | `1.3` | Offset in z-direction of the traffic lights models (depends on model and scale) |
 | `traffic_light_opacity` | `float` | `1.0` | Opacity of the traffic lights |
-| `yield_sign_mesh_resource` | `string` | `TODO` | Link to the yield sign model to use |
+| `yield_sign_mesh_resource` | `string` | - | Link to the yield sign model to use |
 | `yield_sign_scale` | `float` | `1.0` | Scale of the yield sign models |
 | `yield_sign_z_offset` | `float` | `0.0` | Offset in z-direction of the yield sign models (depends on model and scale) |
 | `yield_sign_opacity` | `float` | `1.0` | Opacity of the yield signs |
