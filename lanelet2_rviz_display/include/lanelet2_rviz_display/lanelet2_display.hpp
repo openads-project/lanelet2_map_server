@@ -26,11 +26,28 @@ class Lanelet2Display : public rviz_common::Display {
   Q_OBJECT
 
  public:
+  /**
+   * @brief Creates the RViz display and initializes its configurable properties.
+   */
   Lanelet2Display();
+
+  /**
+   * @brief Destroys the RViz display and releases its map visualization resources.
+   */
   ~Lanelet2Display() override;
 
   // Overrides from Display
+  /**
+   * @brief Initializes the display once RViz has provided the rendering context.
+   */
   void onInitialize() override;
+
+  /**
+   * @brief Periodically updates the display and refreshes the rendered map when needed.
+   *
+   * @param dt wall-clock time since the previous update
+   * @param ros_dt ROS time since the previous update
+   */
   void update(float dt, float ros_dt) override;
 
  private Q_SLOTS:
@@ -52,9 +69,28 @@ class Lanelet2Display : public rviz_common::Display {
   void update3D();
 
  private:
+  /**
+   * @brief Creates the map interface used to fetch map data from the server node.
+   *
+   * @param parent_node ROS node used for the interface internals
+   */
   void initializeMapInterface(rclcpp::Node& parent_node);
+
+  /**
+   * @brief Creates the RViz rendering object for the currently loaded map.
+   *
+   * @return `true` after the visualization object has been created
+   */
   bool visualizeMap();
+
+  /**
+   * @brief Rebuilds the rendered map using the current rendering options.
+   */
   void updateVisualization();
+
+  /**
+   * @brief Applies visibility toggles to the existing rendered map objects.
+   */
   void updateVisibility();
 
   LL2MapInterface* ll2if_;

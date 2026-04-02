@@ -457,6 +457,13 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
 
 }  // namespace lanelet2_lichtblick_display
 
+/**
+ * @brief Starts the Lanelet2 Lichtblick display node.
+ *
+ * @param argc number of command-line arguments
+ * @param argv command-line argument array
+ * @return process exit code
+ */
 int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<lanelet2_lichtblick_display::Lanelet2LichtblickDisplay>());

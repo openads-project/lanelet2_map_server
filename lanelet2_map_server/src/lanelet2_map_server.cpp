@@ -520,6 +520,13 @@ void LL2MapServer::pub_tf() const {
   RCLCPP_INFO(get_logger(), "Broadcast static transform from '%s' to '%s'", t.header.frame_id.c_str(), t.child_frame_id.c_str());
 }
 
+/**
+ * @brief Starts the Lanelet2 map server node.
+ *
+ * @param argc number of command-line arguments
+ * @param argv command-line argument array
+ * @return process exit code
+ */
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<LL2MapServer>());

@@ -120,12 +120,27 @@ class Lanelet2Map {
     double zSeparator = 0.085;
   };
 
+  /**
+   * @brief Creates a renderable Lanelet2 map attached to an Ogre scene node.
+   *
+   * @param manager Ogre scene manager used to create render objects
+   * @param parent_node parent scene node that owns the map scene node
+   * @param rend_opts initial rendering options
+   * @param map_ptr map to render initially
+   */
   Lanelet2Map(Ogre::SceneManager* manager,
               Ogre::SceneNode* parent_node,
               Lanelet2Map::RenderingOptions rend_opts,
               lanelet::LaneletMapConstPtr map_ptr);
+
+  /**
+   * @brief Destroys the rendered map and all Ogre objects owned by it.
+   */
   ~Lanelet2Map();
 
+  /**
+   * @brief Removes all currently attached Ogre objects from the scene node.
+   */
   void clearObjects();
 
   /**
@@ -135,7 +150,19 @@ class Lanelet2Map {
    */
   Ogre::SceneNode* getSceneNode() { return scene_node_; }
 
+  /**
+   * @brief Replaces the displayed map and rendering configuration.
+   *
+   * @param rend_opts new rendering options
+   * @param map_ptr map to render
+   */
   void updateMap(RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
+
+  /**
+   * @brief Updates visibility of already-created objects without rebuilding geometry.
+   *
+   * @param rend_opts rendering options that define which classes should be visible
+   */
   void updateVisibility(const RenderingOptions& rend_opts);
 
  private:
@@ -148,48 +175,228 @@ class Lanelet2Map {
   std::shared_ptr<Ogre::Material> material_surface_;
   std::shared_ptr<Ogre::Material> material_line_;
 
+  /**
+   * @brief Builds the complete Ogre representation of a Lanelet2 map.
+   *
+   * @param map_ptr map to render
+   */
   void create(lanelet::LaneletMapConstPtr map_ptr);
 
+  /**
+   * @brief Adds the lanelet boundary geometry for a single lanelet.
+   *
+   * @param lanelet lanelet to render
+   * @param manual manual object receiving the geometry
+   */
   void addLaneletToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds separator markings associated with a lanelet.
+   *
+   * @param lanelet lanelet whose separators are rendered
+   * @param manual manual object receiving the geometry
+   */
   void addSeperatorToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds an area outline or fill geometry.
+   *
+   * @param area area primitive to render
+   * @param manual manual object receiving the geometry
+   */
   void addAreaToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds a parking area outline or fill geometry.
+   *
+   * @param area parking area primitive to render
+   * @param manual manual object receiving the geometry
+   */
   void addParkingAreaToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds a filled road-surface polygon for a lanelet.
+   *
+   * @param lanelet lanelet to render
+   * @param manual manual object receiving the geometry
+   */
   void addLaneFillToManualObject(const lanelet::ConstLanelet& lanelet, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds a filled sidewalk polygon.
+   *
+   * @param area sidewalk area to render
+   * @param manual manual object receiving the geometry
+   */
   void addSidewalkToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
+
+  /**
+   * @brief Adds a filled crosswalk polygon.
+   *
+   * @param area crosswalk area to render
+   * @param manual manual object receiving the geometry
+   */
   void addCrosswalkToManualObject(const lanelet::ConstArea& area, Ogre::ManualObject* manual);
 
+  /**
+   * @brief Adds rendered regulatory elements belonging to a lanelet.
+   *
+   * @param lanelet lanelet whose regulatory elements are processed
+   * @param parentNode scene node that receives the created objects
+   */
   void addRegulatoryElements(const lanelet::ConstLanelet& lanelet, Ogre::SceneNode* parentNode);
 
+  /**
+   * @brief Attaches stop-line reference lines to the scene.
+   *
+   * @param stopLines stop-line geometries to render
+   * @param parentNode scene node that receives the created objects
+   */
   void attachRefLinesToSceneNode(std::vector<lanelet::ConstLineString3d>& stopLines, Ogre::SceneNode* parentNode);
+
+  /**
+   * @brief Attaches traffic-light geometries to the scene.
+   *
+   * @param trafficLights traffic-light polygons to render
+   * @param parentNode scene node that receives the created objects
+   */
   void attachTrafficLightsToSceneNode(std::vector<lanelet::ConstPolygon3d>& trafficLights, Ogre::SceneNode* parentNode);
+
+  /**
+   * @brief Attaches a text label showing a lanelet identifier.
+   *
+   * @param lanelet lanelet whose identifier is shown
+   * @param parentNode scene node that receives the created objects
+   */
   void attachLaneletIdToSceneNode(const lanelet::ConstLanelet& lanelet, Ogre::SceneNode* parentNode);
 
+  /**
+   * @brief Converts a lanelet line string to Ogre coordinates.
+   *
+   * @param lineString line string to convert
+   * @return converted polyline in Ogre coordinates
+   */
   std::vector<Ogre::Vector3> ogreLineFromLLetLineString(const lanelet::ConstLineString3d& lineString) const;
+
+  /**
+   * @brief Converts a lanelet polygon boundary to Ogre coordinates.
+   *
+   * @param polygon polygon to convert
+   * @return converted polygon outline in Ogre coordinates
+   */
   std::vector<Ogre::Vector3> ogreLineFromLLetPolygon(const lanelet::CompoundPolygon3d& polygon) const;
+
+  /**
+   * @brief Converts a traffic-light polygon to a representative Ogre polyline.
+   *
+   * @param polygon3d polygon to convert
+   * @return converted polyline in Ogre coordinates
+   */
   std::vector<Ogre::Vector3> ogreLineFromLLetTrafficLight(const lanelet::ConstPolygon3d& polygon3d) const;
+
+  /**
+   * @brief Converts a point sequence to Ogre coordinates.
+   *
+   * @param ptsVector points to convert
+   * @return converted points in Ogre coordinates
+   */
   std::vector<Ogre::Vector3> ogreLineFromLLetPts(const lanelet::ConstPoints3d& ptsVector) const;
+
+  /**
+   * @brief Converts a Lanelet2 point to an Ogre vector.
+   *
+   * @param point point to convert
+   * @return corresponding Ogre vector
+   */
   Ogre::Vector3 ogreVec3FromLLetPoint(const lanelet::ConstPoint3d point) const;
+
+  /**
+   * @brief Converts a traffic-light point to an Ogre vector with an added z offset.
+   *
+   * @param point point to convert
+   * @param zOffset offset added to the z coordinate
+   * @return corresponding Ogre vector
+   */
   Ogre::Vector3 ogreVec3FromLLetTrafficLight(const lanelet::ConstPoint3d point, const double zOffset) const;
 
+  /**
+   * @brief Updates visibility for one rendered object class.
+   *
+   * @param classification object category to update
+   * @param visible whether objects of that class should be shown
+   */
   void updateVisibility(ObjectClassification classification, bool visible);
 
   // Helper functions
+  /**
+   * @brief Creates a buffered strip around a polyline.
+   *
+   * @param line input polyline
+   * @param buffer_length half-width of the buffer
+   * @return buffered polygon points
+   */
   std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3>& line, double buffer_length);
+
+  /**
+   * @brief Computes an approximate normal vector for a polyline vertex.
+   *
+   * @tparam Iter iterator type over `Ogre::Vector3`
+   * @param it iterator to the current point
+   * @param begin begin iterator of the line
+   * @param end end iterator of the line
+   * @return normalized lateral vector at the current point
+   */
   template <typename Iter>
   Ogre::Vector3 getNormal(Iter it, Iter begin, Iter end);
+
+  /**
+   * @brief Draws a thick polyline into an Ogre manual object.
+   *
+   * @param line line to draw
+   * @param obj manual object receiving the geometry
+   * @param color line color
+   * @param width rendered line width
+   * @param zOffset vertical offset applied to all vertices
+   */
   void drawLine(const std::vector<Ogre::Vector3>& line,
                 Ogre::ManualObject* obj,
                 Ogre::ColourValue color = Ogre::ColourValue::White,
                 double width = 0.1,
                 double zOffset = 0.0);
+
+  /**
+   * @brief Draws a filled polygon area into an Ogre manual object.
+   *
+   * @param line polygon boundary
+   * @param obj manual object receiving the geometry
+   * @param color fill color
+   * @param zOffset vertical offset applied to all vertices
+   */
   void drawArea(const std::vector<Ogre::Vector3>& line,
                 Ogre::ManualObject* obj,
                 Ogre::ColourValue color = Ogre::ColourValue::White,
                 double zOffset = 0.0);
+
+  /**
+   * @brief Draws a simple polygon without holes.
+   *
+   * @param poly polygon vertices
+   * @param obj manual object receiving the geometry
+   * @param color fill color
+   */
   void drawMonoPolygon(const std::vector<Ogre::Vector3>& poly,
                        Ogre::ManualObject* obj,
                        Ogre::ColourValue color = Ogre::ColourValue::White);
 
+  /**
+   * @brief Draws a triangle strip between left and right lane boundaries.
+   *
+   * @param left left boundary points
+   * @param right right boundary points
+   * @param obj manual object receiving the geometry
+   * @param color fill color
+   * @param zOffset vertical offset applied to all vertices
+   */
   void drawLaneFillStrip(const std::vector<Ogre::Vector3>& left,
                          const std::vector<Ogre::Vector3>& right,
                          Ogre::ManualObject* obj,

@@ -33,6 +33,9 @@ inline constexpr bool is_vector_v = is_vector<C>::value;
  */
 class Lanelet2LichtblickDisplay : public rclcpp::Node {
  public:
+  /**
+   * @brief Creates the Lichtblick visualization node and declares its rendering parameters.
+   */
   Lanelet2LichtblickDisplay();
 
  private:

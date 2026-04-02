@@ -39,6 +39,9 @@ inline constexpr bool is_vector_v = is_vector<C>::value;
 
 class LL2MapServer : public rclcpp::Node {
  public:
+  /**
+   * @brief Creates the Lanelet2 map server node and declares its parameters.
+   */
   LL2MapServer();
 
  private:
@@ -77,19 +80,86 @@ class LL2MapServer : public rclcpp::Node {
          */
   rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter>& parameters);
 
+  /**
+   * @brief Loads the configured map file and caches its serialized contents.
+   */
   void loadMapContents();
+
+  /**
+   * @brief Clears map-specific parameters after an invalid or unloaded map state.
+   */
   void unsetMapParameters();
+
+  /**
+   * @brief Writes the current map state into this node's exported ROS parameters.
+   */
   void updateMapParameters();
 
+  /**
+   * @brief Sets up timers, callbacks, publishers, and initial map loading.
+   */
   void setup();
+
+  /**
+   * @brief Recursively scans a directory for available Lanelet2 map files.
+   *
+   * @param directory root directory to search
+   * @param maps output vector that receives discovered map metadata
+   */
   void find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const;
+
+  /**
+   * @brief Fills the derived metadata fields for a discovered map.
+   *
+   * @param map_meta metadata entry whose geographic bounds and size are updated
+   */
   void derive_map_meta(Lanelet2MapMeta& map_meta) const;
+
+  /**
+   * @brief Derives a lower-left origin latitude and longitude from a Lanelet2 map file.
+   *
+   * @param map_filepath path to the map file
+   * @param origin_lat output latitude of the derived lower-left origin
+   * @param origin_lon output longitude of the derived lower-left origin
+   * @return `true` if the origin could be derived from the map bounds
+   */
   bool deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const;
 
+  /**
+   * @brief Tries to load a map with the provided origin to verify that it is usable.
+   *
+   * @param map_filename path to the map file
+   * @param origin_lat latitude used for projection
+   * @param origin_lon longitude used for projection
+   * @return `true` if the map passes the sanity check
+   */
   bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon) const;
+
+  /**
+   * @brief Publishes the static transform from the derived UTM frame to the map frame.
+   */
   void pub_tf() const;
+
+  /**
+   * @brief Derives the UTM zone and hemisphere from a geographic position.
+   *
+   * @param latitude latitude in degrees
+   * @param longitude longitude in degrees
+   * @param zone output UTM zone number
+   * @param northp output hemisphere flag, `true` for northern hemisphere
+   */
   void derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const;
+
+  /**
+   * @brief Stores the latest GNSS fix for automatic map selection.
+   *
+   * @param msg incoming GPS fix message
+   */
   void navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg);
+
+  /**
+   * @brief Periodically reevaluates the best map when automatic selection is enabled.
+   */
   void automaticMapUpdateTimerCallback();
 
  private:

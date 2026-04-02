@@ -51,9 +51,24 @@ struct PathElement {
   bool inverted;
 };
 
+/**
+ * @brief Compares two path elements for identical lanelet ID and orientation.
+ *
+ * @param lhs left-hand path element
+ * @param rhs right-hand path element
+ * @return `true` if both path elements reference the same lanelet with the same inversion state
+ */
 inline bool operator==(const PathElement& lhs, const PathElement& rhs) {
   return lhs.ll_id == rhs.ll_id && lhs.inverted == rhs.inverted;
 };
+
+/**
+ * @brief Compares two path elements for inequality.
+ *
+ * @param lhs left-hand path element
+ * @param rhs right-hand path element
+ * @return `true` if the path elements differ in lanelet ID or inversion state
+ */
 inline bool operator!=(const PathElement& lhs, const PathElement& rhs) { return !(lhs == rhs); };
 
 using Path = std::vector<PathElement>;
@@ -78,10 +93,24 @@ class Lanelet2Utilities {
     return getLaneletLineHeading(utils::to2D(laneletLine).basicLineString(), length);
   }
 
+  /**
+   * @brief Returns the approximate heading of a 2D lanelet line at a given arc length.
+   *
+   * @param laneletLine line string to sample
+   * @param length arc length along the line
+   * @return heading angle relative to UTM in radians
+   */
   static double getLaneletLineHeading(const ConstLineString2d& laneletLine, const double& length) {
     return getLaneletLineHeading(laneletLine.basicLineString(), length);
   }
 
+  /**
+   * @brief Returns the approximate heading of a basic 2D line at a given arc length.
+   *
+   * @param laneletLine line string to sample
+   * @param length arc length along the line
+   * @return heading angle relative to UTM in radians
+   */
   static double getLaneletLineHeading(const BasicLineString2d& laneletLine, const double& length) {
     double total_length = 0;
     BasicPoint2d point_x_y_before = fromArcCoordinates_fast(laneletLine, std::max(0.0, length - 0.25), 0., total_length);
@@ -177,6 +206,12 @@ class Lanelet2Utilities {
     return costs;
   }
 
+  /**
+   * @brief Converts a 3D Lanelet2 line string into ROS point messages.
+   *
+   * @param ll_line line string to convert
+   * @return converted points preserving x, y, and z coordinates
+   */
   static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString3d& ll_line) {
     std::vector<geometry_msgs::msg::Point> points;
     for (auto& p : ll_line) {
@@ -189,6 +224,12 @@ class Lanelet2Utilities {
     return points;
   }
 
+  /**
+   * @brief Converts a 2D Lanelet2 line string into ROS point messages.
+   *
+   * @param ll_line line string to convert
+   * @return converted points with z set to zero
+   */
   static std::vector<geometry_msgs::msg::Point> convertLaneletLine2Linestring(const BasicLineString2d& ll_line) {
     std::vector<geometry_msgs::msg::Point> points;
     for (auto& p : ll_line) {
@@ -201,6 +242,15 @@ class Lanelet2Utilities {
     return points;
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a 2D line string.
+   *
+   * @param line reference line string
+   * @param length longitudinal arc length along the line
+   * @param distance lateral offset from the line
+   * @param line_length optional output for the total line length when `length` exceeds the line end
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d& line,
                                               const double& length,
                                               const double& distance,
@@ -254,26 +304,70 @@ class Lanelet2Utilities {
     return BasicPoint2d(p_x + dy * distance, p_y - dx * distance);
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a const 2D line string.
+   *
+   * @param line reference line string
+   * @param length longitudinal arc length along the line
+   * @param distance lateral offset from the line
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d& line, const double& length, const double& distance) {
     return fromArcCoordinates_fast(line.basicLineString(), length, distance);
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a const 3D line string.
+   *
+   * @param line reference line string
+   * @param length longitudinal arc length along the line
+   * @param distance lateral offset from the line
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d& line, const double& length, const double& distance) {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), length, distance);
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a basic 2D line string.
+   *
+   * @param line reference line string
+   * @param arc arc-coordinate pair
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const BasicLineString2d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(line, arc.length, arc.distance);
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a const 2D line string.
+   *
+   * @param line reference line string
+   * @param arc arc-coordinate pair
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString2d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(line.basicLineString(), arc.length, arc.distance);
   }
 
+  /**
+   * @brief Interpolates a point from arc coordinates on a const 3D line string.
+   *
+   * @param line reference line string
+   * @param arc arc-coordinate pair
+   * @return interpolated point in Cartesian coordinates
+   */
   static BasicPoint2d fromArcCoordinates_fast(const ConstLineString3d& line, const ArcCoordinates& arc) {
     return fromArcCoordinates_fast(utils::to2D(line).basicLineString(), arc.length, arc.distance);
   }
 
+  /**
+   * @brief Appends the boundary segment that corresponds to the current centerline segment.
+   *
+   * @param boundaries accumulated left and right boundaries
+   * @param segments candidate left and right boundary segments
+   * @param centerline centerline used to determine the shared endpoint
+   */
   static void addBoundarySegment(std::pair<BasicLineString2d, BasicLineString2d>& boundaries,
                                  const std::pair<BasicLineString2d, BasicLineString2d>& segments,
                                  const BasicLineString2d& centerline) {
@@ -294,6 +388,13 @@ class Lanelet2Utilities {
     }
   }
 
+  /**
+   * @brief Removes the portion of a boundary segment that was already consumed by a centerline.
+   *
+   * @param left_segment mutable left boundary segment
+   * @param right_segment mutable right boundary segment
+   * @param centerline centerline used to determine the split point
+   */
   static void delFromBoundarySegment(BasicLineString2d& left_segment,
                                      BasicLineString2d& right_segment,
                                      const BasicLineString2d& centerline) {
@@ -314,6 +415,14 @@ class Lanelet2Utilities {
     }
   }
 
+  /**
+   * @brief Finds the final boundary point aligned with the end of a centerline.
+   *
+   * @param boundary_segment boundary segment to inspect
+   * @param centerline centerline whose end point is used as reference
+   * @param max_distance lateral search distance and side sign
+   * @return closest matching boundary point near the end of the centerline
+   */
   static BasicPoint2d getLastBoundaryPoint(const BasicLineString2d& boundary_segment,
                                            const BasicLineString2d& centerline,
                                            const double& max_distance) {
@@ -332,6 +441,14 @@ class Lanelet2Utilities {
     return interpoints.size() ? all_interpoints.front().second : BasicPoint2d(boundary_segment.back());
   }
 
+  /**
+   * @brief Splits a line string into two parts at the point nearest to `pt`.
+   *
+   * @param ls line string to split
+   * @param pt split point
+   * @param line1 output prefix segment
+   * @param line2 output suffix segment
+   */
   static void splitLinestring(const BasicLineString2d& ls,
                               const BasicPoint2d& pt,
                               BasicLineString2d& line1,
@@ -351,6 +468,13 @@ class Lanelet2Utilities {
     line2.insert(line2.begin() + 1, idx + 1, ls.end());
   }
 
+  /**
+   * @brief Smooths a line by replacing local sections with quadratic Bezier samples.
+   *
+   * @param input_line line to smooth
+   * @param smooth_factor spacing between Bezier control points
+   * @return smoothed line string
+   */
   static BasicLineString2d smoothByQuadraticBezierCurve(const BasicLineString2d& input_line, uint smooth_factor) {
     BasicLineString2d output_line;
     output_line.push_back(input_line.at(0));
@@ -399,6 +523,12 @@ class Lanelet2Utilities {
   }
 
   // Line conversions
+  /**
+   * @brief Converts an internal timed line representation to a Lanelet2 line string.
+   *
+   * @param lanelet_line output Lanelet2 line string
+   * @param line internal timed line representation
+   */
   static void internalLine2llLine(BasicLineString2d& lanelet_line, const LineWithTime& line) {
     lanelet_line.clear();
     lanelet_line.reserve(line.size());
@@ -408,6 +538,12 @@ class Lanelet2Utilities {
     }
   }
 
+  /**
+   * @brief Converts a Lanelet2 3D line string to the internal timed line representation.
+   *
+   * @param lanelet_line source Lanelet2 line string
+   * @param line output internal timed line representation
+   */
   static void llLine2internalLine(const BasicLineString3d& lanelet_line, LineWithTime& line) {
     line.clear();
     line.reserve(lanelet_line.size());
@@ -423,6 +559,13 @@ class Lanelet2Utilities {
   }
 
   // Path conversions
+  /**
+   * @brief Converts an internal path of lanelet IDs to Lanelet2 lanelet primitives.
+   *
+   * @param ll_id_vec internal path representation
+   * @param ll_map map used to resolve lanelet IDs
+   * @return lanelet path resolved from the map
+   */
   static ConstLanelets internalPath2llPath(const Path& ll_id_vec, const LaneletMapConstPtr& ll_map) {
     ConstLanelets ll_route;
     ll_route.reserve(ll_id_vec.size());
@@ -437,6 +580,12 @@ class Lanelet2Utilities {
     return ll_route;
   }
 
+  /**
+   * @brief Converts a Lanelet2 path to the internal ID-based path representation.
+   *
+   * @param ll_route Lanelet2 path
+   * @return internal path representation
+   */
   static Path llPath2internalPath(const ConstLanelets& ll_route) {
     Path ll_id_vec;
     ll_id_vec.reserve(ll_route.size());
@@ -449,6 +598,12 @@ class Lanelet2Utilities {
   }
 
   // Path to line conversions
+  /**
+   * @brief Concatenates lanelet centerlines into the internal timed line representation.
+   *
+   * @param ll_route lanelet path
+   * @return internal line representation with zero timestamps
+   */
   static LineWithTime llPath2internalLine(const ConstLanelets& ll_route) {
     LineWithTime line;
     line.reserve(ll_route.size());
@@ -466,6 +621,18 @@ class Lanelet2Utilities {
     return line;
   }
 
+  /**
+   * @brief Samples a lanelet path in time domain, approximating lane changes with a sine offset.
+   *
+   * @param ll_path lanelet path to sample
+   * @param cur_pos current position on the first segment
+   * @param vel velocity used to convert time to traveled distance
+   * @param t_ref reference time for lane change completion
+   * @param t_max maximum horizon in seconds
+   * @param dt sampling time step in seconds
+   * @param target_point optional point at which to stop sampling early
+   * @return sampled centerline points
+   */
   static BasicLineString2d llPath2llLineTimeBased(const ConstLanelets& ll_path,
                                                   const BasicPoint2d& cur_pos,
                                                   const double& vel,
@@ -581,6 +748,20 @@ class Lanelet2Utilities {
   }
 
   // Creates a linestring from a lanelet path, sampled by distane with step size ds, accounting for lane changes with a sine function
+  /**
+   * @brief Samples a lanelet path in distance domain, approximating lane changes with a sine offset.
+   *
+   * @param ll_path lanelet path to sample
+   * @param cur_pos current position on the first segment
+   * @param vel velocity used to derive lane change length from `t_ref`
+   * @param t_ref reference time for lane change completion
+   * @param s_max maximum traveled distance
+   * @param ds sampling distance step
+   * @param target_point optional point at which to stop sampling early
+   * @param boundaries optional output boundaries corresponding to the sampled path
+   * @param routing_graph optional routing graph used to derive bicycle-lane boundaries
+   * @return sampled centerline points
+   */
   static BasicLineString2d llPath2llLineDistanceBased(
       const ConstLanelets& ll_path,
       const BasicPoint2d& cur_pos,
@@ -792,6 +973,14 @@ class Lanelet2Utilities {
     return path_line;
   }
 
+  /**
+   * @brief Computes the Menger curvature defined by three points.
+   *
+   * @param p1 first point
+   * @param p2 second point
+   * @param p3 third point
+   * @return signed curvature, or a large value for nearly degenerate configurations
+   */
   static double computeCurvature(const BasicPoint2d& p1, const BasicPoint2d& p2, const BasicPoint2d& p3) {
     // https://en.wikipedia.org/wiki/Menger_curvature#Definition
     const double area = 0.5 * ((p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x()));
