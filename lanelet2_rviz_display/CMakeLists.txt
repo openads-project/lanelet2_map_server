@@ -46,6 +46,7 @@ endforeach()
 set(${PROJECT_NAME}_source_files
   src/lanelet2_display.cpp
   src/lanelet2_map.cpp
+  src/lanelet2_map_helpers.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -104,6 +105,12 @@ install(
 install(
   DIRECTORY include/
   DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+  FILES
+    LICENSE.BSD-3-Clause
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

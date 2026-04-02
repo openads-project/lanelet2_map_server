@@ -10,6 +10,7 @@
   <author email="guido.linden@rwth-aachen.de">Guido Linden</author>
 
   <license>Apache-2.0</license>
+  <license>BSD-3-Clause</license> <!-- lanelet2_map_helpers.hpp|cpp -->
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

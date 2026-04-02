@@ -108,6 +108,8 @@ Package and node interfaces are documented in the respective package READMEs lis
 
 The source code in this repository is licensed under Apache-2.0, see [LICENSE](LICENSE). Container images provided by this repository may contain third-party software shipped with their own license terms.
 
+An exception applies to the following files, which are licensed under BSD-3-Clause, see [LICENSE.BSD-3-Clause](./lanelet2_rviz_display/LICENSE.BSD-3-Clause): [`lanelet2_map_helpers.hpp`](./lanelet2_rviz_display/src/lanelet2_map_helpers.hpp), [`lanelet2_map_helpers.cpp`](./lanelet2_rviz_display/src/lanelet2_map_helpers.cpp).
+
 ## 🙏 Acknowledgements
 
 Development and maintenance of this repository are supported by the following projects. We acknowledge the funding of the respective institutions.

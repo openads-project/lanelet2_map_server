@@ -1,11 +1,9 @@
 - quick start
 - copyright notices in lanelet2_map.hpp and lanelet2_map.cpp
-- lanelet2_rviz_display had BSD license?
-- check package.xml authors (GLI only?)
 - screenshot of rviz display in package readme
 - screenshot of lanelet map in rviz in top-level readme
 
-- lanelet2_utilities in lanelet2_route_planning
+- lanelet2_utilities in lanelet2_route_planning -> copy paste those to lanelet2_rp?
   - laneletSorting (60 lines)
     - getLaneletLineHeading (20 lines)
       - fromArcCoordinates_fast (50 lines)
