@@ -12,11 +12,11 @@ set(TARGET_NAME lanelet2_utilities)
 
 add_library(${TARGET_NAME} INTERFACE)
 
-target_include_directories(${TARGET_NAME} PUBLIC
+target_include_directories(${TARGET_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_compile_features(${TARGET_NAME} PUBLIC c_std_99 cxx_std_17)
+target_compile_features(${TARGET_NAME} INTERFACE c_std_99 cxx_std_17)
 
 ament_target_dependencies(${TARGET_NAME} INTERFACE
   lanelet2
@@ -25,8 +25,17 @@ ament_target_dependencies(${TARGET_NAME} INTERFACE
 ament_export_targets(${TARGET_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(lanelet2)
 
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
 install(TARGETS ${TARGET_NAME}
-  DESTINATION lib/${PROJECT_NAME}
+  EXPORT ${TARGET_NAME}Targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib
+  INCLUDES DESTINATION include
 )
 
 install(DIRECTORY launch

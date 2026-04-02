@@ -29,7 +29,6 @@ target_compile_features(${TARGET_NAME} PUBLIC c_std_99 cxx_std_17)
 ament_target_dependencies(${TARGET_NAME}
   lanelet2_core
   lanelet2_io
-  lanelet2_map_interface
   lanelet2_projection
   rclcpp
 )
@@ -39,8 +38,17 @@ ament_export_dependencies(lanelet2_core)
 ament_export_dependencies(lanelet2_io)
 ament_export_dependencies(lanelet2_projection)
 
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
 install(TARGETS ${TARGET_NAME}
-  DESTINATION lib/${PROJECT_NAME}
+  EXPORT ${TARGET_NAME}Targets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
 install(DIRECTORY launch
