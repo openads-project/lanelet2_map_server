@@ -7,6 +7,7 @@
   <a href="https://github.com/openads-project/lanelet2_map_server/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_map_server"/></a>
   <br>
   <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml/badge.svg"/></a>
   <a href="https://openads-project.github.io/lanelet2_map_server"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docs.yml/badge.svg"/></a>
   <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml/badge.svg"/></a>
 </p>
@@ -20,7 +21,7 @@ TODO: High-level repository introduction paragraph
 </p>
 
 > [!IMPORTANT]
-> This repository is part of [***OpenADS***](https://github.com/openads-project), the *Open Automated Driving Stack*.
+> This repository is part of [***OpenADS***](https://github.com/openads-project), the *Open Automated Driving Stack*. *OpenADS* and its modules have been initiated and are currently being maintained by the [**Institute for Automotive Engineering (ika) at RWTH Aachen University**](https://www.ika.rwth-aachen.de/de/).
 
 
 ## 🚀 Quick Start
