@@ -1,5 +1,6 @@
 stages:
   - docker-ros
+  - compose-oci
   - consistency
   - docs
 
@@ -14,10 +15,28 @@ docker-ros:
     TARGET: dev,run
     BASE_IMAGE: rwthika/ros2:jazzy
     RMW_IMPLEMENTATION: rmw_zenoh_cpp
-    COMMAND: ros2 run lanelet2_map_server lanelet2_map_server
+    COMMAND: ros2 launch lanelet2_map_server lanelet2_map_server_launch.py
     ENABLE_INDUSTRIAL_CI: 'true'
     TARGET_CMAKE_ARGS: '-DCMAKE_EXPORT_COMPILE_COMMANDS=1'
-    NOT_TEST_BUILD: 'true'
+
+compose-oci:
+  stage: compose-oci
+  image: docker:28-cli
+  rules:
+    - if: '$CI_COMMIT_BRANCH || $CI_COMMIT_TAG'
+      exists:
+        - docker/compose/docker-compose.yml
+  variables:
+    COMPOSE_FILE: docker/compose/docker-compose.yml
+    COMPOSE_IMAGE_NAME: $CI_REGISTRY_IMAGE
+    COMPOSE_IMAGE_TAG: compose-$CI_COMMIT_REF_SLUG
+    COMPOSE_REGISTRY: $CI_REGISTRY
+    COMPOSE_REGISTRY_USER: $CI_REGISTRY_USER
+    COMPOSE_REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+  script:
+    - test -f "$COMPOSE_FILE"
+    - echo "$COMPOSE_REGISTRY_PASSWORD" | docker login "$COMPOSE_REGISTRY" -u "$COMPOSE_REGISTRY_USER" --password-stdin
+    - docker compose -f "$COMPOSE_FILE" publish --yes "$COMPOSE_IMAGE_NAME:$COMPOSE_IMAGE_TAG"
 
 consistency:
   stage: consistency

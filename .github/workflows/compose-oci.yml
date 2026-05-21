@@ -1,0 +1,14 @@
+name: compose-oci
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  compose-oci:
+    uses: openads-project/openads-dev-environment/.github/workflows/compose-oci.yml@main
+    secrets: inherit
