@@ -26,7 +26,7 @@ The library can be integrated into nodes that require access to the current Lane
             std::unique_ptr<LL2MapInterface> ll2_interface_;
     }
     ```
-1. Access the current Lanelet2 map via the interface. A browsable [API documentation](https://openads-project.github.io/lanelet2_localization) is available.
+1. Access the current Lanelet2 map via the interface. A browsable [API documentation](https://openads-project.github.io/lanelet2_map_server) is available.
     ```c++
     if(ll2_interface_->map_loaded_) {
         lanelet::LaneletMapConstPtr map = ll2_interface_->getMapPtr();

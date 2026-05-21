@@ -1,14 +1,14 @@
-# lanelet2_localization
+# lanelet2_map_server
 
 <p align="center">
   <a href="https://github.com/openads-project"><img src="https://img.shields.io/badge/OpenADS-f5ff01"/></a>
   <a href="https://www.ros.org"><img src="https://img.shields.io/badge/ROS 2-jazzy-22314e"/></a>
-  <a href="https://github.com/openads-project/lanelet2_localization/releases/latest"><img src="https://img.shields.io/github/v/release/openads-project/lanelet2_localization"/></a>
-  <a href="https://github.com/openads-project/lanelet2_localization/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_localization"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/releases/latest"><img src="https://img.shields.io/github/v/release/openads-project/lanelet2_map_server"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_map_server"/></a>
   <br>
-  <a href="https://github.com/openads-project/lanelet2_localization/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/docker-ros.yml/badge.svg"/></a>
-  <a href="https://openads-project.github.io/lanelet2_localization"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/docs.yml/badge.svg"/></a>
-  <a href="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_localization/actions/workflows/consistency.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml/badge.svg"/></a>
+  <a href="https://openads-project.github.io/lanelet2_map_server"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docs.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml/badge.svg"/></a>
 </p>
 
 **ROS 2 Localization Utilities for Automated Driving based on Lanelet2**
@@ -27,7 +27,7 @@ TODO: High-level repository introduction paragraph
 
 1. Start a container of the pre-built runtime image.
     ```bash
-    docker run --rm -it ghcr.io/openads-project/lanelet2_localization:latest bash
+    docker run --rm -it ghcr.io/openads-project/lanelet2_map_server:latest bash
     ```
 1. Inside the container, launch the pre-built nodes.
     ```bash
@@ -57,11 +57,11 @@ TODO: High-level repository introduction paragraph
 
 1. Clone the repository.
     ```bash
-    git clone https://github.com/openads-project/lanelet2_localization.git
+    git clone https://github.com/openads-project/lanelet2_map_server.git
     ```
 1. Initialize the [`.openads-dev-environment`](https://github.com/openads-project/openads-dev-environment) submodule containing development environment configuration.
     ```bash
-    cd lanelet2_localization
+    cd lanelet2_map_server
     git submodule update --init --recursive
     ```
 1. Open the repository in [Visual Studio Code](https://code.visualstudio.com).
@@ -94,7 +94,7 @@ colcon test-result --verbose
 
 ## 📝 Documentation
 
-Package and node interfaces are documented in the respective package READMEs listed below. Implementation details are found in the [Source Code Documentation](https://openads-project.github.io/lanelet2_localization).
+Package and node interfaces are documented in the respective package READMEs listed below. Implementation details are found in the [Source Code Documentation](https://openads-project.github.io/lanelet2_map_server).
 
 | Package | Description |
 | --- | --- |
