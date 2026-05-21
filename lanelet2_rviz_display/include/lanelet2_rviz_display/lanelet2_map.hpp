@@ -99,23 +99,31 @@ class Lanelet2Map {
     double zSeparator = 0.085;
   };
 
+  /// Create an RViz scene representation for a lanelet map.
   Lanelet2Map(Ogre::SceneManager* manager,
               Ogre::SceneNode* parent_node,
               Lanelet2Map::RenderingOptions rend_opts,
               lanelet::LaneletMapConstPtr map_ptr);
 
+  /// Destroy the scene representation and its OGRE objects.
   ~Lanelet2Map();
 
+  /// Remove all OGRE objects owned by this map.
   void clearObjects();
 
+  /// Return the root scene node used by this map.
   Ogre::SceneNode* getSceneNode() { return scene_node_; }
 
+  /// Replace the rendered map and apply the given rendering options.
   void updateMap(RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr);
 
+  /// Update object visibility from the supplied rendering options.
   void updateVisibility(const RenderingOptions& rend_opts);
 
  private:
+  /// Create OGRE objects for all supported lanelet map layers.
   void create(lanelet::LaneletMapConstPtr map_ptr);
+  /// Set visibility for one object classification.
   void updateVisibility(ObjectClassification classification, bool visible);
 
   Lanelet2Map::RenderingOptions rend_opts_;
