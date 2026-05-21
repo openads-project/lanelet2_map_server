@@ -14,7 +14,7 @@
 
 **ROS 2 Localization Utilities for Automated Driving based on Lanelet2**
 
-TODO: High-level repository introduction paragraph
+The [lanelet2_map_server](./lanelet2_map_server/README.md) node provides a common [Lanelet2](https://github.com/fzi-forschungszentrum-informatik/Lanelet2) map to other modules relying on a map, e.g., the [lanelet2_route_planning](https://github.com/openads-project/lanelet2_route_planning). The map is loaded from a file and made available as a ROS parameter. For convenience, the [lanelet2_map_interface](./lanelet2_map_interface/README.md) library can be used to receive the map from the server and access it in other nodes. The [lanelet2_rviz_display](./lanelet2_rviz_display/README.md) and [lanelet2_lichtblick_display](./lanelet2_lichtblick_display/README.md) packages provide visualization of the map in RViz and Lichtblick, respectively.
 
 <p align="center">
   <strong>🚀 <a href="#-quick-start">Quick Start</a></strong> • <strong>💻 <a href="#-development">Development</a></strong> • <strong>📝 <a href="#-documentation">Documentation</a></strong>
