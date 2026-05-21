@@ -1,3 +1,0 @@
-- quick start
-- screenshot of rviz display in package readme
-- screenshot of lanelet map in rviz in top-level readme
