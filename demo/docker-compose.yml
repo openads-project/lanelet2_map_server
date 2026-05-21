@@ -13,8 +13,7 @@ services:
       - ./lanelet2_map_server/maps:/data/maps
 
   rviz:
-    # TODO: github image
-    image: gitlab.ika.rwth-aachen.de:5050/fb-fi/its-modules/monitoring/ros-monitoring:v1.0.0
+    image: ghcr.io/openads-project/lanelet2_route_planning:demo-monitoring
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
       DISPLAY: ${DISPLAY}
