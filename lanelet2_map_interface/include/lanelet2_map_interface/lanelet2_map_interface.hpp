@@ -9,11 +9,11 @@
 #include <lanelet2_projection/UTM.h>
 
 #include <string.h>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <limits>
 
-using namespace std::chrono_literals;
 class LL2MapInterface {
  public:
   /**
@@ -49,7 +49,7 @@ class LL2MapInterface {
   std::string map_frame_id_;
 
  private:
-  rclcpp::Node& parent_node_;
+  rclcpp::Node* parent_node_;
   std::shared_ptr<rclcpp::AsyncParametersClient> parameter_client_;
   std::shared_ptr<rclcpp::ParameterEventHandler> parameter_sub_;
   std::shared_ptr<rclcpp::ParameterCallbackHandle> frame_id_callback_handle_, contents_callback_handle_,

@@ -13,6 +13,7 @@ from launch_ros.actions import Node, SetParameter
 
 
 def generate_launch_description():
+    """Generate the Lanelet2 Lichtblick display launch description."""
 
     remappable_topics = [
         DeclareLaunchArgument(

@@ -36,6 +36,11 @@ class Lanelet2Display : public rviz_common::Display {
    */
   ~Lanelet2Display() override;
 
+  Lanelet2Display(const Lanelet2Display&) = delete;
+  Lanelet2Display& operator=(const Lanelet2Display&) = delete;
+  Lanelet2Display(Lanelet2Display&&) = delete;
+  Lanelet2Display& operator=(Lanelet2Display&&) = delete;
+
   // Overrides from Display
   /**
    * @brief Initializes the display once RViz has provided the rendering context.
@@ -93,7 +98,7 @@ class Lanelet2Display : public rviz_common::Display {
    */
   void updateVisibility();
 
-  LL2MapInterface* ll2if_;
+  std::unique_ptr<LL2MapInterface> ll2_interface_;
   rclcpp::Node::SharedPtr rviz_node_;
 
   bool viz_init_ = false;

@@ -136,7 +136,7 @@ class Lanelet2MapHelpers {
                          Ogre::ColourValue color,
                          double z_offset = 0.0);
 
-  Lanelet2Map& owner_;
+  Lanelet2Map& owner_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 };
 
 }  // namespace rviz_rendering::detail

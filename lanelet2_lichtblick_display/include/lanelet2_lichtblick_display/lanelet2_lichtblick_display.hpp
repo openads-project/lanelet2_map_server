@@ -144,9 +144,9 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   void addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
                           int& current_marker_id,
                           const std::string& ns,
-                          float line_width,
+                          double line_width,
                           const std::string& color_hex,
-                          float opacity,
+                          double opacity,
                           const std_msgs::msg::Header& header,
                           const std::vector<geometry_msgs::msg::Point>& points);
 
@@ -225,8 +225,6 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   std::shared_ptr<LL2MapInterface> ll2if_;
   lanelet::LaneletMapConstPtr last_map_ptr_;
   std::string map_frame_id;
-
-  int marker_id_counter_ = 0;
 
   rclcpp::Time current_timestamp;
 

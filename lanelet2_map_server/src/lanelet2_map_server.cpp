@@ -473,13 +473,13 @@ bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat,
 }
 
 void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const {
-  if (latitude >= 0.0)
+  if (latitude >= 0.0) {
     northp = true;
-  else
+  } else {
     northp = false;
+  }
 
-  zone = (int)std::floor((longitude + 180.0) / 6.0) + 1;
-  return;
+  zone = static_cast<int>(std::floor((longitude + 180.0) / 6.0)) + 1;
 }
 
 void LL2MapServer::pub_tf() const {
@@ -501,15 +501,16 @@ void LL2MapServer::pub_tf() const {
   t.transform.rotation.z = 0;
   t.transform.rotation.w = 1;
 
-  bool northp;
-  int zone;
+  bool northp = false;
+  int zone = 0;
   derive_utm_zone(origin_lat_, origin_lon_, zone, northp);
 
   std::string hemisphere;
-  if (northp)
+  if (northp) {
     hemisphere = "N";
-  else
+  } else {
     hemisphere = "S";
+  }
 
   t.header.frame_id = "utm_" + std::to_string(zone) + hemisphere;
   t.child_frame_id = map_frame_id_;

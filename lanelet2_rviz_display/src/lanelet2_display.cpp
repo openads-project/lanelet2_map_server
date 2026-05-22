@@ -25,6 +25,9 @@ using rviz_common::properties::StringProperty;
 namespace lanelet2_rviz_display {
 
 Lanelet2Display::Lanelet2Display() {
+  // RViz properties are parent-owned by Qt/RViz once constructed with this display as parent.
+  // NOLINTBEGIN(cppcoreguidelines-owning-memory)
+  // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
   ll2_server_name_property_ =
       new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
                          QString::fromStdString("Global name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
@@ -136,6 +139,7 @@ Lanelet2Display::Lanelet2Display() {
 
   char_height_property_ =
       new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_, SLOT(updateStyle()), this);
+  // NOLINTEND(cppcoreguidelines-owning-memory)
 }
 
 Lanelet2Display::~Lanelet2Display() = default;
@@ -146,7 +150,7 @@ void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
     if (name[0] != '/') {
       name = '/' + name;
     }
-    ll2if_ = new LL2MapInterface(parent_node, name);
+    ll2_interface_ = std::make_unique<LL2MapInterface>(parent_node, name);
   }
 }
 
@@ -157,13 +161,13 @@ void Lanelet2Display::onInitialize() {
 }
 
 void Lanelet2Display::update(float dt, float ros_dt) {
-  if (ll2if_->map_loaded_) {
+  if (ll2_interface_->map_loaded_) {
     if (!viz_init_) {
       viz_init_ = visualizeMap();
-      ll2if_->update_pending_ = false;
+      ll2_interface_->update_pending_ = false;
     }
 
-    if (ll2if_->update_pending_) {
+    if (ll2_interface_->update_pending_) {
       updateVisualization();
     }
 
@@ -173,12 +177,12 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 
       Ogre::Vector3 position;
       Ogre::Quaternion orientation;
-      if (context_->getFrameManager()->getTransform(ll2if_->map_frame_id_, position, orientation)) {
+      if (context_->getFrameManager()->getTransform(ll2_interface_->map_frame_id_, position, orientation)) {
         scene_node_->setPosition(position);
         scene_node_->setOrientation(orientation);
         setTransformOk();
       } else {
-        setMissingTransformToFixedFrame(ll2if_->map_frame_id_);
+        setMissingTransformToFixedFrame(ll2_interface_->map_frame_id_);
         map_->getSceneNode()->setVisible(false);
       }
     }
@@ -186,20 +190,21 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 }
 
 void Lanelet2Display::updateServerName() {
-  delete ll2if_;
+  ll2_interface_.reset();
   initializeMapInterface(*rviz_node_);
   viz_init_ = false;
 }
 
 bool Lanelet2Display::visualizeMap() {
-  map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_, ll2if_->getMapPtr());
+  map_ =
+      std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_, ll2_interface_->getMapPtr());
   return true;
 }
 
 void Lanelet2Display::updateVisualization() {
   if (viz_init_) {
-    map_->updateMap(rendering_options_, ll2if_->getMapPtr());
-    ll2if_->update_pending_ = false;
+    map_->updateMap(rendering_options_, ll2_interface_->getMapPtr());
+    ll2_interface_->update_pending_ = false;
   }
 }
 
@@ -381,4 +386,5 @@ void Lanelet2Display::update3D() {
 }  // namespace lanelet2_rviz_display
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 PLUGINLIB_EXPORT_CLASS(lanelet2_rviz_display::Lanelet2Display, rviz_common::Display)

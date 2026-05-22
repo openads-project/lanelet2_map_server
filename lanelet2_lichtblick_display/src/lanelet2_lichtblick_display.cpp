@@ -180,7 +180,9 @@ void Lanelet2LichtblickDisplay::hexToRgb(const std::string& hex, float& r, float
     return;
   }
 
-  unsigned int r_int, g_int, b_int;
+  unsigned int r_int = 0U;
+  unsigned int g_int = 0U;
+  unsigned int b_int = 0U;
 
   std::istringstream rs(clean_hex.substr(0, 2));
   rs >> std::hex >> r_int;
@@ -218,9 +220,9 @@ void Lanelet2LichtblickDisplay::clearAllMarkers() {
 void Lanelet2LichtblickDisplay::addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
                                                    int& current_marker_id,
                                                    const std::string& ns,
-                                                   float line_width,
+                                                   double line_width,
                                                    const std::string& color_hex,
-                                                   float opacity,
+                                                   double opacity,
                                                    const std_msgs::msg::Header& header,
                                                    const std::vector<geometry_msgs::msg::Point>& points) {
   if (points.empty()) {
@@ -236,12 +238,14 @@ void Lanelet2LichtblickDisplay::addLineStripMarker(visualization_msgs::msg::Mark
   marker.action = visualization_msgs::msg::Marker::ADD;
   marker.scale.x = line_width;
 
-  float r, g, b;
+  float r = 0.0F;
+  float g = 0.0F;
+  float b = 0.0F;
   hexToRgb(color_hex, r, g, b);
   marker.color.r = r;
   marker.color.g = g;
   marker.color.b = b;
-  marker.color.a = opacity;
+  marker.color.a = static_cast<float>(opacity);
   marker.points = points;
 
   marker_array_msg.markers.push_back(marker);
@@ -294,7 +298,7 @@ void Lanelet2LichtblickDisplay::addMeshMarker(visualization_msgs::msg::MarkerArr
   marker.pose.orientation = tf2::toMsg(q);
 
   marker.mesh_use_embedded_materials = true;
-  marker.color.a = opacity;
+  marker.color.a = static_cast<float>(opacity);
 
   marker_array_msg.markers.push_back(marker);
 }
@@ -363,7 +367,9 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
   std_msgs::msg::Header header;
   header.frame_id = map_frame_id;
   header.stamp = current_timestamp;
-  float r, g, b;
+  float r = 0.0F;
+  float g = 0.0F;
+  float b = 0.0F;
 
   // Iterate through all lanelets in the map
   for (const auto& lanelet : lanelet_map->laneletLayer) {
@@ -400,9 +406,10 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
         sum_z += p.z();
       }
       if (!lanelet.centerline().empty()) {
-        centerline_center.x = sum_x / lanelet.centerline().size();
-        centerline_center.y = sum_y / lanelet.centerline().size();
-        centerline_center.z = sum_z / lanelet.centerline().size();
+        const auto centerline_size = static_cast<double>(lanelet.centerline().size());
+        centerline_center.x = sum_x / centerline_size;
+        centerline_center.y = sum_y / centerline_size;
+        centerline_center.z = sum_z / centerline_size;
       }
       text_marker.pose.position = centerline_center;
       text_marker.scale.z = lanelet_text_scale_;  // For TEXT_VIEW_FACING, scale.z controls the character height
@@ -411,7 +418,7 @@ void Lanelet2LichtblickDisplay::publishMarker(const lanelet::LaneletMapConstPtr&
       text_marker.color.r = r;
       text_marker.color.g = g;
       text_marker.color.b = b;
-      text_marker.color.a = lanelet_text_opacity_;
+      text_marker.color.a = static_cast<float>(lanelet_text_opacity_);
 
       text_marker.text = std::to_string(lanelet.id());
 

@@ -86,9 +86,7 @@ Lanelet2Map::~Lanelet2Map() {
   }
 }
 
-void Lanelet2Map::clearObjects() {
-  bsd_helpers_->clearObjects();
-}
+void Lanelet2Map::clearObjects() { bsd_helpers_->clearObjects(); }
 
 void Lanelet2Map::updateMap(Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr) {
   rend_opts_ = rend_opts;
@@ -177,12 +175,12 @@ void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
   for (const lanelet::ConstArea& area : map_ptr->areaLayer) {
     auto attributes = area.attributes();
     const auto subtype = attributes[lanelet::AttributeName::Subtype];
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     if (subtype == lanelet::AttributeValueString::Parking) {
       bsd_helpers_->addParkingAreaToManualObject(area, parking_manual_object);
     } else if (rend_opts_.renderCrosswalks && (subtype == "crosswalk")) {
       bsd_helpers_->addCrosswalkToManualObject(area, crosswalk_manual_object);
-    } else if (rend_opts_.renderSidewalks &&
-               (subtype == "sidewalk" || subtype == "walkway" || subtype == "footway")) {
+    } else if (rend_opts_.renderSidewalks && (subtype == "sidewalk" || subtype == "walkway" || subtype == "footway")) {
       bsd_helpers_->addSidewalkToManualObject(area, sidewalk_manual_object);
     } else {
       bsd_helpers_->addAreaToManualObject(area, area_manual_object);
