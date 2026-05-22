@@ -100,9 +100,16 @@ class Lanelet2Map {
   /// Destroy the scene representation and its OGRE objects.
   ~Lanelet2Map();
 
+  /// Copy construction is disabled because the map owns OGRE scene objects.
   Lanelet2Map(const Lanelet2Map&) = delete;
+
+  /// Copy assignment is disabled because the map owns OGRE scene objects.
   Lanelet2Map& operator=(const Lanelet2Map&) = delete;
+
+  /// Move construction is disabled because OGRE scene ownership is pointer-based.
   Lanelet2Map(Lanelet2Map&&) = delete;
+
+  /// Move assignment is disabled because OGRE scene ownership is pointer-based.
   Lanelet2Map& operator=(Lanelet2Map&&) = delete;
 
   /// Remove all OGRE objects owned by this map.

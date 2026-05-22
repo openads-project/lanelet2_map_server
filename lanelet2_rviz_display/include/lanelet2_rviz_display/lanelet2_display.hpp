@@ -36,9 +36,24 @@ class Lanelet2Display : public rviz_common::Display {
    */
   ~Lanelet2Display() override;
 
+  /**
+   * @brief Copy construction is disabled because the display owns RViz resources.
+   */
   Lanelet2Display(const Lanelet2Display&) = delete;
+
+  /**
+   * @brief Copy assignment is disabled because the display owns RViz resources.
+   */
   Lanelet2Display& operator=(const Lanelet2Display&) = delete;
+
+  /**
+   * @brief Move construction is disabled because RViz owns the display lifecycle.
+   */
   Lanelet2Display(Lanelet2Display&&) = delete;
+
+  /**
+   * @brief Move assignment is disabled because RViz owns the display lifecycle.
+   */
   Lanelet2Display& operator=(Lanelet2Display&&) = delete;
 
   // Overrides from Display
