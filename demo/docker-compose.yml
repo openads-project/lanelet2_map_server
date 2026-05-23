@@ -1,8 +1,7 @@
 services:
 
   lanelet2-map-server:
-    # TODO: github image
-    image: gitlab.ika.rwth-aachen.de:5050/fb-fi/its-modules/localization/lanelet2_map_server:latest_open-source_ci-amd64 # v1.1.1
+    image: ghcr.io/openads-project/lanelet2_map_server:v1.1.1
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
     command: |
