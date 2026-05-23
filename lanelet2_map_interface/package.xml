@@ -3,7 +3,7 @@
 <package format="3">
 
   <name>lanelet2_map_interface</name>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
   <description>Library to receive Lanelet2 maps from lanelet2_map_server</description>
 
   <maintainer email="guido.linden@rwth-aachen.de">Guido Linden</maintainer>
