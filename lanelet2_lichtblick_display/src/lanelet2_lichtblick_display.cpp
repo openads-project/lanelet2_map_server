@@ -161,7 +161,7 @@ void Lanelet2LichtblickDisplay::setup() {
   marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/lichtblick_lanelet2_map", qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
-  ll2if_ = std::make_shared<LL2MapInterface>(*this, "ll2_map_server");
+  ll2if_ = std::make_shared<LL2MapInterface>(*this, "lanelet2_map_server");
 
   // periodically check for map updates
   timer_ = this->create_wall_timer(std::chrono::milliseconds(2000), std::bind(&Lanelet2LichtblickDisplay::checkMapStatus, this));

@@ -29,8 +29,8 @@ Lanelet2Display::Lanelet2Display() {
   // NOLINTBEGIN(cppcoreguidelines-owning-memory)
   // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
   ll2_server_name_property_ =
-      new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
-                         QString::fromStdString("Global name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
+      new StringProperty(QString::fromStdString("Name of lanelet2_map_server"), QString::fromStdString("lanelet2_map_server"),
+                         QString::fromStdString("Global name of lanelet2_map_server node"), this, SLOT(updateServerName()));
 
   alpha_property_ =
       new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this, SLOT(updateColor()), this);
