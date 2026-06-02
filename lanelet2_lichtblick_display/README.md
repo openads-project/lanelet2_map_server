@@ -1,32 +1,63 @@
-# lanelet2_lichtblick_display
+# `lanelet2_lichtblick_display`
 
-This ROS 2 node is able to visualize Lanelet2-Maps that are provided via the [lanelet2_map_server](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_server)/[-_interface](https://gitlab.ika.rwth-aachen.de/fb-fi/its-modules/localization/lanelet2_map_interface) into `visualization_msgs::msg::MarkerArray`. It converts the various lanelet boundaries, centerlines, reference lines and regulatory elements (e.g. traffic lights). These standard message types can be visualized with both RVIZ and Lichtblick, but we mainly use this for visualizations for the latter, hence the name.
+Converts Lanelet2 maps to MarkerArrays for visualization in Lichtblick
 
-### Published Topics
+![Visualization Example](./assets/visualization_example.png)
+
+## Nodes
+
+### `lanelet2_lichtblick_display`
+
+```mermaid
+flowchart LR
+    NODE("lanelet2_lichtblick_display")
+    NODE -->|~/lichtblick_lanelet2_map| P0:::hidden
+    classDef hidden display: none;
+```
+
+#### Published Topics
 
 | Topic | Type | Description |
 | --- | --- | --- |
-| `lichtblick_lanelet2_map` | `visualization_msgs/msg/MarkerArray` | Marker array containing lanelet elements. Published with `transient_local` QoS so visualizers that start later still receive the latest marker set. |
+| `~/lichtblick_lanelet2_map` | `visualization_msgs/msg/MarkerArray` | marker visualization of map |
 
-### Parameters
+#### Parameters
 
-For left_bound, right_bound, centerline and reference the following three parameters are customizable:
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `left_bound_line_width` | `float` | `0.1` | Width of the left boundary lines |
+| `left_bound_color_hex` | `string` | `"#0000FF"` | Color of the left boundary lines |
+| `left_bound_line_opacity` | `float` | `0.5` | Opacity of the left boundary lines |
+| `right_bound_line_width` | `float` | `0.1` | Width of the right boundary lines |
+| `right_bound_color_hex` | `string` | `"#FF0000"` | Color of the right boundary lines |
+| `right_bound_line_opacity` | `float` | `0.5` | Opacity of the right boundary lines |
+| `centerline_line_width` | `float` | `0.08` | Width of the centerlines |
+| `centerline_color_hex` | `string` | `"#008000"` | Color of the centerlines |
+| `centerline_line_opacity` | `float` | `0.4` | Opacity of the centerlines |
+| `lanelet_text_scale` | `float` | `0.5` | Scale of the lanelet ID text |
+| `lanelet_text_color` | `string` | `"#000000"` | Color of the lanelet ID text |
+| `lanelet_text_opacity` | `float` | `1.0` | Opacity of the lanelet ID text |
+| `reference_line_width` | `float` | `0.2` | Width of the reference lines |
+| `reference_line_color_hex` | `string` | `"#FFFF00"` | Color of the reference lines |
+| `reference_line_opacity` | `float` | `0.5` | Opacity of the reference lines |
+| `traffic_light_mesh_resource` | `string` | - | Link to the traffic light model to use |
+| `traffic_light_scale` | `float` | `1.0` | Scale of the traffic lights models |
+| `traffic_light_z_offset` | `float` | `1.3` | Offset in z-direction of the traffic lights models (depends on model and scale) |
+| `traffic_light_opacity` | `float` | `1.0` | Opacity of the traffic lights |
+| `yield_sign_mesh_resource` | `string` | - | Link to the yield sign model to use |
+| `yield_sign_scale` | `float` | `1.0` | Scale of the yield sign models |
+| `yield_sign_z_offset` | `float` | `0.0` | Offset in z-direction of the yield sign models (depends on model and scale) |
+| `yield_sign_opacity` | `float` | `1.0` | Opacity of the yield signs |
 
-| Parameter | Type | Description |
+## Launch Files
+
+### [`lanelet2_lichtblick_display_launch.py`](launch/lanelet2_lichtblick_display_launch.py)
+
+| Argument | Default | Description |
 | --- | --- | --- |
-| `X`_line_width | `double` | Line width for lines `LINE_STRIP` markers |
-| `X`_color_hex | `string` | Color for lines as a hex string |
-| `X`_line_opacity | `double` | Opacity as an alpha value (0.0–1.0) for lines |
-
-Traffic lights are visualized as a `MESH_RESOURCE` and can be loaded via https, (ros-)package and file, but package and file links only work in the Desktop application.
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `traffic_light_mesh_resource` | `string` | mesh_resource link used for traffic light MESH_RESOURCE markers |
-| `traffic_light_scale` | `double` | Uniform scale factor for traffic light meshes |
-| `traffic_light_z_offset` | `double` | z-offset applied to traffic light positions. Useful to adapt model origin/height. |
-| `traffic_light_opacity` | `double` | Opacity as an alpha value (0.0–1.0) for  traffic lights |
-
-### Visualization Example
-
-![Visualization Example](/lanelet2_lichtblick_display/assets/visualization_example.png)
+| `output_topic` | `"~/lichtblick_lanelet2_map"` | marker visualization of map |
+| `name` | `"lanelet2_lichtblick_display"` | node name |
+| `namespace` | `""` | node namespace |
+| `params` | `os.path.join(get_package_share_directory("lanelet2_lichtblick_display"), "config", "params.yml")` | path to parameter file |
+| `log_level` | `"info"` | ROS logging level (debug, info, warn, error, fatal) |
+| `use_sim_time` | `"false"` | use simulation clock |

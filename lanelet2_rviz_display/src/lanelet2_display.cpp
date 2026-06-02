@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #include "lanelet2_rviz_display/lanelet2_display.hpp"
 
 #include <cstdint>
@@ -22,22 +25,25 @@ using rviz_common::properties::StringProperty;
 namespace lanelet2_rviz_display {
 
 Lanelet2Display::Lanelet2Display() {
+  // RViz properties are parent-owned by Qt/RViz once constructed with this display as parent.
+  // NOLINTBEGIN(cppcoreguidelines-owning-memory)
+  // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
   ll2_server_name_property_ =
-      new StringProperty(QString::fromStdString("Lanelet2-Map-Server Name"), QString::fromStdString("ll2_map_server"),
-                         QString::fromStdString("Global name of the Lanelet2-Map-Server."), this, SLOT(updateServerName()));
+      new StringProperty(QString::fromStdString("Name of lanelet2_map_server"), QString::fromStdString("lanelet2_map_server"),
+                         QString::fromStdString("Global name of lanelet2_map_server node"), this, SLOT(updateServerName()));
 
-  alpha_property_ = new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this,
-                                      SLOT(updateColor()), this);
+  alpha_property_ =
+      new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this, SLOT(updateColor()), this);
   alpha_property_->setMin(0.0f);
   alpha_property_->setMax(1.0f);
 
-  three_d_property_ = new BoolProperty("Show Map in 3D", true,
-                                       "Toggles wether to display the lanelet map with or without its z coordinates.",
-                                       this, SLOT(update3D()));
+  three_d_property_ =
+      new BoolProperty("Show Map in 3D", true, "Toggles wether to display the lanelet map with or without its z coordinates.",
+                       this, SLOT(update3D()));
 
   viz_linestring_property_ =
-      new BoolProperty("Visualize Lanelet-Linestrings", true, "Activate the visualization of Lanelet-Linestrings.",
-                       this, SLOT(updateLinestringRendering()));
+      new BoolProperty("Visualize Lanelet-Linestrings", true, "Activate the visualization of Lanelet-Linestrings.", this,
+                       SLOT(updateLinestringRendering()));
 
   ll_left_col_property_ = new ColorProperty("LL Color Left", Qt::white, "Color of left Lanelet-Linestring.",
                                             viz_linestring_property_, SLOT(updateColor()), this);
@@ -60,8 +66,8 @@ Lanelet2Display::Lanelet2Display() {
                                                  viz_separators_property_, SLOT(updateStyle()), this);
   separators_width_property_->setMin(0.01f);
 
-  viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.",
-                                             this, SLOT(updateStopLineRendering()));
+  viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.", this,
+                                             SLOT(updateStopLineRendering()));
 
   stop_line_col_property_ = new ColorProperty("Stop Line Color", QColor{255, 25, 25}, "Color of Stop-Lines.",
                                               viz_stop_line_property_, SLOT(updateColor()), this);
@@ -74,82 +80,78 @@ Lanelet2Display::Lanelet2Display() {
       new BoolProperty("Visualize Traffic Lights", true, "Activate the visualization of Traffic-Lights.", this,
                        SLOT(updateTrafficLightRendering()));
 
-  traffic_light_col_property_ =
-      new ColorProperty("Traffic Light Color", QColor{102, 102, 102}, "Color of Traffic-Lights.",
-                        viz_traffic_light_property_, SLOT(updateColor()), this);
+  traffic_light_col_property_ = new ColorProperty("Traffic Light Color", QColor{102, 102, 102}, "Color of Traffic-Lights.",
+                                                  viz_traffic_light_property_, SLOT(updateColor()), this);
 
   traffic_light_height_property_ =
       new FloatProperty("Traffic Light Height", 3.0f, "The height, in meters, of each traffic light.",
                         viz_traffic_light_property_, SLOT(updateStyle()), this);
   traffic_light_height_property_->setMin(0.01f);
 
-  viz_area_property_ = new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this,
-                                        SLOT(updateAreaRendering()));
+  viz_area_property_ =
+      new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this, SLOT(updateAreaRendering()));
 
-  area_col_property_ = new ColorProperty("Area Color", QColor{230, 127, 25}, "Color of Areas.", viz_area_property_,
-                                         SLOT(updateColor()), this);
+  area_col_property_ =
+      new ColorProperty("Area Color", QColor{230, 127, 25}, "Color of Areas.", viz_area_property_, SLOT(updateColor()), this);
 
-  area_width_property_ = new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.",
-                                           viz_area_property_, SLOT(updateStyle()), this);
+  area_width_property_ =
+      new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.", viz_area_property_, SLOT(updateStyle()), this);
   area_width_property_->setMin(0.01f);
 
   fill_area_property_ = new BoolProperty("Fill Areas", false, "Toggles wether to fill the areas with color or not.",
                                          viz_area_property_, SLOT(updateStyle()), this);
 
-  viz_parking_property_ = new BoolProperty("Visualize Parking", true, "Activate the visualization of Parking.", this,
-                                           SLOT(updateParkingRendering()));
+  viz_parking_property_ =
+      new BoolProperty("Visualize Parking", true, "Activate the visualization of Parking.", this, SLOT(updateParkingRendering()));
 
-  parking_col_property_ = new ColorProperty("Parking Color", QColor{0, 179, 76}, "Color of Parking.",
-                                            viz_parking_property_, SLOT(updateColor()), this);
+  parking_col_property_ = new ColorProperty("Parking Color", QColor{0, 179, 76}, "Color of Parking.", viz_parking_property_,
+                                            SLOT(updateColor()), this);
 
   parking_width_property_ = new FloatProperty("Parking Width", 0.3f, "The width, in meters, of each parking.",
                                               viz_parking_property_, SLOT(updateStyle()), this);
   parking_width_property_->setMin(0.01f);
 
-  fill_parking_property_ =
-      new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
-                       viz_parking_property_, SLOT(updateStyle()), this);
+  fill_parking_property_ = new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
+                                            viz_parking_property_, SLOT(updateStyle()), this);
 
   // Lane fills (road surface)
-  viz_lane_fill_property_ = new BoolProperty("Fill Lanelets (Road)", true,
-                                            "Render road surface as filled polygons.", this,
-                                            SLOT(updateLaneFillRendering()));
-  lane_fill_col_property_ = new ColorProperty("Road Color", QColor{56, 56, 56},
-                                             "Color of road fill.", viz_lane_fill_property_, SLOT(updateColor()), this);
+  viz_lane_fill_property_ = new BoolProperty("Fill Lanelets (Road)", true, "Render road surface as filled polygons.", this,
+                                             SLOT(updateLaneFillRendering()));
+  lane_fill_col_property_ = new ColorProperty("Road Color", QColor{56, 56, 56}, "Color of road fill.", viz_lane_fill_property_,
+                                              SLOT(updateColor()), this);
 
   // Pedestrian features
-  viz_sidewalk_property_ = new BoolProperty("Visualize Sidewalks", true,
-                                            "Render sidewalk areas as filled polygons.", this,
+  viz_sidewalk_property_ = new BoolProperty("Visualize Sidewalks", true, "Render sidewalk areas as filled polygons.", this,
                                             SLOT(updateSidewalkRendering()));
-  sidewalk_col_property_ = new ColorProperty("Sidewalk Color", QColor{191, 191, 191},
-                                             "Color of sidewalks.", viz_sidewalk_property_, SLOT(updateColor()), this);
+  sidewalk_col_property_ = new ColorProperty("Sidewalk Color", QColor{191, 191, 191}, "Color of sidewalks.",
+                                             viz_sidewalk_property_, SLOT(updateColor()), this);
 
-  viz_crosswalk_property_ = new BoolProperty("Visualize Crosswalks", true,
-                                             "Render crosswalk areas as filled polygons.", this,
+  viz_crosswalk_property_ = new BoolProperty("Visualize Crosswalks", true, "Render crosswalk areas as filled polygons.", this,
                                              SLOT(updateCrosswalkRendering()));
-  crosswalk_col_property_ = new ColorProperty("Crosswalk Color", QColor{255, 255, 255},
-                                              "Color of crosswalks.", viz_crosswalk_property_, SLOT(updateColor()), this);
+  crosswalk_col_property_ = new ColorProperty("Crosswalk Color", QColor{255, 255, 255}, "Color of crosswalks.",
+                                              viz_crosswalk_property_, SLOT(updateColor()), this);
 
-  viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.",
-                                      this, SLOT(updateIdRendering()));
+  viz_id_property_ = new BoolProperty("Visualize Lanelet-IDs", false, "Activate the visualization of Lanelet-IDs.", this,
+                                      SLOT(updateIdRendering()));
 
   id_col_property_ =
       new ColorProperty("ID Color", Qt::white, "Color of Lanelet-IDs.", viz_id_property_, SLOT(updateColor()), this);
 
-  char_height_property_ = new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_,
-                                            SLOT(updateStyle()), this);
+  char_height_property_ =
+      new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_, SLOT(updateStyle()), this);
+  // NOLINTEND(cppcoreguidelines-owning-memory)
 }
 
 Lanelet2Display::~Lanelet2Display() = default;
 
 void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
   std::string name = ll2_server_name_property_->getStdString();
-  if(!name.empty()) {
-    if(name[0] != '/') {
-        name = '/' + name;
+  if (!name.empty()) {
+    if (name[0] != '/') {
+      name = '/' + name;
     }
-    ll2if_ = new LL2MapInterface(parent_node, name);
-  } 
+    ll2_interface_ = std::make_unique<LL2MapInterface>(parent_node, name);
+  }
 }
 
 void Lanelet2Display::onInitialize() {
@@ -159,13 +161,13 @@ void Lanelet2Display::onInitialize() {
 }
 
 void Lanelet2Display::update(float dt, float ros_dt) {
-  if (ll2if_->map_loaded_) {
+  if (ll2_interface_->map_loaded_) {
     if (!viz_init_) {
       viz_init_ = visualizeMap();
-      ll2if_->update_pending_ = false;
+      ll2_interface_->update_pending_ = false;
     }
 
-    if (ll2if_->update_pending_) {
+    if (ll2_interface_->update_pending_) {
       updateVisualization();
     }
 
@@ -175,12 +177,12 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 
       Ogre::Vector3 position;
       Ogre::Quaternion orientation;
-      if (context_->getFrameManager()->getTransform(ll2if_->map_frame_id_, position, orientation)) {
+      if (context_->getFrameManager()->getTransform(ll2_interface_->map_frame_id_, position, orientation)) {
         scene_node_->setPosition(position);
         scene_node_->setOrientation(orientation);
         setTransformOk();
       } else {
-        setMissingTransformToFixedFrame(ll2if_->map_frame_id_);
+        setMissingTransformToFixedFrame(ll2_interface_->map_frame_id_);
         map_->getSceneNode()->setVisible(false);
       }
     }
@@ -188,21 +190,21 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 }
 
 void Lanelet2Display::updateServerName() {
-  delete ll2if_;
+  ll2_interface_.reset();
   initializeMapInterface(*rviz_node_);
   viz_init_ = false;
 }
 
 bool Lanelet2Display::visualizeMap() {
-  map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_,
-                                                       ll2if_->getMapPtr());
+  map_ =
+      std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_, ll2_interface_->getMapPtr());
   return true;
 }
 
 void Lanelet2Display::updateVisualization() {
   if (viz_init_) {
-    map_->updateMap(rendering_options_, ll2if_->getMapPtr());
-    ll2if_->update_pending_ = false;
+    map_->updateMap(rendering_options_, ll2_interface_->getMapPtr());
+    ll2_interface_->update_pending_ = false;
   }
 }
 
@@ -384,4 +386,5 @@ void Lanelet2Display::update3D() {
 }  // namespace lanelet2_rviz_display
 
 #include <pluginlib/class_list_macros.hpp>  // NOLINT
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 PLUGINLIB_EXPORT_CLASS(lanelet2_rviz_display::Lanelet2Display, rviz_common::Display)

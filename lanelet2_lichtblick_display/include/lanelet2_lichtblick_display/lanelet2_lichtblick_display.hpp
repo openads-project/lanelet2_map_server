@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <atomic>
@@ -7,34 +10,35 @@
 #include <string>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
 #include <tf2/LinearMath/Quaternion.h>
+#include <rclcpp/rclcpp.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-#include "visualization_msgs/msg/marker_array.hpp"
 #include "geometry_msgs/msg/point.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 
 #include "lanelet2_map_interface/lanelet2_map_interface.hpp"
 
-
 namespace lanelet2_lichtblick_display {
 
-template <typename C> struct is_vector : std::false_type {};    
-template <typename T,typename A> struct is_vector< std::vector<T,A> > : std::true_type {};    
-template <typename C> inline constexpr bool is_vector_v = is_vector<C>::value;
-
+template <typename C>
+struct is_vector : std::false_type {};
+template <typename T, typename A>
+struct is_vector<std::vector<T, A>> : std::true_type {};
+template <typename C>
+inline constexpr bool is_vector_v = is_vector<C>::value;
 
 /**
  * @brief Lanelet2LichtblickDisplay class
  */
 class Lanelet2LichtblickDisplay : public rclcpp::Node {
-
  public:
-
+  /**
+   * @brief Creates the Lichtblick visualization node and declares its rendering parameters.
+   */
   Lanelet2LichtblickDisplay();
 
  private:
-
   /**
    * @brief Declares and loads a ROS parameter
    *
@@ -50,16 +54,16 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param additional_constraints additional constraints description
    */
   template <typename T>
-  void declareAndLoadParameter(const std::string &name,
-                               T &param,
-                               const std::string &description,
+  void declareAndLoadParameter(const std::string& name,
+                               T& param,
+                               const std::string& description,
                                const bool add_to_auto_reconfigurable_params = true,
                                const bool is_required = false,
                                const bool read_only = false,
-                               const std::optional<double> &from_value = std::nullopt,
-                               const std::optional<double> &to_value = std::nullopt,
-                               const std::optional<double> &step_value = std::nullopt,
-                               const std::string &additional_constraints = "");
+                               const std::optional<double>& from_value = std::nullopt,
+                               const std::optional<double>& to_value = std::nullopt,
+                               const std::optional<double>& step_value = std::nullopt,
+                               const std::string& additional_constraints = "");
 
   /**
    * @brief Handles reconfiguration when a parameter value is changed
@@ -84,7 +88,6 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * Called periodically by the node's timer.
    */
   void checkMapStatus();
-
 
   /**
    * @brief Convert a hex color string into normalized RGB float components.
@@ -114,7 +117,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param point Eigen 3D point
    * @return geometry_msgs::msg::Point ROS point message
    */
-  geometry_msgs::msg::Point toRos(const Eigen::Vector3d &point);
+  geometry_msgs::msg::Point toRos(const Eigen::Vector3d& point);
 
   /**
    * @brief Publishes a DELETEALL action to clear all markers from the topic.
@@ -123,7 +126,6 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * markers previously published on the topic, ensuring a clean slate for new visualizations.
    */
   void clearAllMarkers();
-
 
   /**
    * @brief Creates and adds a LINE_STRIP marker to a marker array.
@@ -140,19 +142,18 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param points A vector of geometry_msgs::msg::Point objects defining the line segments.
    */
   void addLineStripMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
-                        int& current_marker_id,
-                        const std::string& ns,
-                        float line_width,
-                        const std::string& color_hex,
-                        float opacity,
-                        const std_msgs::msg::Header& header,
-                        const std::vector<geometry_msgs::msg::Point>& points);
+                          int& current_marker_id,
+                          const std::string& ns,
+                          double line_width,
+                          const std::string& color_hex,
+                          double opacity,
+                          const std_msgs::msg::Header& header,
+                          const std::vector<geometry_msgs::msg::Point>& points);
 
-
-/**
+  /**
  * @brief Creates and adds a MESH_RESOURCE marker for regulatory elements.
  * * Streamlines the process of visualizing 3D models of traffic signs. It handles the common
- * logic for setting marker properties, including calculating the orientation to be orthogonal to 
+ * logic for setting marker properties, including calculating the orientation to be orthogonal to
  * a reference line.
  * * @param marker_array_msg The marker array message to which the new marker will be added.
  * @param current_marker_id A reference to the marker ID counter, which will be incremented.
@@ -167,16 +168,16 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
  * @param middle_point The middle point of the reference line, used to determine orientation.
  */
   void addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
-                    int& current_marker_id,
-                    const std::string& ns,
-                    const std::string& mesh_resource,
-                    const geometry_msgs::msg::Point& position,
-                    double scale,
-                    double z_offset,
-                    double opacity,
-                    const std_msgs::msg::Header& header,
-                    double yaw_ref_line,
-                    const geometry_msgs::msg::Point& middle_point);
+                     int& current_marker_id,
+                     const std::string& ns,
+                     const std::string& mesh_resource,
+                     const geometry_msgs::msg::Point& position,
+                     double scale,
+                     double z_offset,
+                     double opacity,
+                     const std_msgs::msg::Header& header,
+                     double yaw_ref_line,
+                     const geometry_msgs::msg::Point& middle_point);
 
   /**
    * @brief Extracts the reference/effect line of a regulatory element.
@@ -201,13 +202,11 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   std::vector<geometry_msgs::msg::Point> regulatoryElementPositions(
       const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element);
 
-
  private:
-
   /**
    * @brief Auto-reconfigurable parameters for dynamic reconfiguration
    */
-  std::vector<std::tuple<std::string, std::function<void(const rclcpp::Parameter &)>>> auto_reconfigurable_params_;
+  std::vector<std::tuple<std::string, std::function<void(const rclcpp::Parameter&)>>> auto_reconfigurable_params_;
 
   /**
    * @brief Callback handle for dynamic parameter reconfiguration
@@ -224,13 +223,10 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   std::atomic<bool> need_republish_{false};
 
   std::shared_ptr<LL2MapInterface> ll2if_;
-  lanelet::LaneletMapConstPtr last_map_ptr_; 
+  lanelet::LaneletMapConstPtr last_map_ptr_;
   std::string map_frame_id;
 
-  int marker_id_counter_ = 0;
-
   rclcpp::Time current_timestamp;
-
 
   // Parameters
   double left_bound_line_width_ = 0.1;
@@ -262,8 +258,6 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   double yield_sign_scale_ = 1.0;
   double yield_sign_z_offset_ = 0.0;
   double yield_sign_opacity_ = 1.0;
-
 };
 
-
-}
+}  // namespace lanelet2_lichtblick_display

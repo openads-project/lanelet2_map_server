@@ -1,3 +1,6 @@
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
+
 #include <cctype>
 #include <cstdlib>
 #include <filesystem>
@@ -36,63 +39,56 @@ std::filesystem::path resolveFilepath(const std::string& path_string) {
 }
 
 LL2MapInterface::LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name)
-    : parent_node_(parent_node), map_server_name_(map_server_name) {
-  // default map filepath includes node name to avoid race conditions
-  map_filepath_ =
-      std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm";
+    : parent_node_(&parent_node),
+      map_filepath_(std::string(".lanelet2_map_interface/") + std::string(parent_node.get_fully_qualified_name()) + "/map.osm"),
+      map_server_name_(map_server_name) {
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.description = "Local filepath to where map from map server is written to (relative to $ROS_HOME)";
   try {
-    parent_node_.declare_parameter("map_filepath", map_filepath_, param_desc);
+    parent_node_->declare_parameter("map_filepath", map_filepath_, param_desc);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException& ex) {
-    RCLCPP_WARN(parent_node_.get_logger(), "Parameter 'map_filepath' already declared: %s", ex.what());
+    RCLCPP_WARN(parent_node_->get_logger(), "Parameter 'map_filepath' already declared: %s", ex.what());
   }
-  map_filepath_ = parent_node_.get_parameter("map_filepath").as_string();
+  map_filepath_ = parent_node_->get_parameter("map_filepath").as_string();
   map_filepath_ = resolveFilepath(map_filepath_).string();
-  RCLCPP_INFO(parent_node_.get_logger(), "Loaded parameter 'map_filepath': %s", map_filepath_.c_str());
+  RCLCPP_INFO(parent_node_->get_logger(), "Loaded parameter 'map_filepath': %s", map_filepath_.c_str());
 
   // Initialize parameter client and event handler
-  parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(&parent_node_, map_server_name);
-  parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(&parent_node_);
+  parameter_client_ = std::make_shared<rclcpp::AsyncParametersClient>(parent_node_, map_server_name);
+  parameter_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(parent_node_);
 
   // Periodically check if the parameter server is available
-  startup_timer_ = parent_node_.create_wall_timer(1s, std::bind(&LL2MapInterface::findMapServer, this));
+  startup_timer_ = parent_node_->create_wall_timer(std::chrono::seconds(1), std::bind(&LL2MapInterface::findMapServer, this));
 }
 
 void LL2MapInterface::findMapServer() {
-  if (!parameter_client_->wait_for_service(0.01s)) {
-    RCLCPP_WARN(parent_node_.get_logger(), "Waiting for map server ('%s') parameter service ...",
-                map_server_name_.c_str());
+  if (!parameter_client_->wait_for_service(std::chrono::milliseconds(10))) {
+    RCLCPP_WARN(parent_node_->get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name_.c_str());
     return;
   } else {
     startup_timer_->cancel();
-    auto parameters_future = parameter_client_->get_parameters(
-        {"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-        std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    RCLCPP_INFO(parent_node_.get_logger(), "Connected to map server ('%s') parameter service",
-                map_server_name_.c_str());
+    auto parameters_future =
+        parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                          std::bind(&LL2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+    RCLCPP_INFO(parent_node_->get_logger(), "Connected to map server ('%s') parameter service", map_server_name_.c_str());
 
     // Only declare parameters once
     if (!params_declared_) {
       frame_id_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "map_frame_id", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       contents_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "map_contents", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "origin_lat", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1),
-          map_server_name_);
+          "origin_lon", std::bind(&LL2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
       params_declared_ = true;
     }
   }
 }
 
 void LL2MapInterface::updateParamsCallback(const rclcpp::Parameter& p) {
-  RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Parameter '" << p.get_name() << "' changed, reloading map");
+  RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Parameter '" << p.get_name() << "' changed, reloading map");
   updateMapParam(p);
   std::ignore = loadMap();
 }
@@ -107,23 +103,23 @@ void LL2MapInterface::serviceParamsCallback(std::shared_future<std::vector<rclcp
 
 bool LL2MapInterface::validateParams() {
   if (map_frame_id_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_frame_id_' is empty");
+    RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_frame_id_' is empty");
     return false;
   }
   if (map_filepath_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_filepath_' is empty");
+    RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_filepath_' is empty");
     return false;
   }
   if (map_contents_.size() == 0) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Parameter 'map_contents_' is empty");
+    RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_contents_' is empty");
     return false;
   }
   if (origin_lat_ == std::numeric_limits<double>::quiet_NaN()) {
-    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lat_' is not set");
+    RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter 'origin_lat_' is not set");
     return false;
   }
   if (origin_lon_ == std::numeric_limits<double>::quiet_NaN()) {
-    RCLCPP_WARN_STREAM(parent_node_.get_logger(), "Parameter 'origin_lon_' is not set");
+    RCLCPP_WARN_STREAM(parent_node_->get_logger(), "Parameter 'origin_lon_' is not set");
     return false;
   }
   return true;
@@ -172,7 +168,7 @@ bool LL2MapInterface::loadMap() {
   std::string map_directory = map_filepath_.substr(0, map_filepath_.find_last_of("/"));
   if (!std::filesystem::exists(map_directory)) {
     if (!std::filesystem::create_directories(map_directory)) {
-      RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to create directory '" << map_directory << "'");
+      RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Failed to create directory '" << map_directory << "'");
       return false;
     }
   }
@@ -188,10 +184,10 @@ bool LL2MapInterface::loadMap() {
     utmProjectorPtr_ = std::make_shared<lanelet::projection::UtmProjector>(lanelet::Origin({origin_lat_, origin_lon_}));
     mapPtr_ = lanelet::load(map_filepath_, *utmProjectorPtr_);
     map_loaded_ = true;
-    RCLCPP_INFO_STREAM(parent_node_.get_logger(), "Loaded map '" + map_filepath_ + "'");
+    RCLCPP_INFO_STREAM(parent_node_->get_logger(), "Loaded map '" + map_filepath_ + "'");
     update_pending_ = true;
   } catch (const std::exception& exc) {
-    RCLCPP_ERROR_STREAM(parent_node_.get_logger(), "Failed to load map '" + map_filepath_ + "': " + exc.what());
+    RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Failed to load map '" + map_filepath_ + "': " + exc.what());
     return false;
   }
 

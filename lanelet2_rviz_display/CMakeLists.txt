@@ -46,6 +46,7 @@ endforeach()
 set(${PROJECT_NAME}_source_files
   src/lanelet2_display.cpp
   src/lanelet2_map.cpp
+  src/lanelet2_map_helpers.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -106,7 +107,28 @@ install(
   DESTINATION include/${PROJECT_NAME}
 )
 
+install(
+  FILES
+    LICENSE.BSD-3-Clause
+  DESTINATION share/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_clang_format_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/format/.clang-format)
+  set(ament_cmake_clang_tidy_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/.clang-tidy)
+  set(ament_cmake_flake8_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/ament_flake8.ini)
+  ament_lint_auto_find_test_dependencies()
+
+  # Use a custom project-scoped clang-tidy wrapper to avoid linting failures induced by third-party code, e.g., Qt.
+  set(AMENT_LINT_AUTO_EXCLUDE ament_cmake_clang_tidy)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/project_clang_tidy.cmake)
+  add_project_clang_tidy_test(
+    CONFIG_FILE ${ament_cmake_clang_tidy_CONFIG_FILE}
+    EXTRA_ARGS "-U_OPENMP"
+  )
+endif()
+
 ament_package(
   CONFIG_EXTRAS "${PROJECT_NAME}-extras.cmake"
 )
-

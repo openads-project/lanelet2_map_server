@@ -1,32 +1,30 @@
-/*
- *
- * This implementation is partly based on the ROS1 lanelet_rviz_plugin from FZI & KIT and the RViz Rendering "Grid" and the RViz Default Plugins "Grid Display"
- * https://github.com/coincar-sim/lanelet_rviz_plugin_ros/
- * https://github.com/ros2/rviz/tree/rolling/rviz_default_plugins
- * https://github.com/ros2/rviz/blob/rolling/rviz_rendering
- *
- * NOTE THE COPYRIGHT AND LICENSE BEFORE ANY DISTRIBUTION
- *
- * AUTHOR: Guido Küppers (guido.kueppers@ika.rwth-aachen.de)
- *
- */
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
+// SPDX-License-Identifier: Apache-2.0
 
 #include "lanelet2_rviz_display/lanelet2_map.hpp"
 
-#include <OgreManualObject.h>
+#include "lanelet2_map_helpers.hpp"
+
+#include <OgreMaterial.h>
 #include <OgreMaterialManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreTechnique.h>
-#include <OgreVector.h>
+
+#include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <string>
 
 namespace rviz_rendering {
 
 int Lanelet2Map::manual_object_counter_{0};
 
-Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_node,
-                         Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr)
-    : rend_opts_(rend_opts), scene_manager_(manager) {
+Lanelet2Map::Lanelet2Map(Ogre::SceneManager* manager,
+                         Ogre::SceneNode* parent_node,
+                         Lanelet2Map::RenderingOptions rend_opts,
+                         lanelet::LaneletMapConstPtr map_ptr)
+    : rend_opts_(rend_opts), scene_manager_(manager), bsd_helpers_(std::make_unique<detail::Lanelet2MapHelpers>(*this)) {
   std::string ll_map_name = "Lanelet2Map";
 
   if (!parent_node) {
@@ -35,7 +33,6 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
 
   scene_node_ = parent_node->createChildSceneNode();
 
-  // Create two materials: one for surfaces (fills), one for lines/overlays
   const std::string mat_surface_name = ll_map_name + "SurfaceMaterial";
   const std::string mat_line_name = ll_map_name + "LineMaterial";
 
@@ -50,7 +47,6 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
       material_surface_->getTechnique(0)->setDepthWriteEnabled(true);
       material_surface_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
       material_surface_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
-      // mild bias for surfaces against ground plane
       material_surface_->getTechnique(0)->getPass(0)->setDepthBias(1.0f, 1.0f);
     }
   }
@@ -63,11 +59,10 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
       material_line_->setReceiveShadows(false);
       material_line_->getTechnique(0)->setLightingEnabled(false);
       material_line_->getTechnique(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-      material_line_->getTechnique(0)->setDepthWriteEnabled(false);  // overlays, do not write depth
-      material_line_->getTechnique(0)->setDepthCheckEnabled(true);   // but still test depth
+      material_line_->getTechnique(0)->setDepthWriteEnabled(false);
+      material_line_->getTechnique(0)->setDepthCheckEnabled(true);
       material_line_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
       material_line_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
-      // stronger bias so borders sit clearly above surfaces
       material_line_->getTechnique(0)->getPass(0)->setDepthBias(2.0f, 1.0f);
     }
   }
@@ -79,132 +74,28 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager *manager, Ogre::SceneNode *parent_no
 Lanelet2Map::~Lanelet2Map() {
   clearObjects();
 
-  // destroy all child scene nodes
   scene_node_->removeAndDestroyAllChildren();
-  // self detach from parent_scene_node
   scene_node_->getParentSceneNode()->removeChild(scene_node_);
-  // delete sceneNode_
   scene_manager_->destroySceneNode(scene_node_);
 
-  
-  if (material_surface_) material_surface_->unload();
-  if (material_line_) material_line_->unload();
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L66
-void Lanelet2Map::clearObjects() {
-  for (auto object : objects_) {
-    switch (object.first) {
-      case ObjectClassification::MAP: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::LANELETID: {
-        auto mov_text = dynamic_cast<rviz_rendering::MovableText *>(object.second);
-        if (mov_text) {
-          mov_text->detachFromParent();
-          delete mov_text;
-        }
-        break;
-      }
-
-      case ObjectClassification::AREA: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::PARKINGAREA: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::SEPERATOR: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::STOPLINE: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::TRAFFICLIGHT: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::LANEFILL: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::SIDEWALK: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      case ObjectClassification::CROSSWALK: {
-        auto man_object = dynamic_cast<Ogre::ManualObject *>(object.second);
-        if (man_object) {
-          man_object->detachFromParent();
-          scene_manager_->destroyManualObject(man_object);
-        }
-        break;
-      }
-
-      default: {
-        if (object.second) {
-          object.second->detachFromParent();
-          delete object.second;
-        }
-      }
-    }
+  if (material_surface_) {
+    material_surface_->unload();
   }
-  manual_object_counter_ = 0;
-  objects_.clear();
+  if (material_line_) {
+    material_line_->unload();
+  }
 }
+
+void Lanelet2Map::clearObjects() { bsd_helpers_->clearObjects(); }
 
 void Lanelet2Map::updateMap(Lanelet2Map::RenderingOptions rend_opts, lanelet::LaneletMapConstPtr map_ptr) {
   rend_opts_ = rend_opts;
-  clearObjects();                // Clear all old objects
-  create(map_ptr);               // Create new objects from map
-  updateVisibility(rend_opts_);  // Hide all objects that are not supposed to be visible
+  clearObjects();
+  create(map_ptr);
+  updateVisibility(rend_opts_);
 }
 
-void Lanelet2Map::updateVisibility(const RenderingOptions &rend_opts) {
+void Lanelet2Map::updateVisibility(const RenderingOptions& rend_opts) {
   rend_opts_ = rend_opts;
   updateVisibility(ObjectClassification::MAP, rend_opts_.renderLaneletLinestrings);
   updateVisibility(ObjectClassification::LANELETID, rend_opts_.renderLaneletIds);
@@ -227,521 +118,99 @@ void Lanelet2Map::updateVisibility(ObjectClassification classification, bool vis
 }
 
 void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
-  // Create manual objects that will be attached to the scene-node
-  Ogre::ManualObject *mapManualObject =
+  Ogre::ManualObject* map_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *seperatorManualObject =
+  Ogre::ManualObject* separator_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *areaManualObject =
+  Ogre::ManualObject* area_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *parkingManualObject =
+  Ogre::ManualObject* parking_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *laneFillManualObject =
+  Ogre::ManualObject* lane_fill_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *sidewalkManualObject =
+  Ogre::ManualObject* sidewalk_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  Ogre::ManualObject *crosswalkManualObject =
+  Ogre::ManualObject* crosswalk_manual_object =
       scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
 
-  if (map_ptr != nullptr) {
-    // Attach begin with correct materials
-    mapManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    seperatorManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    areaManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    parkingManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    laneFillManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    sidewalkManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-    crosswalkManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-
-    // Order the queue: surfaces first, overlays (lines) later
-    const uint8_t q_surfaces = Ogre::RENDER_QUEUE_MAIN;          // default group
-    const uint8_t q_lines = Ogre::RENDER_QUEUE_MAIN + 5;         // later in the queue
-    laneFillManualObject->setRenderQueueGroup(q_surfaces);
-    areaManualObject->setRenderQueueGroup(q_surfaces);
-    parkingManualObject->setRenderQueueGroup(q_surfaces);
-    sidewalkManualObject->setRenderQueueGroup(q_surfaces);
-    crosswalkManualObject->setRenderQueueGroup(q_surfaces);
-    mapManualObject->setRenderQueueGroup(q_lines);
-    seperatorManualObject->setRenderQueueGroup(q_lines);
-    // Iterate through all lanelets in map-graph
-    for (const lanelet::ConstLanelet &lanelet : map_ptr->laneletLayer) {
-      addLaneletToManualObject(lanelet, mapManualObject);
-      addSeperatorToManualObject(lanelet, seperatorManualObject);
-      if (rend_opts_.renderLaneletFills) {
-        addLaneFillToManualObject(lanelet, laneFillManualObject);
-      }
-      addRegulatoryElements(lanelet, scene_node_);
-      attachLaneletIdToSceneNode(lanelet, scene_node_);
-    }
-    for (const lanelet::ConstArea &area : map_ptr->areaLayer) {
-      auto attributes = area.attributes();
-      const auto subtype = attributes[lanelet::AttributeName::Subtype];
-      if (subtype == lanelet::AttributeValueString::Parking) {
-        addParkingAreaToManualObject(area, parkingManualObject);
-      } else if (rend_opts_.renderCrosswalks && (subtype == "crosswalk")) {
-        addCrosswalkToManualObject(area, crosswalkManualObject);
-      } else if (rend_opts_.renderSidewalks && (subtype == "sidewalk" || subtype == "walkway" || subtype == "footway")) {
-        addSidewalkToManualObject(area, sidewalkManualObject);
-      } else {
-        addAreaToManualObject(area, areaManualObject);
-      }
-    }
-    mapManualObject->end();
-    seperatorManualObject->end();
-    areaManualObject->end();
-    parkingManualObject->end();
-    laneFillManualObject->end();
-    sidewalkManualObject->end();
-    crosswalkManualObject->end();
-    // attach manual object to scene node
-    if (mapManualObject->getNumSections()) {
-      scene_node_->attachObject(mapManualObject);
-      // save ptr to manual object (needed later for deletion)
-      objects_.push_back(std::make_pair(ObjectClassification::MAP, mapManualObject));
-    } else {
-      scene_manager_->destroyManualObject(mapManualObject);
-    }
-
-    if (seperatorManualObject->getNumSections()) {
-      scene_node_->attachObject(seperatorManualObject);
-      // save ptr to manual object (needed later for deletion)
-      objects_.push_back(std::make_pair(ObjectClassification::SEPERATOR, seperatorManualObject));
-    } else {
-      scene_manager_->destroyManualObject(seperatorManualObject);
-    }
-
-    if (areaManualObject->getNumSections()) {
-      scene_node_->attachObject(areaManualObject);
-      // save ptr to manual object (needed later for deletion)
-      objects_.push_back(std::make_pair(ObjectClassification::AREA, areaManualObject));
-    } else {
-      scene_manager_->destroyManualObject(areaManualObject);
-    }
-
-    if (parkingManualObject->getNumSections()) {
-      scene_node_->attachObject(parkingManualObject);
-      // save ptr to manual object (needed later for deletion)
-      objects_.push_back(std::make_pair(ObjectClassification::PARKINGAREA, parkingManualObject));
-    } else {
-      scene_manager_->destroyManualObject(parkingManualObject);
-    }
-
-    if (laneFillManualObject->getNumSections()) {
-      scene_node_->attachObject(laneFillManualObject);
-      objects_.push_back(std::make_pair(ObjectClassification::LANEFILL, laneFillManualObject));
-    } else {
-      scene_manager_->destroyManualObject(laneFillManualObject);
-    }
-
-    if (sidewalkManualObject->getNumSections()) {
-      scene_node_->attachObject(sidewalkManualObject);
-      objects_.push_back(std::make_pair(ObjectClassification::SIDEWALK, sidewalkManualObject));
-    } else {
-      scene_manager_->destroyManualObject(sidewalkManualObject);
-    }
-
-    if (crosswalkManualObject->getNumSections()) {
-      scene_node_->attachObject(crosswalkManualObject);
-      objects_.push_back(std::make_pair(ObjectClassification::CROSSWALK, crosswalkManualObject));
-    } else {
-      scene_manager_->destroyManualObject(crosswalkManualObject);
-    }
-  }
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L339
-void Lanelet2Map::addLaneletToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual) {
-  // get line from left Linestrip points
-  auto leftbound = lanelet.leftBound();
-  auto lineLeft = ogreLineFromLLetLineString(leftbound);
-  // draw line as Ogre Object
-  drawLine(lineLeft, manual, rend_opts_.colorLeft, rend_opts_.linestringWidth, rend_opts_.zRoadLines);
-  // get line from right Linestrip points
-  auto rightbound = lanelet.rightBound();
-  auto lineRight = ogreLineFromLLetLineString(rightbound);
-  // draw line as Ogre Object
-  drawLine(lineRight, manual, rend_opts_.colorRight, rend_opts_.linestringWidth, rend_opts_.zRoadLines);
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L384
-void Lanelet2Map::addSeperatorToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual) {
-  // get line from first Point of the left Linestrip to the first Point of the
-  // right Linestrip
-  lanelet::ConstPoints3d pointsF;
-  pointsF.push_back(lanelet.leftBound().front());
-  pointsF.push_back(lanelet.rightBound().front());
-  // draw line as Ogre Object
-  auto line = ogreLineFromLLetPts(pointsF);
-  drawLine(line, manual, rend_opts_.colorSeperator, rend_opts_.seperatorWidth, rend_opts_.zSeparator);
-
-  // get line from last Point of the left Linestrip to the last Point of the
-  // right Linestrip
-  lanelet::ConstPoints3d pointsL;
-  pointsF.push_back(lanelet.leftBound().front());
-  pointsF.push_back(lanelet.rightBound().front());
-  // draw line as Ogre Object
-  line = ogreLineFromLLetPts(pointsL);
-  drawLine(line, manual, rend_opts_.colorSeperator, rend_opts_.seperatorWidth, rend_opts_.zSeparator);
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L352
-void Lanelet2Map::addAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual) {
-  // get outer boundary of area
-  // auto outerbound = area.outerBound(); //would return a vector, therefore the conversion to polygon to get a
-  // lanelet-style ConstLineString3d
-
-  const lanelet::CompoundPolygon3d outerPolygon = area.outerBoundPolygon();
-  const auto arealine = ogreLineFromLLetPolygon(outerPolygon);
-
-  // draw polygon as Ogre Object
-  if (rend_opts_.fillArea) {
-    drawArea(arealine, manual, rend_opts_.colorArea, rend_opts_.zAreas);
-  } else {
-    drawLine(arealine, manual, rend_opts_.colorArea, rend_opts_.areaWidth, rend_opts_.zAreas);
-  }
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L368
-void Lanelet2Map::addParkingAreaToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual) {
-  // get outer boundary of area
-  // auto outerbound = area.outerBound(); //would return a vector, therefore the conversion to polygon to get a
-  // lanelet-style ConstLineString3d
-
-  const lanelet::CompoundPolygon3d outerPolygon = area.outerBoundPolygon();
-  const auto arealine = ogreLineFromLLetPolygon(outerPolygon);
-
-  // draw polygon as Ogre Object
-  if (rend_opts_.fillParking) {
-    drawArea(arealine, manual, rend_opts_.colorParking, rend_opts_.zParking);
-  } else {
-    drawLine(arealine, manual, rend_opts_.colorParking, rend_opts_.parkingWidth, rend_opts_.zParking);
-  }
-}
-
-void Lanelet2Map::addLaneFillToManualObject(const lanelet::ConstLanelet &lanelet, Ogre::ManualObject *manual) {
-  const auto left = ogreLineFromLLetLineString(lanelet.leftBound());
-  const auto right = ogreLineFromLLetLineString(lanelet.rightBound());
-  drawLaneFillStrip(left, right, manual, rend_opts_.colorLaneFill, rend_opts_.zLaneFill);
-}
-
-void Lanelet2Map::addSidewalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual) {
-  const lanelet::CompoundPolygon3d outerPolygon = area.outerBoundPolygon();
-  const auto arealine = ogreLineFromLLetPolygon(outerPolygon);
-  drawArea(arealine, manual, rend_opts_.colorSidewalk, rend_opts_.zSidewalk);
-}
-
-void Lanelet2Map::addCrosswalkToManualObject(const lanelet::ConstArea &area, Ogre::ManualObject *manual) {
-  const lanelet::CompoundPolygon3d outerPolygon = area.outerBoundPolygon();
-  const auto arealine = ogreLineFromLLetPolygon(outerPolygon);
-  drawArea(arealine, manual, rend_opts_.colorCrosswalk, rend_opts_.zCrosswalk);
-}
-
-void Lanelet2Map::addRegulatoryElements(const lanelet::ConstLanelet &lanelet, Ogre::SceneNode *parentNode) {
-  // create child SceneNode. Only SceneNodes can be positioned.
-  Ogre::SceneNode *regulatoryElementsNode = parentNode->createChildSceneNode();
-  // get pointer to regulatory elements
-  auto regulatoryElements = lanelet.regulatoryElements();
-  auto trafficLightRegelems = lanelet.regulatoryElementsAs<lanelet::TrafficLight>();
-
-  // loop  over the regulatory elements
-  if (rend_opts_.renderStopLines) {
-    for (auto &&regElement : regulatoryElements) {
-      // Get reference lines
-      auto refLines = regElement.get()->getParameters<lanelet::ConstLineString3d>(lanelet::RoleName::RefLine);
-      attachRefLinesToSceneNode(refLines, regulatoryElementsNode);
-    }
-  }
-  // loop over traffic lights (RoleName::Refers applies also to speedlimits which are part of the above loop)
-  if (rend_opts_.renderTrafficLights) {
-    for (auto &&trafficLight : trafficLightRegelems) {
-      // ConstPolygon3d for Roadsigns pretend to be traffic lights, ConstLineString3d for actual traffic lights
-      auto trafficLights = trafficLight.get()->getParameters<lanelet::ConstPolygon3d>(lanelet::RoleName::Refers);
-      attachTrafficLightsToSceneNode(trafficLights, regulatoryElementsNode);
-    }
-  }
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L278
-void Lanelet2Map::attachRefLinesToSceneNode(std::vector<lanelet::ConstLineString3d> &stopLines,
-                                            Ogre::SceneNode *parentNode) {
-  // Create Manual Object, RefLines will be created as Manual Object using the
-  // ogre_helper::drawLine helper function
-  Ogre::ManualObject *stopLinesManualObject =
-      scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  stopLinesManualObject->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-  stopLinesManualObject->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN + 6);
-  for (auto &&stopLine : stopLines) {
-    auto line = Lanelet2Map::ogreLineFromLLetLineString(stopLine);
-    drawLine(line, stopLinesManualObject, rend_opts_.colorStopLine, rend_opts_.stopLineWidth, rend_opts_.zStopLine);
-  }
-  if (stopLinesManualObject->getNumSections()) {
-    parentNode->attachObject(stopLinesManualObject);
-    // save ptr to manual object (needed later for deletion)
-    objects_.push_back(std::make_pair(ObjectClassification::STOPLINE, stopLinesManualObject));
-  }
-  stopLinesManualObject->end();
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L298
-void Lanelet2Map::attachTrafficLightsToSceneNode(std::vector<lanelet::ConstPolygon3d> &trafficLights,
-                                                 Ogre::SceneNode *parentNode) {
-  // Create Manual Object, RefLines will be created as Manual Object using the
-  // ogre_helper::drawLine helper function
-  Ogre::ManualObject *trafficLightManualObject =
-      scene_manager_->createManualObject("llet_object_" + std::to_string(manual_object_counter_++));
-  trafficLightManualObject->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
-  trafficLightManualObject->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN + 4);
-  for (auto &&trafficLight : trafficLights) {
-    std::vector<Ogre::Vector3> line = Lanelet2Map::ogreLineFromLLetTrafficLight(trafficLight);
-    drawArea(line, trafficLightManualObject, rend_opts_.colorTrafficLight, rend_opts_.zStopLine);
-  }
-  if (trafficLightManualObject->getNumSections()) {
-    parentNode->attachObject(trafficLightManualObject);
-    // save ptr to manual object (needed later for deletion)
-    objects_.push_back(std::make_pair(ObjectClassification::TRAFFICLIGHT, trafficLightManualObject));
-  }
-  trafficLightManualObject->end();
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L317
-void Lanelet2Map::attachLaneletIdToSceneNode(const lanelet::ConstLanelet &lanelet, Ogre::SceneNode *parentNode) {
-  // create child SceneNode. Only SceneNodes can be positioned.
-  Ogre::SceneNode *childNode = parentNode->createChildSceneNode();
-
-  rviz_rendering::MovableText *msg = new rviz_rendering::MovableText(std::to_string(lanelet.id()));
-  msg->setCharacterHeight(rend_opts_.characterHeight);
-  msg->setColor(rend_opts_.colorLaneletId);
-  msg->setTextAlignment(rviz_rendering::MovableText::H_CENTER,
-                        rviz_rendering::MovableText::V_ABOVE);  // Center horizontally and
-                                                                // display above the node
-
-  lanelet::ConstPoint3d text_pos(
-      lanelet::utils::getId(), lanelet.centerline()[lanelet.centerline().size() / 2].x(),
-      lanelet.centerline()[lanelet.centerline().size() / 2].y(),
-      rend_opts_.threeD ? lanelet.centerline()[lanelet.centerline().size() / 2].z() - 0.2 : -0.2);
-
-  Ogre::Vector3 trans = ogreVec3FromLLetPoint(text_pos);
-  childNode->setPosition(trans);
-
-  childNode->attachObject(msg);
-  objects_.push_back(std::make_pair(ObjectClassification::LANELETID, msg));
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L405
-std::vector<Ogre::Vector3> Lanelet2Map::ogreLineFromLLetLineString(const lanelet::ConstLineString3d &lineString) const {
-  std::vector<Ogre::Vector3> line;
-  for (lanelet::ConstPoint3d point : lineString) {
-    line.push_back(ogreVec3FromLLetPoint(point));
-  }
-  return line;
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L413
-std::vector<Ogre::Vector3> Lanelet2Map::ogreLineFromLLetPolygon(const lanelet::CompoundPolygon3d &polygon) const {
-  // overloaded function to convert outer boundary of an area to an oger::line
-  std::vector<Ogre::Vector3> line;
-  for (lanelet::ConstPoint3d point : polygon) {
-    line.push_back(ogreVec3FromLLetPoint(point));
-  }
-  return line;
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L422
-std::vector<Ogre::Vector3> Lanelet2Map::ogreLineFromLLetTrafficLight(const lanelet::ConstPolygon3d &polygon) const {
-  if (polygon.empty()) {
-    return {};
-  }
-
-  // overloaded function to convert outer boundary of an area to a line
-  std::vector<Ogre::Vector3> line;
-  const lanelet::ConstPoint3d lowestPoint = *std::min_element(
-      polygon.begin(), polygon.end(),
-      [](const lanelet::ConstPoint3d &p1, const lanelet::ConstPoint3d &p2) { return p1.z() < p2.z(); });
-
-  for (lanelet::ConstPoint3d point : polygon) {
-    line.push_back(ogreVec3FromLLetTrafficLight(point, rend_opts_.trafficLightHeightAboveGround - lowestPoint.z()));
-  }
-  return line;
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L441
-std::vector<Ogre::Vector3> Lanelet2Map::ogreLineFromLLetPts(const lanelet::ConstPoints3d &ptsVector) const {
-  std::vector<Ogre::Vector3> line;
-  for (lanelet::ConstPoint3d point : ptsVector) {
-    line.push_back(ogreVec3FromLLetPoint(point));
-  }
-  return line;
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L450
-Ogre::Vector3 Lanelet2Map::ogreVec3FromLLetPoint(const lanelet::ConstPoint3d point) const {
-  using boost::numeric_cast;
-  using boost::numeric::bad_numeric_cast;
-  return Ogre::Vector3(numeric_cast<Ogre::Real>(point.x()), numeric_cast<Ogre::Real>(point.y()),
-                       numeric_cast<Ogre::Real>(point.z()) * rend_opts_.threeD);
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element.cpp#L456
-Ogre::Vector3 Lanelet2Map::ogreVec3FromLLetTrafficLight(const lanelet::ConstPoint3d point, const double zOffset) const {
-  using boost::numeric_cast;
-  using boost::numeric::bad_numeric_cast;
-  // sets z-value to an appropriat height in a projected 2D map
-  return Ogre::Vector3(numeric_cast<Ogre::Real>(point.x()), numeric_cast<Ogre::Real>(point.y()),
-                       numeric_cast<Ogre::Real>(point.z() + zOffset));
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element_ogre_helper.hpp#L86
-std::vector<Ogre::Vector3> Lanelet2Map::bufferSegment(const std::vector<Ogre::Vector3> &line, double buffer_length) {
-  std::vector<Ogre::Vector3> buffered;
-  buffered.reserve(line.size());
-  assert(line.size() >= 2);
-  for (auto it = line.begin(); it != line.end(); ++it) {
-    auto normal = getNormal(it, line.begin(), line.end());
-    buffered.push_back(*it + normal * buffer_length / 2);
-  }
-  for (auto it = line.rbegin(); it != line.rend(); ++it) {
-    auto normal = getNormal(it, line.rbegin(), line.rend());
-    buffered.push_back(*it + normal * buffer_length / 2);
-  }
-  return buffered;
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element_ogre_helper.hpp#L55
-template <typename Iter>
-Ogre::Vector3 Lanelet2Map::getNormal(Iter it, Iter begin, Iter end) {
-  Ogre::Vector3 zero(0, 0, 0);
-  // iterate backwards until direction vector is nonzero (in case of points on same position)
-  auto dirBefore = zero;
-  int i = 1;
-  while (it != begin && dirBefore == zero) {
-    dirBefore = *it - *std::prev(it, i);
-    i++;
-  }
-  // same thing forwards
-  auto dirAfter = zero;
-  i = 1;
-  while (std::next(it) != end && dirAfter == zero) {
-    dirAfter = *std::next(it, i) - *it;
-    i++;
-  }
-  // if no directions could be calculated, return 0 (only happens if there are no points or all points are identical)
-  if (dirBefore == zero && dirAfter == zero) return zero;
-  if (dirAfter == zero) dirAfter = dirBefore;
-  if (dirBefore == zero) dirBefore = dirAfter;
-
-  // calculate direction as mean from both line orientations
-  auto dirCombined = dirAfter * (1 / dirAfter.length()) + dirBefore * (1 / dirBefore.length());
-  dirCombined *= 1 / dirCombined.length();
-  return Ogre::Vector3(dirCombined.y, -dirCombined.x, 0);  // rotate 90 degrees
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element_ogre_helper.hpp#L148
-void Lanelet2Map::drawLine(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj, Ogre::ColourValue color,
-                           double width, double zOffset) {
-  if (width <= 0) return;
-  if (line.size() < 2) return;
-  auto buffered = bufferSegment(line, width);
-  if (zOffset != 0.0) {
-    for (auto &v : buffered) v.z += zOffset;
-  }
-  drawMonoPolygon(buffered, obj, color);
-}
-
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element_ogre_helper.hpp#L141
-void Lanelet2Map::drawArea(const std::vector<Ogre::Vector3> &line, Ogre::ManualObject *obj, Ogre::ColourValue color, double zOffset) {
-  if (line.size() < 2) {
+  if (map_ptr == nullptr) {
+    scene_manager_->destroyManualObject(map_manual_object);
+    scene_manager_->destroyManualObject(separator_manual_object);
+    scene_manager_->destroyManualObject(area_manual_object);
+    scene_manager_->destroyManualObject(parking_manual_object);
+    scene_manager_->destroyManualObject(lane_fill_manual_object);
+    scene_manager_->destroyManualObject(sidewalk_manual_object);
+    scene_manager_->destroyManualObject(crosswalk_manual_object);
     return;
   }
-  if (zOffset != 0.0) {
-    std::vector<Ogre::Vector3> elevated;
-    elevated.reserve(line.size());
-    for (auto v : line) {
-      v.z += zOffset;
-      elevated.push_back(v);
+
+  map_manual_object->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  separator_manual_object->begin(material_line_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  area_manual_object->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  parking_manual_object->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  lane_fill_manual_object->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  sidewalk_manual_object->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+  crosswalk_manual_object->begin(material_surface_->getName(), Ogre::RenderOperation::OT_TRIANGLE_LIST, "rviz_rendering");
+
+  const uint8_t q_surfaces = Ogre::RENDER_QUEUE_MAIN;
+  const uint8_t q_lines = Ogre::RENDER_QUEUE_MAIN + 5;
+  lane_fill_manual_object->setRenderQueueGroup(q_surfaces);
+  area_manual_object->setRenderQueueGroup(q_surfaces);
+  parking_manual_object->setRenderQueueGroup(q_surfaces);
+  sidewalk_manual_object->setRenderQueueGroup(q_surfaces);
+  crosswalk_manual_object->setRenderQueueGroup(q_surfaces);
+  map_manual_object->setRenderQueueGroup(q_lines);
+  separator_manual_object->setRenderQueueGroup(q_lines);
+
+  for (const lanelet::ConstLanelet& lanelet : map_ptr->laneletLayer) {
+    bsd_helpers_->addLaneletToManualObject(lanelet, map_manual_object);
+    bsd_helpers_->addSeperatorToManualObject(lanelet, separator_manual_object);
+    if (rend_opts_.renderLaneletFills) {
+      bsd_helpers_->addLaneFillToManualObject(lanelet, lane_fill_manual_object);
     }
-    drawMonoPolygon(elevated, obj, color);
-  } else {
-    drawMonoPolygon(line, obj, color);
+    bsd_helpers_->addRegulatoryElements(lanelet, scene_node_);
+    bsd_helpers_->attachLaneletIdToSceneNode(lanelet, scene_node_);
   }
-}
 
-// https://github.com/coincar-sim/lanelet_rviz_plugin_ros/blob/9a36cb891ef0d175e0a893526980ea515712e1b9/src/map_element_ogre_helper.hpp#L101
-/**
- * @brief drawMonoPolygon draws a monotone polygon in ogre
- * @param poly
- * @param color
- * @param objcv::norm(dir)
- */
-void Lanelet2Map::drawMonoPolygon(const std::vector<Ogre::Vector3> &poly, Ogre::ManualObject *obj,
-                                  Ogre::ColourValue color) {
-  if (poly.size() < 3) return;
-
-  auto itLeft = poly.begin();
-  auto itRight = --poly.end();
-  const auto startIndex = obj->getCurrentVertexCount();
-  auto count = 0u;
-  //    std::raise(SIGINT);
-  //    obj->begin("osm_material", Ogre::RenderOperation::OT_TRIANGLE_LIST);
-  for (; itRight >= itLeft; ++itLeft, --itRight) {
-    obj->position(*itLeft);
-    obj->normal(0, 0, 1);
-    obj->colour(color);
-    if (count >= 2) {
-      assert(obj->getCurrentVertexCount() > startIndex + count);
-      obj->triangle(startIndex + count - 2, startIndex + count - 1, startIndex + count);
+  for (const lanelet::ConstArea& area : map_ptr->areaLayer) {
+    auto attributes = area.attributes();
+    const auto subtype = attributes[lanelet::AttributeName::Subtype];
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    if (subtype == lanelet::AttributeValueString::Parking) {
+      bsd_helpers_->addParkingAreaToManualObject(area, parking_manual_object);
+    } else if (rend_opts_.renderCrosswalks && (subtype == "crosswalk")) {
+      bsd_helpers_->addCrosswalkToManualObject(area, crosswalk_manual_object);
+    } else if (rend_opts_.renderSidewalks && (subtype == "sidewalk" || subtype == "walkway" || subtype == "footway")) {
+      bsd_helpers_->addSidewalkToManualObject(area, sidewalk_manual_object);
+    } else {
+      bsd_helpers_->addAreaToManualObject(area, area_manual_object);
     }
-    count++;
-    obj->position(*itRight);
-    obj->normal(0, 0, 1);
-    obj->colour(color);
-    if (count >= 2) {
-      assert(obj->getCurrentVertexCount() > startIndex + count);
-      // assert(obj->getCurrentVertexCount() < 65535);
-      obj->triangle(startIndex + count, startIndex + count - 1, startIndex + count - 2);
+  }
+
+  map_manual_object->end();
+  separator_manual_object->end();
+  area_manual_object->end();
+  parking_manual_object->end();
+  lane_fill_manual_object->end();
+  sidewalk_manual_object->end();
+  crosswalk_manual_object->end();
+
+  auto attach_if_populated = [this](Ogre::ManualObject* manual_object, ObjectClassification classification) {
+    if (manual_object->getNumSections()) {
+      scene_node_->attachObject(manual_object);
+      objects_.push_back(std::make_pair(classification, manual_object));
+    } else {
+      scene_manager_->destroyManualObject(manual_object);
     }
-    count++;
-  }
-}
+  };
 
-void Lanelet2Map::drawLaneFillStrip(const std::vector<Ogre::Vector3> &left,
-                                    const std::vector<Ogre::Vector3> &right,
-                                    Ogre::ManualObject *obj,
-                                    Ogre::ColourValue color,
-                                    double zOffset) {
-  if (left.size() < 2 || right.size() < 2) return;
-  const size_t nL = left.size();
-  const size_t nR = right.size();
-
-  // We build a triangle strip by pairing points based on relative progress along each side.
-  // Use index-based proportional mapping for efficiency.
-  size_t maxSteps = std::max(nL, nR) - 1;
-  for (size_t i = 0; i < maxSteps; ++i) {
-    double t0 = static_cast<double>(i) / static_cast<double>(maxSteps);
-    double t1 = static_cast<double>(i + 1) / static_cast<double>(maxSteps);
-
-    size_t iL0 = static_cast<size_t>(t0 * (nL - 1));
-    size_t iL1 = std::min(static_cast<size_t>(t1 * (nL - 1)), nL - 1);
-    size_t iR0 = static_cast<size_t>(t0 * (nR - 1));
-    size_t iR1 = std::min(static_cast<size_t>(t1 * (nR - 1)), nR - 1);
-
-    Ogre::Vector3 L0 = left[iL0];
-    Ogre::Vector3 L1 = left[iL1];
-    Ogre::Vector3 R0 = right[iR0];
-    Ogre::Vector3 R1 = right[iR1];
-    L0.z += zOffset; L1.z += zOffset; R0.z += zOffset; R1.z += zOffset;
-
-    const auto base = obj->getCurrentVertexCount();
-    // First triangle L0-R0-L1
-    obj->position(L0); obj->normal(0,0,1); obj->colour(color);
-    obj->position(R0); obj->normal(0,0,1); obj->colour(color);
-    obj->position(L1); obj->normal(0,0,1); obj->colour(color);
-    obj->triangle(base + 0, base + 1, base + 2);
-    // Second triangle L1-R0-R1
-    obj->position(L1); obj->normal(0,0,1); obj->colour(color);
-    obj->position(R0); obj->normal(0,0,1); obj->colour(color);
-    obj->position(R1); obj->normal(0,0,1); obj->colour(color);
-    obj->triangle(base + 3, base + 4, base + 5);
-  }
+  attach_if_populated(map_manual_object, ObjectClassification::MAP);
+  attach_if_populated(separator_manual_object, ObjectClassification::SEPERATOR);
+  attach_if_populated(area_manual_object, ObjectClassification::AREA);
+  attach_if_populated(parking_manual_object, ObjectClassification::PARKINGAREA);
+  attach_if_populated(lane_fill_manual_object, ObjectClassification::LANEFILL);
+  attach_if_populated(sidewalk_manual_object, ObjectClassification::SIDEWALK);
+  attach_if_populated(crosswalk_manual_object, ObjectClassification::CROSSWALK);
 }
 
 }  // namespace rviz_rendering

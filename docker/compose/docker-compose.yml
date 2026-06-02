@@ -1,0 +1,27 @@
+services:
+
+  lanelet2-map-server:
+    image: ghcr.io/openads-project/lanelet2_map_server:v1.2.0
+    environment:
+      # --- name ------
+      NAMESPACE: /
+      NAME: lanelet2_map_server
+      # --- inputs ----
+      NAV_SAT_FIX_TOPIC: ~/gps/fix
+      # --- other -----
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      USE_SIM_TIME: ${USE_SIM_TIME:-false}
+      PARAMS: ${PARAMS:-/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml}
+    command:
+      - /bin/bash
+      - -ic
+      - |
+        ros2 launch lanelet2_map_server lanelet2_map_server_launch.py \
+          namespace:=$${NAMESPACE} \
+          name:=$${NAME} \
+          log_level:=$${LOG_LEVEL} \
+          use_sim_time:=$${USE_SIM_TIME} \
+          params:=$${PARAMS} \
+          nav_sat_fix_topic:=$${NAV_SAT_FIX_TOPIC}
+    # volumes:
+    #   - ./params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml

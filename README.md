@@ -1,0 +1,115 @@
+# lanelet2_map_server
+
+<p align="center">
+  <a href="https://github.com/openads-project"><img src="https://img.shields.io/badge/OpenADS-f5ff01"/></a>
+  <a href="https://www.ros.org"><img src="https://img.shields.io/badge/ROS 2-jazzy-22314e"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/releases/latest"><img src="https://img.shields.io/github/v/release/openads-project/lanelet2_map_server"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_map_server"/></a>
+  <br>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml/badge.svg"/></a>
+  <a href="https://openads-project.github.io/lanelet2_map_server"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docs.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml/badge.svg"/></a>
+</p>
+
+**ROS 2 HD Map Server for Automated Driving based on Lanelet2**
+
+The [lanelet2_map_server](./lanelet2_map_server/README.md) node provides a common [Lanelet2](https://github.com/fzi-forschungszentrum-informatik/Lanelet2) map to other modules relying on a map, e.g., the [lanelet2_route_planning](https://github.com/openads-project/lanelet2_route_planning). The map is loaded from a file and made available as a ROS parameter. For convenience, the [lanelet2_map_interface](./lanelet2_map_interface/README.md) library can be used to receive the map from the server and access it in other nodes. The [lanelet2_rviz_display](./lanelet2_rviz_display/README.md) and [lanelet2_lichtblick_display](./lanelet2_lichtblick_display/README.md) packages provide visualization of the map in RViz and Lichtblick, respectively.
+
+<p align="center">
+  <strong>🚀 <a href="#-quick-start">Quick Start</a></strong> • <strong>💻 <a href="#-development">Development</a></strong> • <strong>📝 <a href="#-documentation">Documentation</a></strong>
+</p>
+
+> [!IMPORTANT]
+> This repository is part of [***OpenADS***](https://github.com/openads-project), the *Open Automated Driving Stack*. *OpenADS* and its modules have been initiated and are currently being maintained by the [**Institute for Automotive Engineering (ika) at RWTH Aachen University**](https://www.ika.rwth-aachen.de/de/).
+
+
+## 🚀 Quick Start
+
+![Teaser Image](assets/teaser.gif)
+
+1. Launch the [`demo/docker-compose.yml`](demo/docker-compose.yml) setup. This will open RViz with a visualization of a Lanelet2 map. The [`lanelet2_rviz_display`](./lanelet2_rviz_display/README.md) visualizes the map, fetching it from the [`lanelet2_map_server`](./lanelet2_map_server/README.md) via the [`lanelet2_map_interface`](./lanelet2_map_interface/README.md).
+    ```bash
+    cd demo
+    xhost +local: # allow GUI forwarding from containers
+    docker compose up -d
+    ```
+2. Stop the demo and clean up.
+    ```bash
+    docker compose down
+    xhost -local: # revoke GUI forwarding permissions
+    ```
+
+## 💻 Development
+
+### Set up Development Environment
+
+1. Clone the repository.
+    ```bash
+    git clone https://github.com/openads-project/lanelet2_map_server.git
+    ```
+1. Initialize the [`.openads-dev-environment`](https://github.com/openads-project/openads-dev-environment) submodule containing development environment configuration.
+    ```bash
+    cd lanelet2_map_server
+    git submodule update --init --recursive
+    ```
+1. Open the repository in [Visual Studio Code](https://code.visualstudio.com).
+    ```bash
+    code .
+    ```
+1. Install the recommended VS Code extensions.
+    > *Ctrl+Shift+P / Extensions: Show Recommended Extensions / Install Workspace Recommended Extensions (Cloud Download Icon)*
+1. Reopen the repository in a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers).
+    > *Ctrl+Shift+P / Dev Containers: Rebuild and Reopen in Container*
+
+### Build
+
+> *Ctrl+Shift+B*
+
+```bash
+colcon build
+```
+
+### Run Tests
+
+> *Ctrl+Shift+P / Tasks: Run Test Task*
+
+```bash
+colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+colcon test
+colcon test-result --verbose
+```
+
+
+## 📝 Documentation
+
+Package and node interfaces are documented in the respective package READMEs listed below. Implementation details are found in the [Source Code Documentation](https://openads-project.github.io/lanelet2_map_server).
+
+| Package | Description |
+| --- | --- |
+| [lanelet2_lichtblick_display](lanelet2_lichtblick_display/README.md) | Converts Lanelet2 maps to MarkerArrays for visualization in Lichtblick |
+| [lanelet2_map_interface](lanelet2_map_interface/README.md) | Library to receive Lanelet2 maps from lanelet2_map_server |
+| [lanelet2_map_server](lanelet2_map_server/README.md) | Provides Lanelet2 maps to other modules |
+| [lanelet2_rviz_display](lanelet2_rviz_display/README.md) | RViz plugin to visualize Lanelet2 maps |
+
+## ⚖️ Licensing
+
+The source code in this repository is licensed under Apache-2.0, see [LICENSE](LICENSE). Container images provided by this repository may contain third-party software shipped with their own license terms.
+
+An exception applies to the following files, which are licensed under BSD-3-Clause, see [LICENSE.BSD-3-Clause](./lanelet2_rviz_display/LICENSE.BSD-3-Clause): [`lanelet2_map_helpers.hpp`](./lanelet2_rviz_display/src/lanelet2_map_helpers.hpp), [`lanelet2_map_helpers.cpp`](./lanelet2_rviz_display/src/lanelet2_map_helpers.cpp).
+
+## 🙏 Acknowledgements
+
+Development and maintenance of this repository are supported by the following projects. We acknowledge the funding of the respective institutions.
+
+| Project | Funding Institution | Grant Number |
+| --- | --- | --- |
+| [autotech.agil](https://www.autotechagil.de/) | 🇩🇪 Federal Ministry for Research, Technology and Space (BMFTR) | 01IS22088A |
+| [AIthena](https://aithena.eu/) | 🇪🇺 European Union | 101076754 |
+
+<p>
+  <img src="https://www.drought.uni-freiburg.de/stressres/images/bmftr-logo/image" height=70>
+  <img src="https://ec.europa.eu/regional_policy/images/information-sources/logo-download-center/eu_funded_en.jpg" height=70>
+</p>
+
+<sub><sup>Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Climate, Infrastructure and Environment Executive Agency (CINEA). Neither the European Union nor CINEA can be held responsible for them.</sup></sub>
