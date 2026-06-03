@@ -116,11 +116,11 @@ class LL2MapServer : public rclcpp::Node {
   void derive_map_meta(Lanelet2MapMeta& map_meta) const;
 
   /**
-   * @brief Derives a lower-left origin latitude and longitude from a Lanelet2 map file.
+   * @brief Derives a south-west origin latitude and longitude from a Lanelet2 map file.
    *
    * @param map_filepath path to the map file
-   * @param origin_lat output latitude of the derived lower-left origin
-   * @param origin_lon output longitude of the derived lower-left origin
+   * @param origin_lat output latitude of the derived south-west origin
+   * @param origin_lon output longitude of the derived south-west origin
    * @return `true` if the origin could be derived from the map bounds
    */
   bool deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const;

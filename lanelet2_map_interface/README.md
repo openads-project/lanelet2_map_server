@@ -2,7 +2,7 @@
 
 Library to receive Lanelet2 maps from lanelet2_map_server
 
-The `lanelet2_map_interface` is a library that should be included into various ROS2 nodes that rely on Lanelet2 map information. The corresponding map parameters are provided to all nodes through the [lanelet2_map_server](../lanelet2_map_server).
+The `lanelet2_map_interface` is a library to be included into other nodes that rely on Lanelet2 map information. By including the interface, nodes can access one commonly loaded map distributed by the [lanelet2_map_server](../lanelet2_map_server).
 
 ### Integration
 
