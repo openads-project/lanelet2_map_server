@@ -4,11 +4,11 @@ Provides Lanelet2 maps to other modules
 
 ## Nodes
 
-### `ll2_map_server`
+### `lanelet2_map_server`
 
 ```mermaid
 flowchart LR
-    NODE("ll2_map_server")
+    NODE("lanelet2_map_server")
     S0:::hidden -->|~/gps/fix| NODE
     classDef hidden display: none;
 ```

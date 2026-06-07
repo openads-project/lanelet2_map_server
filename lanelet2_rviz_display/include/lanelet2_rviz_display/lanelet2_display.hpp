@@ -113,7 +113,7 @@ class Lanelet2Display : public rviz_common::Display {
    */
   void updateVisibility();
 
-  std::unique_ptr<LL2MapInterface> ll2_interface_;
+  std::unique_ptr<Lanelet2MapInterface> lanelet2_map_interface_;
   rclcpp::Node::SharedPtr rviz_node_;
 
   bool viz_init_ = false;

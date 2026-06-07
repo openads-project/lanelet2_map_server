@@ -81,7 +81,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
   /**
    * @brief Check for a new or changed Lanelet2 map and publish markers if present
    *
-   * This function queries the LL2MapInterface for the current map pointer and compares it
+   * This function queries the Lanelet2MapInterface for the current map pointer and compares it
    * against the internally stored `last_map_ptr_`. If a new map is detected (pointer change
    * and non-null), it triggers publishMarker(...) to convert the map into visualization markers.
    *
@@ -222,7 +222,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
 
   std::atomic<bool> need_republish_{false};
 
-  std::shared_ptr<LL2MapInterface> ll2if_;
+  std::shared_ptr<Lanelet2MapInterface> lanelet2_map_interface_;
   lanelet::LaneletMapConstPtr last_map_ptr_;
   std::string map_frame_id;
 

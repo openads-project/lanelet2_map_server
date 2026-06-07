@@ -161,7 +161,7 @@ void Lanelet2LichtblickDisplay::setup() {
   marker_array_publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/lichtblick_lanelet2_map", qos);
   RCLCPP_INFO(this->get_logger(), "Publishing to '%s' with transient_local QoS", marker_array_publisher_->get_topic_name());
 
-  ll2if_ = std::make_shared<LL2MapInterface>(*this, "lanelet2_map_server");
+  lanelet2_map_interface_ = std::make_shared<Lanelet2MapInterface>(*this, "lanelet2_map_server");
 
   // periodically check for map updates
   timer_ = this->create_wall_timer(std::chrono::milliseconds(2000), std::bind(&Lanelet2LichtblickDisplay::checkMapStatus, this));
@@ -333,13 +333,13 @@ std::vector<geometry_msgs::msg::Point> Lanelet2LichtblickDisplay::regulatoryElem
 }
 
 void Lanelet2LichtblickDisplay::checkMapStatus() {
-  lanelet::LaneletMapConstPtr current_map_ptr = ll2if_->getMapPtr();
+  lanelet::LaneletMapConstPtr current_map_ptr = lanelet2_map_interface_->getMapPtr();
 
   // Check if the map has been loaded or if a new map has been received
   if (current_map_ptr && current_map_ptr != last_map_ptr_) {
     RCLCPP_INFO(this->get_logger(), "New Lanelet2 map detected. Publishing markers...");
 
-    map_frame_id = ll2if_->map_frame_id_;
+    map_frame_id = lanelet2_map_interface_->map_frame_id_;
     this->clearAllMarkers();
 
     this->publishMarker(current_map_ptr);
