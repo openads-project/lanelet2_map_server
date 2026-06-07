@@ -37,12 +37,12 @@ struct is_vector<std::vector<T, A>> : std::true_type {};
 template <typename C>
 inline constexpr bool is_vector_v = is_vector<C>::value;
 
-class LL2MapServer : public rclcpp::Node {
+class Lanelet2MapServer : public rclcpp::Node {
  public:
   /**
    * @brief Creates the Lanelet2 map server node and declares its parameters.
    */
-  LL2MapServer();
+  Lanelet2MapServer();
 
  private:
   /**

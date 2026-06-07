@@ -13,7 +13,7 @@
 #include <type_traits>
 #include <utility>
 
-LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
+Lanelet2MapServer::Lanelet2MapServer() : Node("lanelet2_map_server") {
   // General parameters
   this->declareAndLoadParameter("map_frame_id", map_frame_id_, "Frame ID of Lanelet2 map", true, false, false);
   // Automatic map selection parameters
@@ -34,16 +34,16 @@ LL2MapServer::LL2MapServer() : Node("ll2_map_server") {
 }
 
 template <typename T>
-bool LL2MapServer::declareAndLoadParameter(const std::string& name,
-                                           T& param,
-                                           const std::string& description,
-                                           const bool add_to_auto_reconfigurable_params,
-                                           const bool is_required,
-                                           const bool read_only,
-                                           const std::optional<double>& from_value,
-                                           const std::optional<double>& to_value,
-                                           const std::optional<double>& step_value,
-                                           const std::string& additional_constraints) {
+bool Lanelet2MapServer::declareAndLoadParameter(const std::string& name,
+                                                T& param,
+                                                const std::string& description,
+                                                const bool add_to_auto_reconfigurable_params,
+                                                const bool is_required,
+                                                const bool read_only,
+                                                const std::optional<double>& from_value,
+                                                const std::optional<double>& to_value,
+                                                const std::optional<double>& step_value,
+                                                const std::string& additional_constraints) {
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.description = description;
   param_desc.additional_constraints = additional_constraints;
@@ -110,7 +110,7 @@ bool LL2MapServer::declareAndLoadParameter(const std::string& name,
   return initial_set;
 }
 
-rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
+rcl_interfaces::msg::SetParametersResult Lanelet2MapServer::parametersCallback(const std::vector<rclcpp::Parameter>& parameters) {
   std::string previous_map_filepath = map_filepath_;
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = false;
@@ -227,10 +227,10 @@ rcl_interfaces::msg::SetParametersResult LL2MapServer::parametersCallback(const 
   return result;
 }
 
-void LL2MapServer::setup() {
+void Lanelet2MapServer::setup() {
   // callback for dynamic parameter configuration
   parameters_callback_ =
-      this->add_on_set_parameters_callback(std::bind(&LL2MapServer::parametersCallback, this, std::placeholders::_1));
+      this->add_on_set_parameters_callback(std::bind(&Lanelet2MapServer::parametersCallback, this, std::placeholders::_1));
 
   tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -242,9 +242,9 @@ void LL2MapServer::setup() {
     }
     // Create NavSatFix subscription and automatic map update timer
     navsat_subscription_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
-        "~/gps/fix", 10, std::bind(&LL2MapServer::navSatFixCallback, this, std::placeholders::_1));
+        "~/gps/fix", 10, std::bind(&Lanelet2MapServer::navSatFixCallback, this, std::placeholders::_1));
     automatic_map_timer_ =
-        this->create_wall_timer(std::chrono::seconds(1), std::bind(&LL2MapServer::automaticMapUpdateTimerCallback, this));
+        this->create_wall_timer(std::chrono::seconds(1), std::bind(&Lanelet2MapServer::automaticMapUpdateTimerCallback, this));
   } else {
     if (!origin_lat_set_ && !origin_lon_set_) {
       if (!deriveOriginFromMap(map_filepath_, origin_lat_, origin_lon_)) {
@@ -276,7 +276,7 @@ void LL2MapServer::setup() {
   }
 }
 
-bool LL2MapServer::deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const {
+bool Lanelet2MapServer::deriveOriginFromMap(const std::string& map_filepath, double& origin_lat, double& origin_lon) const {
   if (map_filepath.empty()) {
     RCLCPP_ERROR(this->get_logger(), "No map filepath provided, cannot derive origin from map.");
     return false;
@@ -294,7 +294,7 @@ bool LL2MapServer::deriveOriginFromMap(const std::string& map_filepath, double& 
   return true;
 }
 
-void LL2MapServer::find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const {
+void Lanelet2MapServer::find_available_maps(const std::string& directory, std::vector<Lanelet2MapMeta>& maps) const {
   maps.clear();
   try {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(directory)) {
@@ -321,7 +321,7 @@ void LL2MapServer::find_available_maps(const std::string& directory, std::vector
   }
 }
 
-void LL2MapServer::derive_map_meta(Lanelet2MapMeta& map_meta) const {
+void Lanelet2MapServer::derive_map_meta(Lanelet2MapMeta& map_meta) const {
   map_meta.diagonal_length = -1.0;
   pugi::xml_document document;
   const pugi::xml_parse_result result = document.load_file(map_meta.map_path.c_str());
@@ -376,13 +376,13 @@ void LL2MapServer::derive_map_meta(Lanelet2MapMeta& map_meta) const {
   map_meta.diagonal_length = distance;
 }
 
-void LL2MapServer::navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
+void Lanelet2MapServer::navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
   current_latitude_ = msg->latitude;
   current_longitude_ = msg->longitude;
   gps_fix_received_ = true;
 }
 
-void LL2MapServer::automaticMapUpdateTimerCallback() {
+void Lanelet2MapServer::automaticMapUpdateTimerCallback() {
   if (!gps_fix_received_) {
     RCLCPP_WARN(this->get_logger(), "No initial GPS fix received, unable to select map");
     unsetMapParameters();
@@ -433,7 +433,7 @@ void LL2MapServer::automaticMapUpdateTimerCallback() {
   }
 }
 
-void LL2MapServer::loadMapContents() {
+void Lanelet2MapServer::loadMapContents() {
   if (map_filepath_.empty()) {
     map_contents_ = "";
     return;
@@ -443,14 +443,14 @@ void LL2MapServer::loadMapContents() {
   RCLCPP_INFO(this->get_logger(), "Loaded map contents from '%s' to parameter 'map_contents'", map_filepath_.c_str());
 }
 
-void LL2MapServer::updateMapParameters() {
+void Lanelet2MapServer::updateMapParameters() {
   this->set_parameter(rclcpp::Parameter("map_filepath", map_filepath_));
   this->set_parameter(rclcpp::Parameter("map_contents", map_contents_));
   this->set_parameter(rclcpp::Parameter("origin_lat", origin_lat_));
   this->set_parameter(rclcpp::Parameter("origin_lon", origin_lon_));
 }
 
-void LL2MapServer::unsetMapParameters() {
+void Lanelet2MapServer::unsetMapParameters() {
   map_filepath_ = "";
   map_contents_ = "";
   origin_lat_ = 0.0;
@@ -460,7 +460,7 @@ void LL2MapServer::unsetMapParameters() {
   updateMapParameters();
 }
 
-bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const {
+bool Lanelet2MapServer::map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const {
   lanelet::projection::UtmProjector proj(lanelet::Origin({origin_lat, origin_lon}));
   try {
     lanelet::LaneletMapPtr map = lanelet::load(map_filepath, proj);
@@ -472,7 +472,7 @@ bool LL2MapServer::map_sanity_check(std::string map_filepath, double origin_lat,
   return true;
 }
 
-void LL2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const {
+void Lanelet2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const {
   if (latitude >= 0.0) {
     northp = true;
   } else {
@@ -482,7 +482,7 @@ void LL2MapServer::derive_utm_zone(const double latitude, const double longitude
   zone = static_cast<int>(std::floor((longitude + 180.0) / 6.0)) + 1;
 }
 
-void LL2MapServer::pub_tf() const {
+void Lanelet2MapServer::pub_tf() const {
   if (map_filepath_.empty()) {
     return;
   }
@@ -530,7 +530,7 @@ void LL2MapServer::pub_tf() const {
  */
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<LL2MapServer>());
+  rclcpp::spin(std::make_shared<Lanelet2MapServer>());
   rclcpp::shutdown();
   return 0;
 }

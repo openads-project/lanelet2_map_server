@@ -19,27 +19,27 @@ The library can be integrated into nodes that require access to the current Lane
     class MyNode : public rclcpp::Node {
         public:
             MyNode() {
-                ll2_interface_ = std::make_unique<LL2MapInterface>(*this, ll2_map_server_name_);
+                lanelet2_map_interface_ = std::make_unique<Lanelet2MapInterface>(*this, lanelet2_map_server_name_);
             }
         private:
-            std::string ll2_map_server_name_ = "lanelet2_map_server";
-            std::unique_ptr<LL2MapInterface> ll2_interface_;
+            std::string lanelet2_map_server_name_ = "lanelet2_map_server";
+            std::unique_ptr<Lanelet2MapInterface> lanelet2_map_interface_;
     }
     ```
 1. Access the current Lanelet2 map via the interface. A browsable [API documentation](https://openads-project.github.io/lanelet2_map_server) is available.
     ```c++
-    if(ll2_interface_->map_loaded_) {
-        lanelet::LaneletMapConstPtr map = ll2_interface_->getMapPtr();
-        lanelet::LaneletMapPtr nonconst_map = ll2_interface_->getNonConstMapPtr();
-        std::shared_ptr<lanelet::Projector> proj = ll2_interface_->getProjectorPtr();
-        std::string map_frame_id = ll2_interface_->map_frame_id
-        if(ll2_interface_->update_pending_) {
+    if(lanelet2_map_interface_->map_loaded_) {
+        lanelet::LaneletMapConstPtr map = lanelet2_map_interface_->getMapPtr();
+        lanelet::LaneletMapPtr nonconst_map = lanelet2_map_interface_->getNonConstMapPtr();
+        std::shared_ptr<lanelet::Projector> proj = lanelet2_map_interface_->getProjectorPtr();
+        std::string map_frame_id = lanelet2_map_interface_->map_frame_id
+        if(lanelet2_map_interface_->update_pending_) {
             ...
             // map provided by the server has changed
             // update local variables
-            map = ll2_interface_->getMapPtr();
+            map = lanelet2_map_interface_->getMapPtr();
             // ...
-            ll2_interface_->update_pending_ = false;
+            lanelet2_map_interface_->update_pending_ = false;
         }
     }
     ```

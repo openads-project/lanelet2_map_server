@@ -14,7 +14,7 @@
 #include <iostream>
 #include <limits>
 
-class LL2MapInterface {
+class Lanelet2MapInterface {
  public:
   /**
    * @brief Creates a client-side interface for retrieving Lanelet2 map parameters from a map server node.
@@ -22,7 +22,7 @@ class LL2MapInterface {
    * @param parent_node node that owns the parameter client and timers
    * @param map_server_name fully qualified name of the map server node
    */
-  LL2MapInterface(rclcpp::Node& parent_node, std::string map_server_name);
+  Lanelet2MapInterface(rclcpp::Node& parent_node, std::string map_server_name);
 
   /**
    * @brief Returns the currently loaded immutable Lanelet2 map.

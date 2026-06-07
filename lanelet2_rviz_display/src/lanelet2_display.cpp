@@ -150,7 +150,7 @@ void Lanelet2Display::initializeMapInterface(rclcpp::Node& parent_node) {
     if (name[0] != '/') {
       name = '/' + name;
     }
-    ll2_interface_ = std::make_unique<LL2MapInterface>(parent_node, name);
+    lanelet2_map_interface_ = std::make_unique<Lanelet2MapInterface>(parent_node, name);
   }
 }
 
@@ -161,13 +161,13 @@ void Lanelet2Display::onInitialize() {
 }
 
 void Lanelet2Display::update(float dt, float ros_dt) {
-  if (ll2_interface_->map_loaded_) {
+  if (lanelet2_map_interface_->map_loaded_) {
     if (!viz_init_) {
       viz_init_ = visualizeMap();
-      ll2_interface_->update_pending_ = false;
+      lanelet2_map_interface_->update_pending_ = false;
     }
 
-    if (ll2_interface_->update_pending_) {
+    if (lanelet2_map_interface_->update_pending_) {
       updateVisualization();
     }
 
@@ -177,12 +177,12 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 
       Ogre::Vector3 position;
       Ogre::Quaternion orientation;
-      if (context_->getFrameManager()->getTransform(ll2_interface_->map_frame_id_, position, orientation)) {
+      if (context_->getFrameManager()->getTransform(lanelet2_map_interface_->map_frame_id_, position, orientation)) {
         scene_node_->setPosition(position);
         scene_node_->setOrientation(orientation);
         setTransformOk();
       } else {
-        setMissingTransformToFixedFrame(ll2_interface_->map_frame_id_);
+        setMissingTransformToFixedFrame(lanelet2_map_interface_->map_frame_id_);
         map_->getSceneNode()->setVisible(false);
       }
     }
@@ -190,21 +190,21 @@ void Lanelet2Display::update(float dt, float ros_dt) {
 }
 
 void Lanelet2Display::updateServerName() {
-  ll2_interface_.reset();
+  lanelet2_map_interface_.reset();
   initializeMapInterface(*rviz_node_);
   viz_init_ = false;
 }
 
 bool Lanelet2Display::visualizeMap() {
-  map_ =
-      std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_, ll2_interface_->getMapPtr());
+  map_ = std::make_unique<rviz_rendering::Lanelet2Map>(scene_manager_, scene_node_, rendering_options_,
+                                                       lanelet2_map_interface_->getMapPtr());
   return true;
 }
 
 void Lanelet2Display::updateVisualization() {
   if (viz_init_) {
-    map_->updateMap(rendering_options_, ll2_interface_->getMapPtr());
-    ll2_interface_->update_pending_ = false;
+    map_->updateMap(rendering_options_, lanelet2_map_interface_->getMapPtr());
+    lanelet2_map_interface_->update_pending_ = false;
   }
 }
 
