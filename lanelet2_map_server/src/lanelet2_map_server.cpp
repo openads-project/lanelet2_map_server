@@ -124,7 +124,11 @@ rcl_interfaces::msg::SetParametersResult Lanelet2MapServer::parametersCallback(c
 
   RCLCPP_INFO(this->get_logger(), "Received request to change %zu parameter(s)", parameters.size());
   for (const auto& p : parameters) {
-    RCLCPP_INFO(this->get_logger(), "Incoming param: %s = %s", p.get_name().c_str(), p.value_to_string().c_str());
+    if (p.get_name() == "map_contents") {
+      RCLCPP_INFO(this->get_logger(), "Incoming param: map_contents = <omitted, size=%zu>", p.get_value<std::string>().size());
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Incoming param: %s = %s", p.get_name().c_str(), p.value_to_string().c_str());
+    }
   }
 
   for (const auto& param : parameters) {
