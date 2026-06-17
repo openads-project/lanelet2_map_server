@@ -40,6 +40,11 @@ ament_target_dependencies(${TARGET_NAME}
   visualization_msgs
 )
 
+# Treat dependency includes as system headers so clang-tidy ignores third-party
+# code (and its macros), e.g. lanelet2. The function is provided by
+# find_package(lanelet2_map_interface) above (exported as a CONFIG_EXTRA).
+target_dependencies_as_system(${TARGET_NAME})
+
 install(TARGETS ${TARGET_NAME}
   DESTINATION lib/${PROJECT_NAME}
 )

@@ -36,6 +36,13 @@ ament_target_dependencies(${TARGET_NAME}
   tf2_ros
 )
 
+# Treat dependency includes as system headers so clang-tidy ignores third-party
+# code (and its macros). The helper lives in the sibling lanelet2_map_interface
+# package (single source of truth); this package does not depend on it, so we
+# include the file directly instead of via find_package.
+include(${CMAKE_CURRENT_SOURCE_DIR}/../lanelet2_map_interface/cmake/project_system_includes.cmake)
+target_dependencies_as_system(${TARGET_NAME})
+
 install(TARGETS ${TARGET_NAME}
   DESTINATION lib/${PROJECT_NAME}
 )
