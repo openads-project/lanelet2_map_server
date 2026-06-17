@@ -22,6 +22,10 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_cmake_clang_format</test_depend>
   <test_depend>ament_cmake_clang_tidy</test_depend>
+  <!-- clang-tidy parses with clang + -fopenmp (injected via lanelet2/Eigen) and
+       needs LLVM's omp.h; gcc's omp.h is clang-incompatible. The gcc build does
+       not need this, hence test-only. -->
+  <test_depend>libomp-dev</test_depend>
   <test_depend>ament_cmake_flake8</test_depend>
 
   <export>
