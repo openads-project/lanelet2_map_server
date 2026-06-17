@@ -33,6 +33,11 @@ ament_target_dependencies(${TARGET_NAME}
   rclcpp
 )
 
+# Treat dependency includes as system headers so clang-tidy ignores third-party
+# code (and its macros). Also exported below so downstream packages can reuse it.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/project_system_includes.cmake)
+target_dependencies_as_system(${TARGET_NAME})
+
 ament_export_targets(${TARGET_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(lanelet2_core)
 ament_export_dependencies(lanelet2_io)
@@ -69,4 +74,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_package(CONFIG_EXTRAS cmake/project_system_includes.cmake)
