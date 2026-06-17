@@ -40,6 +40,11 @@ ament_target_dependencies(${TARGET_NAME}
   visualization_msgs
 )
 
+# Treat dependency includes as system headers so clang-tidy ignores third-party
+# code (and its macros), e.g. lanelet2. The function is provided by
+# find_package(lanelet2_map_interface) above (exported as a CONFIG_EXTRA).
+target_dependencies_as_system(${TARGET_NAME})
+
 install(TARGETS ${TARGET_NAME}
   DESTINATION lib/${PROJECT_NAME}
 )
@@ -60,14 +65,6 @@ if(BUILD_TESTING)
   set(ament_cmake_clang_tidy_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/.clang-tidy)
   set(ament_cmake_flake8_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/ament_flake8.ini)
   ament_lint_auto_find_test_dependencies()
-
-  # Use a custom project-scoped clang-tidy wrapper to avoid linting failures induced by third-party code, e.g., Qt.
-  set(AMENT_LINT_AUTO_EXCLUDE ament_cmake_clang_tidy)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/project_clang_tidy.cmake)
-  add_project_clang_tidy_test(
-    CONFIG_FILE ${ament_cmake_clang_tidy_CONFIG_FILE}
-    EXTRA_ARGS "-U_OPENMP"
-  )
 endif()
 
 ament_package()

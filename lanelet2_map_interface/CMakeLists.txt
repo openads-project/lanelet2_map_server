@@ -33,6 +33,11 @@ ament_target_dependencies(${TARGET_NAME}
   rclcpp
 )
 
+# Treat dependency includes as system headers so clang-tidy ignores third-party
+# code (and its macros). Also exported below so downstream packages can reuse it.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/project_system_includes.cmake)
+target_dependencies_as_system(${TARGET_NAME})
+
 ament_export_targets(${TARGET_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(lanelet2_core)
 ament_export_dependencies(lanelet2_io)
@@ -67,14 +72,6 @@ if(BUILD_TESTING)
   set(ament_cmake_clang_tidy_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/.clang-tidy)
   set(ament_cmake_flake8_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/ament_flake8.ini)
   ament_lint_auto_find_test_dependencies()
-
-  # Use a custom project-scoped clang-tidy wrapper to avoid linting failures induced by third-party code, e.g., Qt.
-  set(AMENT_LINT_AUTO_EXCLUDE ament_cmake_clang_tidy)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/project_clang_tidy.cmake)
-  add_project_clang_tidy_test(
-    CONFIG_FILE ${ament_cmake_clang_tidy_CONFIG_FILE}
-    EXTRA_ARGS "-U_OPENMP"
-  )
 endif()
 
-ament_package()
+ament_package(CONFIG_EXTRAS cmake/project_system_includes.cmake)

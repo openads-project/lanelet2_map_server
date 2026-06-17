@@ -120,9 +120,11 @@ if(BUILD_TESTING)
   set(ament_cmake_flake8_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/lint/ament_flake8.ini)
   ament_lint_auto_find_test_dependencies()
 
-  # Use a custom project-scoped clang-tidy wrapper to avoid linting failures induced by third-party code, e.g., Qt.
+  # Qt packages compile generated moc_*.cpp translation units, which stock
+  # ament_clang_tidy lints and floods with cppcoreguidelines findings it cannot
+  # exclude. Use the project-scoped clang-tidy runner instead. 
   set(AMENT_LINT_AUTO_EXCLUDE ament_cmake_clang_tidy)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/project_clang_tidy.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/project_clang_tidy.cmake)
   add_project_clang_tidy_test(
     CONFIG_FILE ${ament_cmake_clang_tidy_CONFIG_FILE}
     EXTRA_ARGS "-U_OPENMP"
