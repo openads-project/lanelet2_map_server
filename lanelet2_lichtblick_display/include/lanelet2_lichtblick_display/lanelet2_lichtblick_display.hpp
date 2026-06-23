@@ -117,7 +117,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param point Eigen 3D point
    * @return geometry_msgs::msg::Point ROS point message
    */
-  geometry_msgs::msg::Point toRos(const Eigen::Vector3d& point);
+  static geometry_msgs::msg::Point toRos(const Eigen::Vector3d& point);
 
   /**
    * @brief Publishes a DELETEALL action to clear all markers from the topic.
@@ -167,17 +167,17 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
  * @param yaw_ref_line The yaw of the reference line, used to calculate orthogonal orientation.
  * @param middle_point The middle point of the reference line, used to determine orientation.
  */
-  void addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
-                     int& current_marker_id,
-                     const std::string& ns,
-                     const std::string& mesh_resource,
-                     const geometry_msgs::msg::Point& position,
-                     double scale,
-                     double z_offset,
-                     double opacity,
-                     const std_msgs::msg::Header& header,
-                     double yaw_ref_line,
-                     const geometry_msgs::msg::Point& middle_point);
+  static void addMeshMarker(visualization_msgs::msg::MarkerArray& marker_array_msg,
+                            int& current_marker_id,
+                            const std::string& ns,
+                            const std::string& mesh_resource,
+                            const geometry_msgs::msg::Point& position,
+                            double scale,
+                            double z_offset,
+                            double opacity,
+                            const std_msgs::msg::Header& header,
+                            double yaw_ref_line,
+                            const geometry_msgs::msg::Point& middle_point);
 
   /**
    * @brief Extracts the reference/effect line of a regulatory element.
@@ -188,7 +188,7 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param[in] regulatory_element regulatory element
    * @return reference line
    */
-  std::optional<std::array<geometry_msgs::msg::Point, 2>> regulatoryElementReferenceLine(
+  static std::optional<std::array<geometry_msgs::msg::Point, 2>> regulatoryElementReferenceLine(
       const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element);
 
   /**
@@ -199,10 +199,9 @@ class Lanelet2LichtblickDisplay : public rclcpp::Node {
    * @param[in] regulatory_element regulatory element
    * @return positions
    */
-  std::vector<geometry_msgs::msg::Point> regulatoryElementPositions(
+  static std::vector<geometry_msgs::msg::Point> regulatoryElementPositions(
       const std::shared_ptr<const lanelet::RegulatoryElement>& regulatory_element);
 
- private:
   /**
    * @brief Auto-reconfigurable parameters for dynamic reconfiguration
    */

@@ -128,12 +128,12 @@ class Lanelet2MapServer : public rclcpp::Node {
   /**
    * @brief Tries to load a map with the provided origin to verify that it is usable.
    *
-   * @param map_filename path to the map file
+   * @param map_filepath path to the map file
    * @param origin_lat latitude used for projection
    * @param origin_lon longitude used for projection
    * @return `true` if the map passes the sanity check
    */
-  bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon) const;
+  bool map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const;
 
   /**
    * @brief Publishes the static transform from the derived UTM frame to the map frame.
@@ -148,7 +148,7 @@ class Lanelet2MapServer : public rclcpp::Node {
    * @param zone output UTM zone number
    * @param northp output hemisphere flag, `true` for northern hemisphere
    */
-  void derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const;
+  static void derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp);
 
   /**
    * @brief Stores the latest GNSS fix for automatic map selection.
@@ -162,7 +162,6 @@ class Lanelet2MapServer : public rclcpp::Node {
    */
   void automaticMapUpdateTimerCallback();
 
- private:
   /**
          * @brief Auto-reconfigurable parameters for dynamic reconfiguration
          */

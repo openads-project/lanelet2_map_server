@@ -88,7 +88,7 @@ class Lanelet2Display : public rviz_common::Display {
   void updateStyle();
   void update3D();
 
- private:
+ private:  // NOLINT(readability-redundant-access-specifiers)
   /**
    * @brief Creates the map interface used to fetch map data from the server node.
    *

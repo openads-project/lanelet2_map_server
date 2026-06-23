@@ -33,7 +33,7 @@ void Lanelet2MapHelpers::clearObjects() {
       case ObjectClassification::SIDEWALK:
       case ObjectClassification::CROSSWALK: {
         auto man_object = dynamic_cast<Ogre::ManualObject*>(object.second);
-        if (man_object) {
+        if (man_object != nullptr) {
           man_object->detachFromParent();
           owner_.scene_manager_->destroyManualObject(man_object);
         }
@@ -42,7 +42,7 @@ void Lanelet2MapHelpers::clearObjects() {
 
       case ObjectClassification::LANELETID: {
         auto mov_text = dynamic_cast<rviz_rendering::MovableText*>(object.second);
-        if (mov_text) {
+        if (mov_text != nullptr) {
           mov_text->detachFromParent();
           // MovableText is created directly and attached to the scene node, so it is destroyed directly here.
           // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
@@ -52,7 +52,7 @@ void Lanelet2MapHelpers::clearObjects() {
       }
 
       default: {
-        if (object.second) {
+        if (object.second != nullptr) {
           object.second->detachFromParent();
           // Fallback for directly owned OGRE objects not handled by the scene manager helpers above.
           // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
@@ -133,14 +133,14 @@ void Lanelet2MapHelpers::addRegulatoryElements(const lanelet::ConstLanelet& lane
 
   if (owner_.rend_opts_.renderStopLines) {
     for (auto&& reg_element : regulatory_elements) {
-      auto ref_lines = reg_element.get()->getParameters<lanelet::ConstLineString3d>(lanelet::RoleName::RefLine);
+      auto ref_lines = reg_element->getParameters<lanelet::ConstLineString3d>(lanelet::RoleName::RefLine);
       attachRefLinesToSceneNode(ref_lines, regulatory_elements_node);
     }
   }
 
   if (owner_.rend_opts_.renderTrafficLights) {
     for (auto&& traffic_light : traffic_light_regelems) {
-      auto traffic_lights = traffic_light.get()->getParameters<lanelet::ConstPolygon3d>(lanelet::RoleName::Refers);
+      auto traffic_lights = traffic_light->getParameters<lanelet::ConstPolygon3d>(lanelet::RoleName::Refers);
       attachTrafficLightsToSceneNode(traffic_lights, regulatory_elements_node);
     }
   }
@@ -159,7 +159,7 @@ void Lanelet2MapHelpers::attachRefLinesToSceneNode(std::vector<lanelet::ConstLin
   }
   // OGRE 1.x exposes section counts through this deprecated API; RViz still uses this vendor version.
   // NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)
-  if (stop_lines_manual_object->getNumSections()) {
+  if (stop_lines_manual_object->getNumSections() != 0U) {
     parent_node->attachObject(stop_lines_manual_object);
     owner_.objects_.push_back(std::make_pair(ObjectClassification::STOPLINE, stop_lines_manual_object));
   }
@@ -179,7 +179,7 @@ void Lanelet2MapHelpers::attachTrafficLightsToSceneNode(std::vector<lanelet::Con
   }
   // OGRE 1.x exposes section counts through this deprecated API; RViz still uses this vendor version.
   // NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)
-  if (traffic_light_manual_object->getNumSections()) {
+  if (traffic_light_manual_object->getNumSections() != 0U) {
     parent_node->attachObject(traffic_light_manual_object);
     owner_.objects_.push_back(std::make_pair(ObjectClassification::TRAFFICLIGHT, traffic_light_manual_object));
   }
@@ -250,7 +250,7 @@ Ogre::Vector3 Lanelet2MapHelpers::ogreVec3FromLLetPoint(lanelet::ConstPoint3d po
                        numeric_cast<Ogre::Real>(point.z()) * numeric_cast<Ogre::Real>(owner_.rend_opts_.threeD));
 }
 
-Ogre::Vector3 Lanelet2MapHelpers::ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset) const {
+Ogre::Vector3 Lanelet2MapHelpers::ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset) {
   using boost::numeric_cast;
   return Ogre::Vector3(numeric_cast<Ogre::Real>(point.x()), numeric_cast<Ogre::Real>(point.y()),
                        numeric_cast<Ogre::Real>(point.z() + z_offset));
@@ -315,7 +315,7 @@ void Lanelet2MapHelpers::drawMonoPolygon(const std::vector<Ogre::Vector3>& poly,
   auto it_left = poly.begin();
   auto it_right = --poly.end();
   const auto start_index = obj->getCurrentVertexCount();
-  auto count = 0u;
+  auto count = 0U;
   for (; it_right >= it_left; ++it_left, --it_right) {
     obj->position(*it_left);
     obj->normal(0, 0, 1);
