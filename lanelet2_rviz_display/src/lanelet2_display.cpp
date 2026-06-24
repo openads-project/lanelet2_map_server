@@ -33,9 +33,9 @@ Lanelet2Display::Lanelet2Display() {
                          QString::fromStdString("Global name of lanelet2_map_server node"), this, SLOT(updateServerName()));
 
   alpha_property_ =
-      new FloatProperty("Alpha", 1.0f, "The amount of transparency to apply to the Map.", this, SLOT(updateColor()), this);
-  alpha_property_->setMin(0.0f);
-  alpha_property_->setMax(1.0f);
+      new FloatProperty("Alpha", 1.0F, "The amount of transparency to apply to the Map.", this, SLOT(updateColor()), this);
+  alpha_property_->setMin(0.0F);
+  alpha_property_->setMax(1.0F);
 
   three_d_property_ =
       new BoolProperty("Show Map in 3D", true, "Toggles wether to display the lanelet map with or without its z coordinates.",
@@ -51,9 +51,9 @@ Lanelet2Display::Lanelet2Display() {
   ll_right_col_property_ = new ColorProperty("LL Color Right", Qt::white, "Color of right Lanelet-Linestring.",
                                              viz_linestring_property_, SLOT(updateColor()), this);
 
-  linestring_width_property_ = new FloatProperty("Linestring Width", 0.1f, "The width, in meters, of each linestring.",
+  linestring_width_property_ = new FloatProperty("Linestring Width", 0.1F, "The width, in meters, of each linestring.",
                                                  viz_linestring_property_, SLOT(updateStyle()), this);
-  linestring_width_property_->setMin(0.01f);
+  linestring_width_property_->setMin(0.01F);
 
   viz_separators_property_ =
       new BoolProperty("Visualize Lanelet-Separators", false, "Activate the visualization of Lanelet-Separators.", this,
@@ -62,9 +62,9 @@ Lanelet2Display::Lanelet2Display() {
   separators_col_property_ = new ColorProperty("Separators Color", QColor{25, 25, 230}, "Color of Lanelet Separators.",
                                                viz_separators_property_, SLOT(updateColor()), this);
 
-  separators_width_property_ = new FloatProperty("Linestring Width", 0.2f, "The width, in meters, of each linestring.",
+  separators_width_property_ = new FloatProperty("Linestring Width", 0.2F, "The width, in meters, of each linestring.",
                                                  viz_separators_property_, SLOT(updateStyle()), this);
-  separators_width_property_->setMin(0.01f);
+  separators_width_property_->setMin(0.01F);
 
   viz_stop_line_property_ = new BoolProperty("Visualize Stop lines", true, "Activate the visualization of Stop-Lines.", this,
                                              SLOT(updateStopLineRendering()));
@@ -72,9 +72,9 @@ Lanelet2Display::Lanelet2Display() {
   stop_line_col_property_ = new ColorProperty("Stop Line Color", QColor{255, 25, 25}, "Color of Stop-Lines.",
                                               viz_stop_line_property_, SLOT(updateColor()), this);
 
-  stop_line_width_property_ = new FloatProperty("Stop Line Width", 0.2f, "The width, in meters, of each stop line.",
+  stop_line_width_property_ = new FloatProperty("Stop Line Width", 0.2F, "The width, in meters, of each stop line.",
                                                 viz_stop_line_property_, SLOT(updateStyle()), this);
-  stop_line_width_property_->setMin(0.01f);
+  stop_line_width_property_->setMin(0.01F);
 
   viz_traffic_light_property_ =
       new BoolProperty("Visualize Traffic Lights", true, "Activate the visualization of Traffic-Lights.", this,
@@ -84,9 +84,9 @@ Lanelet2Display::Lanelet2Display() {
                                                   viz_traffic_light_property_, SLOT(updateColor()), this);
 
   traffic_light_height_property_ =
-      new FloatProperty("Traffic Light Height", 3.0f, "The height, in meters, of each traffic light.",
+      new FloatProperty("Traffic Light Height", 3.0F, "The height, in meters, of each traffic light.",
                         viz_traffic_light_property_, SLOT(updateStyle()), this);
-  traffic_light_height_property_->setMin(0.01f);
+  traffic_light_height_property_->setMin(0.01F);
 
   viz_area_property_ =
       new BoolProperty("Visualize Areas", true, "Activate the visualization of Areas.", this, SLOT(updateAreaRendering()));
@@ -95,8 +95,8 @@ Lanelet2Display::Lanelet2Display() {
       new ColorProperty("Area Color", QColor{230, 127, 25}, "Color of Areas.", viz_area_property_, SLOT(updateColor()), this);
 
   area_width_property_ =
-      new FloatProperty("Area Width", 0.3f, "The width, in meters, of each area.", viz_area_property_, SLOT(updateStyle()), this);
-  area_width_property_->setMin(0.01f);
+      new FloatProperty("Area Width", 0.3F, "The width, in meters, of each area.", viz_area_property_, SLOT(updateStyle()), this);
+  area_width_property_->setMin(0.01F);
 
   fill_area_property_ = new BoolProperty("Fill Areas", false, "Toggles wether to fill the areas with color or not.",
                                          viz_area_property_, SLOT(updateStyle()), this);
@@ -107,9 +107,9 @@ Lanelet2Display::Lanelet2Display() {
   parking_col_property_ = new ColorProperty("Parking Color", QColor{0, 179, 76}, "Color of Parking.", viz_parking_property_,
                                             SLOT(updateColor()), this);
 
-  parking_width_property_ = new FloatProperty("Parking Width", 0.3f, "The width, in meters, of each parking.",
+  parking_width_property_ = new FloatProperty("Parking Width", 0.3F, "The width, in meters, of each parking.",
                                               viz_parking_property_, SLOT(updateStyle()), this);
-  parking_width_property_->setMin(0.01f);
+  parking_width_property_->setMin(0.01F);
 
   fill_parking_property_ = new BoolProperty("Fill Parking", true, "Toggles wether to fill the parking with color or not.",
                                             viz_parking_property_, SLOT(updateStyle()), this);
@@ -138,7 +138,7 @@ Lanelet2Display::Lanelet2Display() {
       new ColorProperty("ID Color", Qt::white, "Color of Lanelet-IDs.", viz_id_property_, SLOT(updateColor()), this);
 
   char_height_property_ =
-      new FloatProperty("Character Height", 1.0f, "The height of each character.", viz_id_property_, SLOT(updateStyle()), this);
+      new FloatProperty("Character Height", 1.0F, "The height of each character.", viz_id_property_, SLOT(updateStyle()), this);
   // NOLINTEND(cppcoreguidelines-owning-memory)
 }
 

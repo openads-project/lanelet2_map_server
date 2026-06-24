@@ -404,7 +404,7 @@ void Lanelet2MapServer::automaticMapUpdateTimerCallback() {
         current_longitude_ > map_meta.max_lon) {
       continue;
     }
-    if (!selected_map || map_meta.diagonal_length < selected_map->diagonal_length) {
+    if (selected_map == nullptr || map_meta.diagonal_length < selected_map->diagonal_length) {
       if (map_sanity_check(map_meta.map_path, map_meta.min_lat, map_meta.min_lon)) {
         RCLCPP_DEBUG(this->get_logger(), "Map sanity check passed for '%s'", map_meta.map_path.c_str());
         selected_map = &map_meta;
@@ -415,7 +415,7 @@ void Lanelet2MapServer::automaticMapUpdateTimerCallback() {
     }
   }
 
-  if (!selected_map) {
+  if (selected_map == nullptr) {
     RCLCPP_WARN(this->get_logger(), "No suitable map found for current GPS location (lat=%.9f, lon=%.9f)", current_latitude_,
                 current_longitude_);
     unsetMapParameters();
@@ -425,16 +425,16 @@ void Lanelet2MapServer::automaticMapUpdateTimerCallback() {
   if (map_filepath_ == selected_map->map_path) {
     RCLCPP_DEBUG(this->get_logger(), "Currently loaded map '%s' is still valid", map_filepath_.c_str());
     return;
-  } else {
-    map_filepath_ = selected_map->map_path;
-    origin_lat_ = selected_map->min_lat;
-    origin_lon_ = selected_map->min_lon;
-    origin_lat_set_ = false;
-    origin_lon_set_ = false;
-    this->loadMapContents();
-    this->updateMapParameters();
-    this->pub_tf();
   }
+
+  map_filepath_ = selected_map->map_path;
+  origin_lat_ = selected_map->min_lat;
+  origin_lon_ = selected_map->min_lon;
+  origin_lat_set_ = false;
+  origin_lon_set_ = false;
+  this->loadMapContents();
+  this->updateMapParameters();
+  this->pub_tf();
 }
 
 void Lanelet2MapServer::loadMapContents() {
@@ -476,13 +476,8 @@ bool Lanelet2MapServer::map_sanity_check(std::string map_filepath, double origin
   return true;
 }
 
-void Lanelet2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) const {
-  if (latitude >= 0.0) {
-    northp = true;
-  } else {
-    northp = false;
-  }
-
+void Lanelet2MapServer::derive_utm_zone(const double latitude, const double longitude, int& zone, bool& northp) {
+  northp = latitude >= 0.0;
   zone = static_cast<int>(std::floor((longitude + 180.0) / 6.0)) + 1;
 }
 

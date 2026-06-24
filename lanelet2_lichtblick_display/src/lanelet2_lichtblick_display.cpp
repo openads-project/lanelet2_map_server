@@ -176,7 +176,7 @@ void Lanelet2LichtblickDisplay::hexToRgb(const std::string& hex, float& r, float
   }
   if (clean_hex.length() != 6) {
     RCLCPP_WARN(this->get_logger(), "Invalid hex color string: %s. Defaulting to black.", hex.c_str());
-    r = g = b = 0.0f;
+    r = g = b = 0.0F;
     return;
   }
 
@@ -186,15 +186,15 @@ void Lanelet2LichtblickDisplay::hexToRgb(const std::string& hex, float& r, float
 
   std::istringstream rs(clean_hex.substr(0, 2));
   rs >> std::hex >> r_int;
-  r = static_cast<float>(r_int) / 255.0f;
+  r = static_cast<float>(r_int) / 255.0F;
 
   std::istringstream gs(clean_hex.substr(2, 2));
   gs >> std::hex >> g_int;
-  g = static_cast<float>(g_int) / 255.0f;
+  g = static_cast<float>(g_int) / 255.0F;
 
   std::istringstream bs(clean_hex.substr(4, 2));
   bs >> std::hex >> b_int;
-  b = static_cast<float>(b_int) / 255.0f;
+  b = static_cast<float>(b_int) / 255.0F;
 }
 
 geometry_msgs::msg::Point Lanelet2LichtblickDisplay::toRos(const Eigen::Vector3d& point) {

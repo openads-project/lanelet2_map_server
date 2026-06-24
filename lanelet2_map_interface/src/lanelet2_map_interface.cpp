@@ -66,25 +66,25 @@ void Lanelet2MapInterface::findMapServer() {
   if (!parameter_client_->wait_for_service(std::chrono::milliseconds(10))) {
     RCLCPP_WARN(parent_node_->get_logger(), "Waiting for map server ('%s') parameter service ...", map_server_name_.c_str());
     return;
-  } else {
-    startup_timer_->cancel();
-    auto parameters_future =
-        parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
-                                          std::bind(&Lanelet2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
-    RCLCPP_INFO(parent_node_->get_logger(), "Connected to map server ('%s') parameter service", map_server_name_.c_str());
+  }
 
-    // Only declare parameters once
-    if (!params_declared_) {
-      frame_id_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_frame_id", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-      contents_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "map_contents", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-      origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lat", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-      origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback(
-          "origin_lon", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
-      params_declared_ = true;
-    }
+  startup_timer_->cancel();
+  auto parameters_future =
+      parameter_client_->get_parameters({"map_frame_id", "map_contents", "origin_lat", "origin_lon"},
+                                        std::bind(&Lanelet2MapInterface::serviceParamsCallback, this, std::placeholders::_1));
+  RCLCPP_INFO(parent_node_->get_logger(), "Connected to map server ('%s') parameter service", map_server_name_.c_str());
+
+  // Only declare parameters once
+  if (!params_declared_) {
+    frame_id_callback_handle_ = parameter_sub_->add_parameter_callback(
+        "map_frame_id", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+    contents_callback_handle_ = parameter_sub_->add_parameter_callback(
+        "map_contents", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+    origin_lat_callback_handle_ = parameter_sub_->add_parameter_callback(
+        "origin_lat", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+    origin_lon_callback_handle_ = parameter_sub_->add_parameter_callback(
+        "origin_lon", std::bind(&Lanelet2MapInterface::updateParamsCallback, this, std::placeholders::_1), map_server_name_);
+    params_declared_ = true;
   }
 }
 
@@ -103,15 +103,15 @@ void Lanelet2MapInterface::serviceParamsCallback(std::shared_future<std::vector<
 }
 
 bool Lanelet2MapInterface::validateParams() {
-  if (map_frame_id_.size() == 0) {
+  if (map_frame_id_.empty()) {
     RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_frame_id_' is empty");
     return false;
   }
-  if (map_filepath_.size() == 0) {
+  if (map_filepath_.empty()) {
     RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_filepath_' is empty");
     return false;
   }
-  if (map_contents_.size() == 0) {
+  if (map_contents_.empty()) {
     RCLCPP_ERROR_STREAM(parent_node_->get_logger(), "Parameter 'map_contents_' is empty");
     return false;
   }
@@ -129,9 +129,8 @@ bool Lanelet2MapInterface::validateParams() {
 lanelet::LaneletMapPtr Lanelet2MapInterface::getNonConstMapPtr() {
   if (!map_loaded_) {
     return nullptr;
-  } else {
-    return mapPtr_;
   }
+  return mapPtr_;
 }
 
 lanelet::LaneletMapConstPtr Lanelet2MapInterface::getMapPtr() { return getNonConstMapPtr(); }
@@ -139,9 +138,8 @@ lanelet::LaneletMapConstPtr Lanelet2MapInterface::getMapPtr() { return getNonCon
 std::shared_ptr<lanelet::Projector> Lanelet2MapInterface::getProjectorPtr() {
   if (!map_loaded_) {
     return nullptr;
-  } else {
-    return utmProjectorPtr_;
   }
+  return utmProjectorPtr_;
 }
 
 void Lanelet2MapInterface::updateMapParam(rclcpp::Parameter param) {

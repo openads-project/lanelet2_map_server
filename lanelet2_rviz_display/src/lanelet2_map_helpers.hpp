@@ -76,10 +76,10 @@ class Lanelet2MapHelpers {
   /// Convert a Lanelet2 point to an OGRE point.
   Ogre::Vector3 ogreVec3FromLLetPoint(lanelet::ConstPoint3d point) const;
   /// Convert a traffic light point to an OGRE point with a height offset.
-  Ogre::Vector3 ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset) const;
+  static Ogre::Vector3 ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset);
 
   /// Create a buffered segment around a line.
-  std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3>& line, double buffer_length);
+  static std::vector<Ogre::Vector3> bufferSegment(const std::vector<Ogre::Vector3>& line, double buffer_length);
 
   /// Return the local 2D normal at an iterator position.
   template <typename Iter>
@@ -115,26 +115,26 @@ class Lanelet2MapHelpers {
   }
 
   /// Draw a line strip into a manual object.
-  void drawLine(const std::vector<Ogre::Vector3>& line,
-                Ogre::ManualObject* obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White,
-                double width = 0.1,
-                double z_offset = 0.0);
-  /// Draw an area outline or fill into a manual object.
-  void drawArea(const std::vector<Ogre::Vector3>& line,
-                Ogre::ManualObject* obj,
-                Ogre::ColourValue color = Ogre::ColourValue::White,
-                double z_offset = 0.0);
-  /// Draw a single polygon into a manual object.
-  void drawMonoPolygon(const std::vector<Ogre::Vector3>& poly,
+  static void drawLine(const std::vector<Ogre::Vector3>& line,
                        Ogre::ManualObject* obj,
-                       Ogre::ColourValue color = Ogre::ColourValue::White);
+                       Ogre::ColourValue color = Ogre::ColourValue::White,
+                       double width = 0.1,
+                       double z_offset = 0.0);
+  /// Draw an area outline or fill into a manual object.
+  static void drawArea(const std::vector<Ogre::Vector3>& line,
+                       Ogre::ManualObject* obj,
+                       Ogre::ColourValue color = Ogre::ColourValue::White,
+                       double z_offset = 0.0);
+  /// Draw a single polygon into a manual object.
+  static void drawMonoPolygon(const std::vector<Ogre::Vector3>& poly,
+                              Ogre::ManualObject* obj,
+                              Ogre::ColourValue color = Ogre::ColourValue::White);
   /// Draw a filled strip between lanelet boundaries.
-  void drawLaneFillStrip(const std::vector<Ogre::Vector3>& left,
-                         const std::vector<Ogre::Vector3>& right,
-                         Ogre::ManualObject* obj,
-                         Ogre::ColourValue color,
-                         double z_offset = 0.0);
+  static void drawLaneFillStrip(const std::vector<Ogre::Vector3>& left,
+                                const std::vector<Ogre::Vector3>& right,
+                                Ogre::ManualObject* obj,
+                                Ogre::ColourValue color,
+                                double z_offset = 0.0);
 
   Lanelet2Map& owner_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 };

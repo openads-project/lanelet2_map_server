@@ -27,7 +27,7 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager* manager,
     : rend_opts_(rend_opts), scene_manager_(manager), bsd_helpers_(std::make_unique<detail::Lanelet2MapHelpers>(*this)) {
   std::string ll_map_name = "Lanelet2Map";
 
-  if (!parent_node) {
+  if (parent_node == nullptr) {
     parent_node = scene_manager_->getRootSceneNode();
   }
 
@@ -47,7 +47,7 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager* manager,
       material_surface_->getTechnique(0)->setDepthWriteEnabled(true);
       material_surface_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
       material_surface_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
-      material_surface_->getTechnique(0)->getPass(0)->setDepthBias(1.0f, 1.0f);
+      material_surface_->getTechnique(0)->getPass(0)->setDepthBias(1.0F, 1.0F);
     }
   }
 
@@ -63,7 +63,7 @@ Lanelet2Map::Lanelet2Map(Ogre::SceneManager* manager,
       material_line_->getTechnique(0)->setDepthCheckEnabled(true);
       material_line_->getTechnique(0)->getPass(0)->setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);
       material_line_->getTechnique(0)->setCullingMode(Ogre::CULL_NONE);
-      material_line_->getTechnique(0)->getPass(0)->setDepthBias(2.0f, 1.0f);
+      material_line_->getTechnique(0)->getPass(0)->setDepthBias(2.0F, 1.0F);
     }
   }
 
@@ -196,7 +196,8 @@ void Lanelet2Map::create(lanelet::LaneletMapConstPtr map_ptr) {
   crosswalk_manual_object->end();
 
   auto attach_if_populated = [this](Ogre::ManualObject* manual_object, ObjectClassification classification) {
-    if (manual_object->getNumSections()) {
+    // NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)
+    if (manual_object->getNumSections() != 0U) {
       scene_node_->attachObject(manual_object);
       objects_.push_back(std::make_pair(classification, manual_object));
     } else {
