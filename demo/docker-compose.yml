@@ -4,11 +4,26 @@ services:
     image: ghcr.io/openads-project/lanelet2_map_server:v1.2.1
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
-    command: |
-      ros2 launch lanelet2_map_server lanelet2_map_server_launch.py
-        namespace:=/localization
-    volumes:
-      - ./lanelet2_map_server/params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml
+    command:
+      - /bin/bash
+      - -ic
+      - |
+        ros2 launch lanelet2_map_server lanelet2_map_server_launch.py \
+          namespace:=/localization
+
+  navsat-fix-publisher:
+    image: ghcr.io/openads-project/lanelet2_map_server:v1.2.1
+    environment:
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+    depends_on:
+      - lanelet2-map-server
+    command:
+      - /bin/bash
+      - -ic
+      - |
+        ros2 topic pub --rate 1 /localization/lanelet2_map_server/gps/fix \
+          sensor_msgs/msg/NavSatFix \
+          "{header: {frame_id: gps}, status: {status: 0, service: 1}, latitude: 0.0, longitude: 0.0, altitude: 0.0, position_covariance_type: 0}"
 
   rviz:
     image: ghcr.io/openads-project/lanelet2_route_planning:demo-monitoring
