@@ -1,0 +1,1 @@
+mv /docker-ros/additional-files /data/maps

@@ -9,7 +9,6 @@ services:
         namespace:=/localization
     volumes:
       - ./lanelet2_map_server/params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml
-      - ./lanelet2_map_server/maps:/data/maps
 
   rviz:
     image: ghcr.io/openads-project/lanelet2_route_planning:demo-monitoring

@@ -23,6 +23,7 @@ jobs:
           rmw-implementation: rmw_zenoh_cpp
           command: ros2 launch lanelet2_map_server lanelet2_map_server_launch.py
           enable-industrial-ci: true
+          additional-files-dir: demo/maps
           label-maintainer: Institute for Automotive Engineering (ika), RWTH Aachen University <opensource@ika.rwth-aachen.de>
           label-authors: Institute for Automotive Engineering (ika), RWTH Aachen University <opensource@ika.rwth-aachen.de>
         env:
