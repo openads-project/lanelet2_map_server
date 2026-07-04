@@ -2,7 +2,7 @@
   ros__parameters:
     map_frame_id: map
     use_automatic_map_selection: true
-    map_directory: /data/maps/default-maps
+    map_directory: /data/maps
     # map_filepath:
     # origin_lat:
     # origin_lon:
