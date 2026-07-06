@@ -7,12 +7,9 @@ services:
     command: |
       ros2 launch lanelet2_map_server lanelet2_map_server_launch.py
         namespace:=/localization
-    volumes:
-      - ./lanelet2_map_server/params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml
-      - ./lanelet2_map_server/maps:/data/maps
 
   rviz:
-    image: ghcr.io/openads-project/lanelet2_route_planning:demo-monitoring
+    image: ghcr.io/openads-project/monitoring:v1.0.0
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
       DISPLAY: ${DISPLAY}

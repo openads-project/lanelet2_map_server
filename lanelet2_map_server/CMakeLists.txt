@@ -57,6 +57,11 @@ install(DIRECTORY config
   OPTIONAL
 )
 
+install(DIRECTORY maps
+  DESTINATION share/${PROJECT_NAME}
+  OPTIONAL
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_clang_format_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.vscode/format/.clang-format)
