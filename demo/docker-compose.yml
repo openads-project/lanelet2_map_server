@@ -4,15 +4,12 @@ services:
     image: ghcr.io/openads-project/lanelet2_map_server:v1.2.1
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
-    command:
-      - /bin/bash
-      - -ic
-      - |
-        ros2 launch lanelet2_map_server lanelet2_map_server_launch.py \
-          namespace:=/localization
+    command: |
+      ros2 launch lanelet2_map_server lanelet2_map_server_launch.py
+        namespace:=/localization
 
   rviz:
-    image: ghcr.io/openads-project/lanelet2_route_planning:demo-monitoring
+    image: ghcr.io/openads-project/monitoring:latest
     environment:
       RMW_IMPLEMENTATION: rmw_fastrtps_cpp
       DISPLAY: ${DISPLAY}
