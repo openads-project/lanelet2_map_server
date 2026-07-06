@@ -1,8 +1,8 @@
 /**/*:
   ros__parameters:
     map_frame_id: map
-    use_automatic_map_selection: true
-    map_directory: /data/maps
-    # map_filepath:
+    use_automatic_map_selection: false
+    # map_directory: /data/maps
+    map_filepath: /docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/maps/Town10HD.osm
     # origin_lat:
     # origin_lon:
