@@ -43,3 +43,6 @@ flowchart LR
 | `params` | `os.path.join(get_package_share_directory("lanelet2_map_server"), "config", "params.yml")` | path to parameter file |
 | `log_level` | `"info"` | ROS logging level (debug, info, warn, error, fatal) |
 | `use_sim_time` | `"false"` | use simulation clock |
+| `map_filepath` | `""` | Path to Lanelet2 map; overrides param in params file if set |
+| `origin_lat` | `""` | Latitude of origin of Lanelet2 map; overrides param in params file if set |
+| `origin_lon` | `""` | Longitude of origin of Lanelet2 map; overrides param in params file if set |

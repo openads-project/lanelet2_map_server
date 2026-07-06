@@ -1,13 +1,16 @@
 services:
 
   lanelet2-map-server:
-    image: ghcr.io/openads-project/lanelet2_map_server:v1.2.1
+    image: ghcr.io/openads-project/lanelet2_map_server:latest_update-launchfile_ci # TODO release v1.2.2
     environment:
       # --- name ------
       NAMESPACE: /
       NAME: lanelet2_map_server
       # --- inputs ----
       NAV_SAT_FIX_TOPIC: ~/gps/fix
+      MAP_FILEPATH: ${MAP_FILEPATH:-}
+      ORIGIN_LAT: ${ORIGIN_LAT:-}
+      ORIGIN_LON: ${ORIGIN_LON:-}
       # --- other -----
       LOG_LEVEL: ${LOG_LEVEL:-info}
       USE_SIM_TIME: ${USE_SIM_TIME:-false}
@@ -22,6 +25,9 @@ services:
           log_level:=$${LOG_LEVEL} \
           use_sim_time:=$${USE_SIM_TIME} \
           params:=$${PARAMS} \
+          $${MAP_FILEPATH:+map_filepath:=$${MAP_FILEPATH}} \
+          $${ORIGIN_LAT:+origin_lat:=$${ORIGIN_LAT}} \
+          $${ORIGIN_LON:+origin_lon:=$${ORIGIN_LON}} \
           nav_sat_fix_topic:=$${NAV_SAT_FIX_TOPIC}
     # volumes:
     #   - ./params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml
