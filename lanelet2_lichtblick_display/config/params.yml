@@ -25,12 +25,12 @@
     # See: https://docs.foxglove.dev/docs/visualization/panels/3d
     # Also: https://foxglove.dev/blog/how-to-visualize-ros-mesh-markers
 
-    traffic_light_mesh_resource: https://raw.githubusercontent.com/openads-project/lanelet2_map_server/refs/tags/v1.2.1/lanelet2_lichtblick_display/meshes/tricolor_traffic_light/tricolor_traffic_light.glb
+    traffic_light_mesh_resource: https://raw.githubusercontent.com/openads-project/lanelet2_map_server/refs/tags/v1.2.2/lanelet2_lichtblick_display/meshes/tricolor_traffic_light/tricolor_traffic_light.glb
     traffic_light_scale: 1.0
     traffic_light_z_offset: 1.3
     traffic_light_opacity: 1.0
 
-    yield_sign_mesh_resource: https://raw.githubusercontent.com/openads-project/lanelet2_map_server/refs/tags/v1.2.1/lanelet2_lichtblick_display/meshes/yield_traffic_sign/yield_traffic_sign.glb
+    yield_sign_mesh_resource: https://raw.githubusercontent.com/openads-project/lanelet2_map_server/refs/tags/v1.2.2/lanelet2_lichtblick_display/meshes/yield_traffic_sign/yield_traffic_sign.glb
     yield_sign_scale: 1.0
     yield_sign_z_offset: 1.0
     yield_sign_opacity: 1.0
