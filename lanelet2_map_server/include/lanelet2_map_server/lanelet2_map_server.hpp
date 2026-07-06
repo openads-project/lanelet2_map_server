@@ -175,7 +175,7 @@ class Lanelet2MapServer : public rclcpp::Node {
   rclcpp::TimerBase::SharedPtr one_shot_timer_;
   rclcpp::TimerBase::SharedPtr automatic_map_timer_;
 
-  bool use_automatic_map_selection_ = true;
+  bool use_automatic_map_selection_ = false;
 
   std::string map_directory_ = "/data/maps/default-maps";
   std::vector<Lanelet2MapMeta> available_maps_;
