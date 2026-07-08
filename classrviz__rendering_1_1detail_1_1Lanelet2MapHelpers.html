@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.1</span>
+   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.2</span>
    </div>
   </td>
  </tr>
@@ -168,31 +168,31 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a789c5fae1e6e5db21f26c16d188b5396" id="r_a789c5fae1e6e5db21f26c16d188b5396"><td class="memItemLeft" align="right" valign="top">Ogre::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a789c5fae1e6e5db21f26c16d188b5396">ogreVec3FromLLetPoint</a> (lanelet::ConstPoint3d point) const</td></tr>
 <tr class="memdesc:a789c5fae1e6e5db21f26c16d188b5396"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a <a class="el" href="classLanelet2.html" title="Displays a Lanelet2 Map.">Lanelet2</a> point to an OGRE point.  <br /></td></tr>
 <tr class="separator:a789c5fae1e6e5db21f26c16d188b5396"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef94b890ce2d73db8986380ce6235ab7" id="r_aef94b890ce2d73db8986380ce6235ab7"><td class="memItemLeft" align="right" valign="top">Ogre::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef94b890ce2d73db8986380ce6235ab7">ogreVec3FromLLetTrafficLight</a> (lanelet::ConstPoint3d point, double z_offset) const</td></tr>
-<tr class="memdesc:aef94b890ce2d73db8986380ce6235ab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a traffic light point to an OGRE point with a height offset.  <br /></td></tr>
-<tr class="separator:aef94b890ce2d73db8986380ce6235ab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4de7c43e86ea22e68ff7ee1a6f54b551" id="r_a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Ogre::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4de7c43e86ea22e68ff7ee1a6f54b551">bufferSegment</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, double buffer_length)</td></tr>
-<tr class="memdesc:a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a buffered segment around a line.  <br /></td></tr>
-<tr class="separator:a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab50658ed66fec85faa42d3b1cedde711" id="r_ab50658ed66fec85faa42d3b1cedde711"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab50658ed66fec85faa42d3b1cedde711">drawLine</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double width=0.1, double z_offset=0.0)</td></tr>
-<tr class="memdesc:ab50658ed66fec85faa42d3b1cedde711"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a line strip into a manual object.  <br /></td></tr>
-<tr class="separator:ab50658ed66fec85faa42d3b1cedde711"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0523175aa954a536c8390b85a8e33d8a" id="r_a0523175aa954a536c8390b85a8e33d8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0523175aa954a536c8390b85a8e33d8a">drawArea</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double z_offset=0.0)</td></tr>
-<tr class="memdesc:a0523175aa954a536c8390b85a8e33d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw an area outline or fill into a manual object.  <br /></td></tr>
-<tr class="separator:a0523175aa954a536c8390b85a8e33d8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba907772d2e45f8aa1f6d1b746cc1ad4" id="r_aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba907772d2e45f8aa1f6d1b746cc1ad4">drawMonoPolygon</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;poly, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White)</td></tr>
-<tr class="memdesc:aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a single polygon into a manual object.  <br /></td></tr>
-<tr class="separator:aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a537e11f1285d7f923f9da85dc608ac19" id="r_a537e11f1285d7f923f9da85dc608ac19"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a537e11f1285d7f923f9da85dc608ac19">drawLaneFillStrip</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;left, const std::vector&lt; Ogre::Vector3 &gt; &amp;right, Ogre::ManualObject *obj, Ogre::ColourValue color, double z_offset=0.0)</td></tr>
-<tr class="memdesc:a537e11f1285d7f923f9da85dc608ac19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a filled strip between lanelet boundaries.  <br /></td></tr>
-<tr class="separator:a537e11f1285d7f923f9da85dc608ac19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a188c1557b2f8acac3f04d2fbc86f9bf6" id="r_a188c1557b2f8acac3f04d2fbc86f9bf6"><td class="memItemLeft" align="right" valign="top">static Ogre::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a188c1557b2f8acac3f04d2fbc86f9bf6">ogreVec3FromLLetTrafficLight</a> (lanelet::ConstPoint3d point, double z_offset)</td></tr>
+<tr class="memdesc:a188c1557b2f8acac3f04d2fbc86f9bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a traffic light point to an OGRE point with a height offset.  <br /></td></tr>
+<tr class="separator:a188c1557b2f8acac3f04d2fbc86f9bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4de7c43e86ea22e68ff7ee1a6f54b551" id="r_a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; Ogre::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4de7c43e86ea22e68ff7ee1a6f54b551">bufferSegment</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, double buffer_length)</td></tr>
+<tr class="memdesc:a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a buffered segment around a line.  <br /></td></tr>
+<tr class="separator:a4de7c43e86ea22e68ff7ee1a6f54b551"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bca7465d20ac5780b5c39e44826a0df" id="r_a2bca7465d20ac5780b5c39e44826a0df"><td class="memTemplParams" colspan="2">template&lt;typename Iter &gt; </td></tr>
 <tr class="memitem:a2bca7465d20ac5780b5c39e44826a0df"><td class="memTemplItemLeft" align="right" valign="top">static Ogre::Vector3&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2bca7465d20ac5780b5c39e44826a0df">getNormal</a> (Iter it, Iter begin, Iter end)</td></tr>
 <tr class="memdesc:a2bca7465d20ac5780b5c39e44826a0df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the local 2D normal at an iterator position.  <br /></td></tr>
 <tr class="separator:a2bca7465d20ac5780b5c39e44826a0df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab50658ed66fec85faa42d3b1cedde711" id="r_ab50658ed66fec85faa42d3b1cedde711"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab50658ed66fec85faa42d3b1cedde711">drawLine</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double width=0.1, double z_offset=0.0)</td></tr>
+<tr class="memdesc:ab50658ed66fec85faa42d3b1cedde711"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a line strip into a manual object.  <br /></td></tr>
+<tr class="separator:ab50658ed66fec85faa42d3b1cedde711"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0523175aa954a536c8390b85a8e33d8a" id="r_a0523175aa954a536c8390b85a8e33d8a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0523175aa954a536c8390b85a8e33d8a">drawArea</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double z_offset=0.0)</td></tr>
+<tr class="memdesc:a0523175aa954a536c8390b85a8e33d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw an area outline or fill into a manual object.  <br /></td></tr>
+<tr class="separator:a0523175aa954a536c8390b85a8e33d8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba907772d2e45f8aa1f6d1b746cc1ad4" id="r_aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba907772d2e45f8aa1f6d1b746cc1ad4">drawMonoPolygon</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;poly, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White)</td></tr>
+<tr class="memdesc:aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a single polygon into a manual object.  <br /></td></tr>
+<tr class="separator:aba907772d2e45f8aa1f6d1b746cc1ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a537e11f1285d7f923f9da85dc608ac19" id="r_a537e11f1285d7f923f9da85dc608ac19"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a537e11f1285d7f923f9da85dc608ac19">drawLaneFillStrip</a> (const std::vector&lt; Ogre::Vector3 &gt; &amp;left, const std::vector&lt; Ogre::Vector3 &gt; &amp;right, Ogre::ManualObject *obj, Ogre::ColourValue color, double z_offset=0.0)</td></tr>
+<tr class="memdesc:a537e11f1285d7f923f9da85dc608ac19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a filled strip between lanelet boundaries.  <br /></td></tr>
+<tr class="separator:a537e11f1285d7f923f9da85dc608ac19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -267,9 +267,9 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  100</span>  }</div>
 <div class="line"><span class="lineno">  101</span>}</div>
 <div class="ttc" id="aclassrviz__rendering_1_1Lanelet2Map_html_a26ede360d1827783bf1d7f436d14fcdf"><div class="ttname"><a href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rviz_rendering::Lanelet2Map::rend_opts_</a></div><div class="ttdeci">Lanelet2Map::RenderingOptions rend_opts_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00133">lanelet2_map.hpp:133</a></div></div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a0523175aa954a536c8390b85a8e33d8a"><div class="ttname"><a href="#a0523175aa954a536c8390b85a8e33d8a">rviz_rendering::detail::Lanelet2MapHelpers::drawArea</a></div><div class="ttdeci">void drawArea(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double z_offset=0.0)</div><div class="ttdoc">Draw an area outline or fill into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00288">lanelet2_map_helpers.cpp:288</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a0523175aa954a536c8390b85a8e33d8a"><div class="ttname"><a href="#a0523175aa954a536c8390b85a8e33d8a">rviz_rendering::detail::Lanelet2MapHelpers::drawArea</a></div><div class="ttdeci">static void drawArea(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double z_offset=0.0)</div><div class="ttdoc">Draw an area outline or fill into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00288">lanelet2_map_helpers.cpp:288</a></div></div>
 <div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a596156241e989bbbed73c2c756cceb51"><div class="ttname"><a href="#a596156241e989bbbed73c2c756cceb51">rviz_rendering::detail::Lanelet2MapHelpers::ogreLineFromLLetPolygon</a></div><div class="ttdeci">std::vector&lt; Ogre::Vector3 &gt; ogreLineFromLLetPolygon(const lanelet::CompoundPolygon3d &amp;polygon) const</div><div class="ttdoc">Convert a Lanelet2 polygon to OGRE points.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00215">lanelet2_map_helpers.cpp:215</a></div></div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_ab50658ed66fec85faa42d3b1cedde711"><div class="ttname"><a href="#ab50658ed66fec85faa42d3b1cedde711">rviz_rendering::detail::Lanelet2MapHelpers::drawLine</a></div><div class="ttdeci">void drawLine(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double width=0.1, double z_offset=0.0)</div><div class="ttdoc">Draw a line strip into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00274">lanelet2_map_helpers.cpp:274</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_ab50658ed66fec85faa42d3b1cedde711"><div class="ttname"><a href="#ab50658ed66fec85faa42d3b1cedde711">rviz_rendering::detail::Lanelet2MapHelpers::drawLine</a></div><div class="ttdeci">static void drawLine(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White, double width=0.1, double z_offset=0.0)</div><div class="ttdoc">Draw a line strip into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00274">lanelet2_map_helpers.cpp:274</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_a64055d52637fe84a8018a9d0ff8251d4"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a64055d52637fe84a8018a9d0ff8251d4">rviz_rendering::Lanelet2Map::RenderingOptions::fillArea</a></div><div class="ttdeci">bool fillArea</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00086">lanelet2_map.hpp:86</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_a71533954b23181a5612673a2c1b2178f"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a71533954b23181a5612673a2c1b2178f">rviz_rendering::Lanelet2Map::RenderingOptions::zAreas</a></div><div class="ttdeci">double zAreas</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00060">lanelet2_map.hpp:60</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_abe85373ab6498521235b47da163c24e4"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#abe85373ab6498521235b47da163c24e4">rviz_rendering::Lanelet2Map::RenderingOptions::colorArea</a></div><div class="ttdeci">Ogre::ColourValue colorArea</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00073">lanelet2_map.hpp:73</a></div></div>
@@ -335,7 +335,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  115</span>  <span class="keyword">const</span> <span class="keyword">auto</span> right = <a class="code hl_function" href="#a6e7e4f050eb3fb36701c98f97ab77d3c">ogreLineFromLLetLineString</a>(lanelet.rightBound());</div>
 <div class="line"><span class="lineno">  116</span>  <a class="code hl_function" href="#a537e11f1285d7f923f9da85dc608ac19">drawLaneFillStrip</a>(left, right, manual, <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a734987727a869d392c8a3968007b2242">colorLaneFill</a>, <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a5a0bd211d938806646ffec311da987b5">zLaneFill</a>);</div>
 <div class="line"><span class="lineno">  117</span>}</div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a537e11f1285d7f923f9da85dc608ac19"><div class="ttname"><a href="#a537e11f1285d7f923f9da85dc608ac19">rviz_rendering::detail::Lanelet2MapHelpers::drawLaneFillStrip</a></div><div class="ttdeci">void drawLaneFillStrip(const std::vector&lt; Ogre::Vector3 &gt; &amp;left, const std::vector&lt; Ogre::Vector3 &gt; &amp;right, Ogre::ManualObject *obj, Ogre::ColourValue color, double z_offset=0.0)</div><div class="ttdoc">Draw a filled strip between lanelet boundaries.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00339">lanelet2_map_helpers.cpp:339</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a537e11f1285d7f923f9da85dc608ac19"><div class="ttname"><a href="#a537e11f1285d7f923f9da85dc608ac19">rviz_rendering::detail::Lanelet2MapHelpers::drawLaneFillStrip</a></div><div class="ttdeci">static void drawLaneFillStrip(const std::vector&lt; Ogre::Vector3 &gt; &amp;left, const std::vector&lt; Ogre::Vector3 &gt; &amp;right, Ogre::ManualObject *obj, Ogre::ColourValue color, double z_offset=0.0)</div><div class="ttdoc">Draw a filled strip between lanelet boundaries.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00339">lanelet2_map_helpers.cpp:339</a></div></div>
 <div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a6e7e4f050eb3fb36701c98f97ab77d3c"><div class="ttname"><a href="#a6e7e4f050eb3fb36701c98f97ab77d3c">rviz_rendering::detail::Lanelet2MapHelpers::ogreLineFromLLetLineString</a></div><div class="ttdeci">std::vector&lt; Ogre::Vector3 &gt; ogreLineFromLLetLineString(const lanelet::ConstLineString3d &amp;line_string) const</div><div class="ttdoc">Convert a Lanelet2 line string to OGRE points.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00207">lanelet2_map_helpers.cpp:207</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_a5a0bd211d938806646ffec311da987b5"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a5a0bd211d938806646ffec311da987b5">rviz_rendering::Lanelet2Map::RenderingOptions::zLaneFill</a></div><div class="ttdeci">double zLaneFill</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00058">lanelet2_map.hpp:58</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_a734987727a869d392c8a3968007b2242"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a734987727a869d392c8a3968007b2242">rviz_rendering::Lanelet2Map::RenderingOptions::colorLaneFill</a></div><div class="ttdeci">Ogre::ColourValue colorLaneFill</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00072">lanelet2_map.hpp:72</a></div></div>
@@ -447,14 +447,14 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  133</span> </div>
 <div class="line"><span class="lineno">  134</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#afbb03a15a0402c54f2771ce60b3b5d05">renderStopLines</a>) {</div>
 <div class="line"><span class="lineno">  135</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; reg_element : regulatory_elements) {</div>
-<div class="line"><span class="lineno">  136</span>      <span class="keyword">auto</span> ref_lines = reg_element.get()-&gt;getParameters&lt;lanelet::ConstLineString3d&gt;(lanelet::RoleName::RefLine);</div>
+<div class="line"><span class="lineno">  136</span>      <span class="keyword">auto</span> ref_lines = reg_element-&gt;getParameters&lt;lanelet::ConstLineString3d&gt;(lanelet::RoleName::RefLine);</div>
 <div class="line"><span class="lineno">  137</span>      <a class="code hl_function" href="#ad136a386510ce91ca556d577ce672539">attachRefLinesToSceneNode</a>(ref_lines, regulatory_elements_node);</div>
 <div class="line"><span class="lineno">  138</span>    }</div>
 <div class="line"><span class="lineno">  139</span>  }</div>
 <div class="line"><span class="lineno">  140</span> </div>
 <div class="line"><span class="lineno">  141</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#acd58d17d04e05d01503b4a239edd7908">renderTrafficLights</a>) {</div>
 <div class="line"><span class="lineno">  142</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; traffic_light : traffic_light_regelems) {</div>
-<div class="line"><span class="lineno">  143</span>      <span class="keyword">auto</span> traffic_lights = traffic_light.get()-&gt;getParameters&lt;lanelet::ConstPolygon3d&gt;(lanelet::RoleName::Refers);</div>
+<div class="line"><span class="lineno">  143</span>      <span class="keyword">auto</span> traffic_lights = traffic_light-&gt;getParameters&lt;lanelet::ConstPolygon3d&gt;(lanelet::RoleName::Refers);</div>
 <div class="line"><span class="lineno">  144</span>      <a class="code hl_function" href="#a7a5187c7898de221f41c812b7dcf7284">attachTrafficLightsToSceneNode</a>(traffic_lights, regulatory_elements_node);</div>
 <div class="line"><span class="lineno">  145</span>    }</div>
 <div class="line"><span class="lineno">  146</span>  }</div>
@@ -621,7 +621,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  159</span>  }</div>
 <div class="line"><span class="lineno">  160</span>  <span class="comment">// OGRE 1.x exposes section counts through this deprecated API; RViz still uses this vendor version.</span></div>
 <div class="line"><span class="lineno">  161</span>  <span class="comment">// NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)</span></div>
-<div class="line"><span class="lineno">  162</span>  <span class="keywordflow">if</span> (stop_lines_manual_object-&gt;getNumSections()) {</div>
+<div class="line"><span class="lineno">  162</span>  <span class="keywordflow">if</span> (stop_lines_manual_object-&gt;getNumSections() != 0U) {</div>
 <div class="line"><span class="lineno">  163</span>    parent_node-&gt;attachObject(stop_lines_manual_object);</div>
 <div class="line"><span class="lineno">  164</span>    <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a2d64ceddaa87c3d41a0773b33347a030">objects_</a>.push_back(std::make_pair(<a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23acfbef7dd8124d8d250af2403a46330e7">ObjectClassification::STOPLINE</a>, stop_lines_manual_object));</div>
 <div class="line"><span class="lineno">  165</span>  }</div>
@@ -671,7 +671,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  179</span>  }</div>
 <div class="line"><span class="lineno">  180</span>  <span class="comment">// OGRE 1.x exposes section counts through this deprecated API; RViz still uses this vendor version.</span></div>
 <div class="line"><span class="lineno">  181</span>  <span class="comment">// NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)</span></div>
-<div class="line"><span class="lineno">  182</span>  <span class="keywordflow">if</span> (traffic_light_manual_object-&gt;getNumSections()) {</div>
+<div class="line"><span class="lineno">  182</span>  <span class="keywordflow">if</span> (traffic_light_manual_object-&gt;getNumSections() != 0U) {</div>
 <div class="line"><span class="lineno">  183</span>    parent_node-&gt;attachObject(traffic_light_manual_object);</div>
 <div class="line"><span class="lineno">  184</span>    <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a2d64ceddaa87c3d41a0773b33347a030">objects_</a>.push_back(std::make_pair(<a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a01ac9571fc40f76468f9596e410418bc">ObjectClassification::TRAFFICLIGHT</a>, traffic_light_manual_object));</div>
 <div class="line"><span class="lineno">  185</span>  }</div>
@@ -706,7 +706,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -763,7 +763,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   33</span>      <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23ac7e4b678a7ef33bea67e7fc8c6874427">ObjectClassification::SIDEWALK</a>:</div>
 <div class="line"><span class="lineno">   34</span>      <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a4dbee18ddb9dc25b7ebc1ea7b68aa4bf">ObjectClassification::CROSSWALK</a>: {</div>
 <div class="line"><span class="lineno">   35</span>        <span class="keyword">auto</span> man_object = <span class="keyword">dynamic_cast&lt;</span>Ogre::ManualObject*<span class="keyword">&gt;</span>(<span class="keywordtype">object</span>.second);</div>
-<div class="line"><span class="lineno">   36</span>        <span class="keywordflow">if</span> (man_object) {</div>
+<div class="line"><span class="lineno">   36</span>        <span class="keywordflow">if</span> (man_object != <span class="keyword">nullptr</span>) {</div>
 <div class="line"><span class="lineno">   37</span>          man_object-&gt;detachFromParent();</div>
 <div class="line"><span class="lineno">   38</span>          <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#af7959be6490972ca191a6aae4436fe5c">scene_manager_</a>-&gt;destroyManualObject(man_object);</div>
 <div class="line"><span class="lineno">   39</span>        }</div>
@@ -772,7 +772,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   42</span> </div>
 <div class="line"><span class="lineno">   43</span>      <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23aa5c5b46362d2ce3db82934010586af97">ObjectClassification::LANELETID</a>: {</div>
 <div class="line"><span class="lineno">   44</span>        <span class="keyword">auto</span> mov_text = <span class="keyword">dynamic_cast&lt;</span>rviz_rendering::MovableText*<span class="keyword">&gt;</span>(<span class="keywordtype">object</span>.second);</div>
-<div class="line"><span class="lineno">   45</span>        <span class="keywordflow">if</span> (mov_text) {</div>
+<div class="line"><span class="lineno">   45</span>        <span class="keywordflow">if</span> (mov_text != <span class="keyword">nullptr</span>) {</div>
 <div class="line"><span class="lineno">   46</span>          mov_text-&gt;detachFromParent();</div>
 <div class="line"><span class="lineno">   47</span>          <span class="comment">// MovableText is created directly and attached to the scene node, so it is destroyed directly here.</span></div>
 <div class="line"><span class="lineno">   48</span>          <span class="comment">// NOLINTNEXTLINE(cppcoreguidelines-owning-memory)</span></div>
@@ -782,7 +782,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   52</span>      }</div>
 <div class="line"><span class="lineno">   53</span> </div>
 <div class="line"><span class="lineno">   54</span>      <span class="keywordflow">default</span>: {</div>
-<div class="line"><span class="lineno">   55</span>        <span class="keywordflow">if</span> (<span class="keywordtype">object</span>.second) {</div>
+<div class="line"><span class="lineno">   55</span>        <span class="keywordflow">if</span> (<span class="keywordtype">object</span>.second != <span class="keyword">nullptr</span>) {</div>
 <div class="line"><span class="lineno">   56</span>          <span class="keywordtype">object</span>.second-&gt;detachFromParent();</div>
 <div class="line"><span class="lineno">   57</span>          <span class="comment">// Fallback for directly owned OGRE objects not handled by the scene manager helpers above.</span></div>
 <div class="line"><span class="lineno">   58</span>          <span class="comment">// NOLINTNEXTLINE(cppcoreguidelines-owning-memory)</span></div>
@@ -837,7 +837,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -861,7 +861,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  304</span>  }</div>
 <div class="line"><span class="lineno">  305</span>  <a class="code hl_function" href="#aba907772d2e45f8aa1f6d1b746cc1ad4">drawMonoPolygon</a>(line, obj, color);</div>
 <div class="line"><span class="lineno">  306</span>}</div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_aba907772d2e45f8aa1f6d1b746cc1ad4"><div class="ttname"><a href="#aba907772d2e45f8aa1f6d1b746cc1ad4">rviz_rendering::detail::Lanelet2MapHelpers::drawMonoPolygon</a></div><div class="ttdeci">void drawMonoPolygon(const std::vector&lt; Ogre::Vector3 &gt; &amp;poly, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White)</div><div class="ttdoc">Draw a single polygon into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00308">lanelet2_map_helpers.cpp:308</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_aba907772d2e45f8aa1f6d1b746cc1ad4"><div class="ttname"><a href="#aba907772d2e45f8aa1f6d1b746cc1ad4">rviz_rendering::detail::Lanelet2MapHelpers::drawMonoPolygon</a></div><div class="ttdeci">static void drawMonoPolygon(const std::vector&lt; Ogre::Vector3 &gt; &amp;poly, Ogre::ManualObject *obj, Ogre::ColourValue color=Ogre::ColourValue::White)</div><div class="ttdoc">Draw a single polygon into a manual object.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00308">lanelet2_map_helpers.cpp:308</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -902,7 +902,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1001,7 +1001,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1021,7 +1021,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  284</span>  }</div>
 <div class="line"><span class="lineno">  285</span>  <a class="code hl_function" href="#aba907772d2e45f8aa1f6d1b746cc1ad4">drawMonoPolygon</a>(buffered, obj, color);</div>
 <div class="line"><span class="lineno">  286</span>}</div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a4de7c43e86ea22e68ff7ee1a6f54b551"><div class="ttname"><a href="#a4de7c43e86ea22e68ff7ee1a6f54b551">rviz_rendering::detail::Lanelet2MapHelpers::bufferSegment</a></div><div class="ttdeci">std::vector&lt; Ogre::Vector3 &gt; bufferSegment(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, double buffer_length)</div><div class="ttdoc">Create a buffered segment around a line.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00259">lanelet2_map_helpers.cpp:259</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a4de7c43e86ea22e68ff7ee1a6f54b551"><div class="ttname"><a href="#a4de7c43e86ea22e68ff7ee1a6f54b551">rviz_rendering::detail::Lanelet2MapHelpers::bufferSegment</a></div><div class="ttdeci">static std::vector&lt; Ogre::Vector3 &gt; bufferSegment(const std::vector&lt; Ogre::Vector3 &gt; &amp;line, double buffer_length)</div><div class="ttdoc">Create a buffered segment around a line.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00259">lanelet2_map_helpers.cpp:259</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1052,7 +1052,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1068,7 +1068,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  315</span>  <span class="keyword">auto</span> it_left = poly.begin();</div>
 <div class="line"><span class="lineno">  316</span>  <span class="keyword">auto</span> it_right = --poly.end();</div>
 <div class="line"><span class="lineno">  317</span>  <span class="keyword">const</span> <span class="keyword">auto</span> start_index = obj-&gt;getCurrentVertexCount();</div>
-<div class="line"><span class="lineno">  318</span>  <span class="keyword">auto</span> count = 0u;</div>
+<div class="line"><span class="lineno">  318</span>  <span class="keyword">auto</span> count = 0U;</div>
 <div class="line"><span class="lineno">  319</span>  <span class="keywordflow">for</span> (; it_right &gt;= it_left; ++it_left, --it_right) {</div>
 <div class="line"><span class="lineno">  320</span>    obj-&gt;position(*it_left);</div>
 <div class="line"><span class="lineno">  321</span>    obj-&gt;normal(0, 0, 1);</div>
@@ -1306,11 +1306,11 @@ template&lt;typename Iter &gt; </div>
 <div class="line"><span class="lineno">  231</span>                        [](<span class="keyword">const</span> lanelet::ConstPoint3d&amp; p1, <span class="keyword">const</span> lanelet::ConstPoint3d&amp; p2) { return p1.z() &lt; p2.z(); });</div>
 <div class="line"><span class="lineno">  232</span> </div>
 <div class="line"><span class="lineno">  233</span>  <span class="keywordflow">for</span> (lanelet::ConstPoint3d point : polygon) {</div>
-<div class="line"><span class="lineno">  234</span>    line.push_back(<a class="code hl_function" href="#aef94b890ce2d73db8986380ce6235ab7">ogreVec3FromLLetTrafficLight</a>(point, <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a876d02d37f1f8acfa3a60dc8c4351836">trafficLightHeightAboveGround</a> - lowest_point.z()));</div>
+<div class="line"><span class="lineno">  234</span>    line.push_back(<a class="code hl_function" href="#a188c1557b2f8acac3f04d2fbc86f9bf6">ogreVec3FromLLetTrafficLight</a>(point, <a class="code hl_variable" href="#a20b5c304e6703338846715d3e4c2a7a3">owner_</a>.<a class="code hl_variable" href="classrviz__rendering_1_1Lanelet2Map.html#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>.<a class="code hl_variable" href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a876d02d37f1f8acfa3a60dc8c4351836">trafficLightHeightAboveGround</a> - lowest_point.z()));</div>
 <div class="line"><span class="lineno">  235</span>  }</div>
 <div class="line"><span class="lineno">  236</span>  <span class="keywordflow">return</span> line;</div>
 <div class="line"><span class="lineno">  237</span>}</div>
-<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_aef94b890ce2d73db8986380ce6235ab7"><div class="ttname"><a href="#aef94b890ce2d73db8986380ce6235ab7">rviz_rendering::detail::Lanelet2MapHelpers::ogreVec3FromLLetTrafficLight</a></div><div class="ttdeci">Ogre::Vector3 ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset) const</div><div class="ttdoc">Convert a traffic light point to an OGRE point with a height offset.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00253">lanelet2_map_helpers.cpp:253</a></div></div>
+<div class="ttc" id="aclassrviz__rendering_1_1detail_1_1Lanelet2MapHelpers_html_a188c1557b2f8acac3f04d2fbc86f9bf6"><div class="ttname"><a href="#a188c1557b2f8acac3f04d2fbc86f9bf6">rviz_rendering::detail::Lanelet2MapHelpers::ogreVec3FromLLetTrafficLight</a></div><div class="ttdeci">static Ogre::Vector3 ogreVec3FromLLetTrafficLight(lanelet::ConstPoint3d point, double z_offset)</div><div class="ttdoc">Convert a traffic light point to an OGRE point with a height offset.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__helpers_8cpp_source.html#l00253">lanelet2_map_helpers.cpp:253</a></div></div>
 <div class="ttc" id="astructrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions_html_a876d02d37f1f8acfa3a60dc8c4351836"><div class="ttname"><a href="structrviz__rendering_1_1Lanelet2Map_1_1RenderingOptions.html#a876d02d37f1f8acfa3a60dc8c4351836">rviz_rendering::Lanelet2Map::RenderingOptions::trafficLightHeightAboveGround</a></div><div class="ttdeci">double trafficLightHeightAboveGround</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00054">lanelet2_map.hpp:54</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1349,8 +1349,8 @@ template&lt;typename Iter &gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="aef94b890ce2d73db8986380ce6235ab7" name="aef94b890ce2d73db8986380ce6235ab7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef94b890ce2d73db8986380ce6235ab7">&#9670;&#160;</a></span>ogreVec3FromLLetTrafficLight()</h2>
+<a id="a188c1557b2f8acac3f04d2fbc86f9bf6" name="a188c1557b2f8acac3f04d2fbc86f9bf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a188c1557b2f8acac3f04d2fbc86f9bf6">&#9670;&#160;</a></span>ogreVec3FromLLetTrafficLight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1366,12 +1366,12 @@ template&lt;typename Iter &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>z_offset</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>z_offset</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1379,7 +1379,7 @@ template&lt;typename Iter &gt; </div>
 <p>Convert a traffic light point to an OGRE point with a height offset. </p>
 
 <p class="definition">Definition at line <a class="el" href="lanelet2__map__helpers_8cpp_source.html#l00253">253</a> of file <a class="el" href="lanelet2__map__helpers_8cpp_source.html">lanelet2_map_helpers.cpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  253</span>                                                                                                             {</div>
+<div class="fragment"><div class="line"><span class="lineno">  253</span>                                                                                                       {</div>
 <div class="line"><span class="lineno">  254</span>  <span class="keyword">using </span>boost::numeric_cast;</div>
 <div class="line"><span class="lineno">  255</span>  <span class="keywordflow">return</span> Ogre::Vector3(numeric_cast&lt;Ogre::Real&gt;(point.x()), numeric_cast&lt;Ogre::Real&gt;(point.y()),</div>
 <div class="line"><span class="lineno">  256</span>                       numeric_cast&lt;Ogre::Real&gt;(point.z() + z_offset));</div>

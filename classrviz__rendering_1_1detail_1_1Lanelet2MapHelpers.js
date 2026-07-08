@@ -12,17 +12,11 @@ var classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers =
     [ "attachLaneletIdToSceneNode", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#ae5aad31767e9e0e4b25430678e77c741", null ],
     [ "attachRefLinesToSceneNode", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#ad136a386510ce91ca556d577ce672539", null ],
     [ "attachTrafficLightsToSceneNode", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a7a5187c7898de221f41c812b7dcf7284", null ],
-    [ "bufferSegment", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a4de7c43e86ea22e68ff7ee1a6f54b551", null ],
     [ "clearObjects", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#aa9decbe6c6a876064f6e1b0a5398c5aa", null ],
-    [ "drawArea", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a0523175aa954a536c8390b85a8e33d8a", null ],
-    [ "drawLaneFillStrip", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a537e11f1285d7f923f9da85dc608ac19", null ],
-    [ "drawLine", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#ab50658ed66fec85faa42d3b1cedde711", null ],
-    [ "drawMonoPolygon", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#aba907772d2e45f8aa1f6d1b746cc1ad4", null ],
     [ "ogreLineFromLLetLineString", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a6e7e4f050eb3fb36701c98f97ab77d3c", null ],
     [ "ogreLineFromLLetPolygon", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a596156241e989bbbed73c2c756cceb51", null ],
     [ "ogreLineFromLLetPts", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a7de5cb834fdd2b2ecad3daa4f5a1d366", null ],
     [ "ogreLineFromLLetTrafficLight", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a281aaa41a57d57442a358adb60f2dbcf", null ],
     [ "ogreVec3FromLLetPoint", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a789c5fae1e6e5db21f26c16d188b5396", null ],
-    [ "ogreVec3FromLLetTrafficLight", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#aef94b890ce2d73db8986380ce6235ab7", null ],
     [ "owner_", "classrviz__rendering_1_1detail_1_1Lanelet2MapHelpers.html#a20b5c304e6703338846715d3e4c2a7a3", null ]
 ];

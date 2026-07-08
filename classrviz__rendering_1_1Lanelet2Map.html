@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.1</span>
+   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.2</span>
    </div>
   </td>
  </tr>
@@ -224,7 +224,7 @@ Friends</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   27</span>    : <a class="code hl_variable" href="#a26ede360d1827783bf1d7f436d14fcdf">rend_opts_</a>(rend_opts), <a class="code hl_variable" href="#af7959be6490972ca191a6aae4436fe5c">scene_manager_</a>(manager), <a class="code hl_variable" href="#a5562a1b4523e1e1382c22b9d818cde8f">bsd_helpers_</a>(std::make_unique&lt;detail::Lanelet2MapHelpers&gt;(*<span class="keyword">this</span>)) {</div>
 <div class="line"><span class="lineno">   28</span>  std::string ll_map_name = <span class="stringliteral">&quot;Lanelet2Map&quot;</span>;</div>
 <div class="line"><span class="lineno">   29</span> </div>
-<div class="line"><span class="lineno">   30</span>  <span class="keywordflow">if</span> (!parent_node) {</div>
+<div class="line"><span class="lineno">   30</span>  <span class="keywordflow">if</span> (parent_node == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><span class="lineno">   31</span>    parent_node = <a class="code hl_variable" href="#af7959be6490972ca191a6aae4436fe5c">scene_manager_</a>-&gt;getRootSceneNode();</div>
 <div class="line"><span class="lineno">   32</span>  }</div>
 <div class="line"><span class="lineno">   33</span> </div>
@@ -244,7 +244,7 @@ Friends</h2></td></tr>
 <div class="line"><span class="lineno">   47</span>      <a class="code hl_variable" href="#a98282b42266630f57337ec03695f0f30">material_surface_</a>-&gt;getTechnique(0)-&gt;setDepthWriteEnabled(<span class="keyword">true</span>);</div>
 <div class="line"><span class="lineno">   48</span>      <a class="code hl_variable" href="#a98282b42266630f57337ec03695f0f30">material_surface_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);</div>
 <div class="line"><span class="lineno">   49</span>      <a class="code hl_variable" href="#a98282b42266630f57337ec03695f0f30">material_surface_</a>-&gt;getTechnique(0)-&gt;setCullingMode(Ogre::CULL_NONE);</div>
-<div class="line"><span class="lineno">   50</span>      <a class="code hl_variable" href="#a98282b42266630f57337ec03695f0f30">material_surface_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setDepthBias(1.0f, 1.0f);</div>
+<div class="line"><span class="lineno">   50</span>      <a class="code hl_variable" href="#a98282b42266630f57337ec03695f0f30">material_surface_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setDepthBias(1.0F, 1.0F);</div>
 <div class="line"><span class="lineno">   51</span>    }</div>
 <div class="line"><span class="lineno">   52</span>  }</div>
 <div class="line"><span class="lineno">   53</span> </div>
@@ -260,7 +260,7 @@ Friends</h2></td></tr>
 <div class="line"><span class="lineno">   63</span>      <a class="code hl_variable" href="#a8046969538dd85322b19bdaa085bcf97">material_line_</a>-&gt;getTechnique(0)-&gt;setDepthCheckEnabled(<span class="keyword">true</span>);</div>
 <div class="line"><span class="lineno">   64</span>      <a class="code hl_variable" href="#a8046969538dd85322b19bdaa085bcf97">material_line_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setVertexColourTracking(Ogre::TVC_AMBIENT + Ogre::TVC_DIFFUSE);</div>
 <div class="line"><span class="lineno">   65</span>      <a class="code hl_variable" href="#a8046969538dd85322b19bdaa085bcf97">material_line_</a>-&gt;getTechnique(0)-&gt;setCullingMode(Ogre::CULL_NONE);</div>
-<div class="line"><span class="lineno">   66</span>      <a class="code hl_variable" href="#a8046969538dd85322b19bdaa085bcf97">material_line_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setDepthBias(2.0f, 1.0f);</div>
+<div class="line"><span class="lineno">   66</span>      <a class="code hl_variable" href="#a8046969538dd85322b19bdaa085bcf97">material_line_</a>-&gt;getTechnique(0)-&gt;getPass(0)-&gt;setDepthBias(2.0F, 1.0F);</div>
 <div class="line"><span class="lineno">   67</span>    }</div>
 <div class="line"><span class="lineno">   68</span>  }</div>
 <div class="line"><span class="lineno">   69</span> </div>
@@ -496,22 +496,23 @@ Friends</h2></td></tr>
 <div class="line"><span class="lineno">  196</span>  crosswalk_manual_object-&gt;end();</div>
 <div class="line"><span class="lineno">  197</span> </div>
 <div class="line"><span class="lineno">  198</span>  <span class="keyword">auto</span> attach_if_populated = [<span class="keyword">this</span>](Ogre::ManualObject* manual_object, <a class="code hl_enumeration" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23">ObjectClassification</a> classification) {</div>
-<div class="line"><span class="lineno">  199</span>    <span class="keywordflow">if</span> (manual_object-&gt;getNumSections()) {</div>
-<div class="line"><span class="lineno">  200</span>      <a class="code hl_variable" href="#a4bb74b30c1f5904a75d33801d6908331">scene_node_</a>-&gt;attachObject(manual_object);</div>
-<div class="line"><span class="lineno">  201</span>      <a class="code hl_variable" href="#a2d64ceddaa87c3d41a0773b33347a030">objects_</a>.push_back(std::make_pair(classification, manual_object));</div>
-<div class="line"><span class="lineno">  202</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  203</span>      <a class="code hl_variable" href="#af7959be6490972ca191a6aae4436fe5c">scene_manager_</a>-&gt;destroyManualObject(manual_object);</div>
-<div class="line"><span class="lineno">  204</span>    }</div>
-<div class="line"><span class="lineno">  205</span>  };</div>
-<div class="line"><span class="lineno">  206</span> </div>
-<div class="line"><span class="lineno">  207</span>  attach_if_populated(map_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a5af1a3a285c2bdee4192223e31e1f833">ObjectClassification::MAP</a>);</div>
-<div class="line"><span class="lineno">  208</span>  attach_if_populated(separator_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a70c8298458224e75cd18dbdf224b6ed3">ObjectClassification::SEPERATOR</a>);</div>
-<div class="line"><span class="lineno">  209</span>  attach_if_populated(area_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a639aaa22a784d5e5cb03a522267e79c4">ObjectClassification::AREA</a>);</div>
-<div class="line"><span class="lineno">  210</span>  attach_if_populated(parking_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a1e12e1edd301b7f92890a050dcfcc94a">ObjectClassification::PARKINGAREA</a>);</div>
-<div class="line"><span class="lineno">  211</span>  attach_if_populated(lane_fill_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23acc134f9a66352f0ec760971bbe907ca8">ObjectClassification::LANEFILL</a>);</div>
-<div class="line"><span class="lineno">  212</span>  attach_if_populated(sidewalk_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23ac7e4b678a7ef33bea67e7fc8c6874427">ObjectClassification::SIDEWALK</a>);</div>
-<div class="line"><span class="lineno">  213</span>  attach_if_populated(crosswalk_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a4dbee18ddb9dc25b7ebc1ea7b68aa4bf">ObjectClassification::CROSSWALK</a>);</div>
-<div class="line"><span class="lineno">  214</span>}</div>
+<div class="line"><span class="lineno">  199</span>    <span class="comment">// NOLINTNEXTLINE(clang-diagnostic-deprecated-declarations)</span></div>
+<div class="line"><span class="lineno">  200</span>    <span class="keywordflow">if</span> (manual_object-&gt;getNumSections() != 0U) {</div>
+<div class="line"><span class="lineno">  201</span>      <a class="code hl_variable" href="#a4bb74b30c1f5904a75d33801d6908331">scene_node_</a>-&gt;attachObject(manual_object);</div>
+<div class="line"><span class="lineno">  202</span>      <a class="code hl_variable" href="#a2d64ceddaa87c3d41a0773b33347a030">objects_</a>.push_back(std::make_pair(classification, manual_object));</div>
+<div class="line"><span class="lineno">  203</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  204</span>      <a class="code hl_variable" href="#af7959be6490972ca191a6aae4436fe5c">scene_manager_</a>-&gt;destroyManualObject(manual_object);</div>
+<div class="line"><span class="lineno">  205</span>    }</div>
+<div class="line"><span class="lineno">  206</span>  };</div>
+<div class="line"><span class="lineno">  207</span> </div>
+<div class="line"><span class="lineno">  208</span>  attach_if_populated(map_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a5af1a3a285c2bdee4192223e31e1f833">ObjectClassification::MAP</a>);</div>
+<div class="line"><span class="lineno">  209</span>  attach_if_populated(separator_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a70c8298458224e75cd18dbdf224b6ed3">ObjectClassification::SEPERATOR</a>);</div>
+<div class="line"><span class="lineno">  210</span>  attach_if_populated(area_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a639aaa22a784d5e5cb03a522267e79c4">ObjectClassification::AREA</a>);</div>
+<div class="line"><span class="lineno">  211</span>  attach_if_populated(parking_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a1e12e1edd301b7f92890a050dcfcc94a">ObjectClassification::PARKINGAREA</a>);</div>
+<div class="line"><span class="lineno">  212</span>  attach_if_populated(lane_fill_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23acc134f9a66352f0ec760971bbe907ca8">ObjectClassification::LANEFILL</a>);</div>
+<div class="line"><span class="lineno">  213</span>  attach_if_populated(sidewalk_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23ac7e4b678a7ef33bea67e7fc8c6874427">ObjectClassification::SIDEWALK</a>);</div>
+<div class="line"><span class="lineno">  214</span>  attach_if_populated(crosswalk_manual_object, <a class="code hl_enumvalue" href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23a4dbee18ddb9dc25b7ebc1ea7b68aa4bf">ObjectClassification::CROSSWALK</a>);</div>
+<div class="line"><span class="lineno">  215</span>}</div>
 <div class="ttc" id="aclassrviz__rendering_1_1Lanelet2Map_html_a2777c295054a0812325fa57cfb508bec"><div class="ttname"><a href="#a2777c295054a0812325fa57cfb508bec">rviz_rendering::Lanelet2Map::manual_object_counter_</a></div><div class="ttdeci">static int manual_object_counter_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00048">lanelet2_map.hpp:48</a></div></div>
 <div class="ttc" id="aclassrviz__rendering_1_1Lanelet2Map_html_a2d64ceddaa87c3d41a0773b33347a030"><div class="ttname"><a href="#a2d64ceddaa87c3d41a0773b33347a030">rviz_rendering::Lanelet2Map::objects_</a></div><div class="ttdeci">std::vector&lt; ClassifiedMovableObject &gt; objects_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00137">lanelet2_map.hpp:137</a></div></div>
 <div class="ttc" id="anamespacerviz__rendering_html_a8a5f4740db5c362ecf342f95c96b4b23"><div class="ttname"><a href="namespacerviz__rendering.html#a8a5f4740db5c362ecf342f95c96b4b23">rviz_rendering::ObjectClassification</a></div><div class="ttdeci">ObjectClassification</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map_8hpp_source.html#l00028">lanelet2_map.hpp:28</a></div></div>

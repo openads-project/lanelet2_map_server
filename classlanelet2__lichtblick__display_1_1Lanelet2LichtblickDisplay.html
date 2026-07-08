@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.1</span>
+   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.2</span>
    </div>
   </td>
  </tr>
@@ -100,6 +100,7 @@ $(function(){initNavTree('classlanelet2__lichtblick__display_1_1Lanelet2Lichtbli
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classlanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay Class Reference</div></div>
@@ -144,22 +145,25 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a2e74f3f33cfa8ae4f3dbb3063e7cdd94" id="r_a2e74f3f33cfa8ae4f3dbb3063e7cdd94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e74f3f33cfa8ae4f3dbb3063e7cdd94">publishMarker</a> (const lanelet::LaneletMapConstPtr &amp;lanelet_map)</td></tr>
 <tr class="memdesc:a2e74f3f33cfa8ae4f3dbb3063e7cdd94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="classLanelet2.html" title="Displays a Lanelet2 Map.">Lanelet2</a> map into a MarkerArray and publishes it.  <br /></td></tr>
 <tr class="separator:a2e74f3f33cfa8ae4f3dbb3063e7cdd94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a150115bcad0f19436b667ffa25eb9b76" id="r_a150115bcad0f19436b667ffa25eb9b76"><td class="memItemLeft" align="right" valign="top">geometry_msgs::msg::Point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a150115bcad0f19436b667ffa25eb9b76">toRos</a> (const Eigen::Vector3d &amp;point)</td></tr>
-<tr class="memdesc:a150115bcad0f19436b667ffa25eb9b76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an Eigen::Vector3d into a ROS geometry_msgs::msg::Point.  <br /></td></tr>
-<tr class="separator:a150115bcad0f19436b667ffa25eb9b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2117710df4a41461d762a2aaf7bd28eb" id="r_a2117710df4a41461d762a2aaf7bd28eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2117710df4a41461d762a2aaf7bd28eb">clearAllMarkers</a> ()</td></tr>
 <tr class="memdesc:a2117710df4a41461d762a2aaf7bd28eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publishes a DELETEALL action to clear all markers from the topic.  <br /></td></tr>
 <tr class="separator:a2117710df4a41461d762a2aaf7bd28eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7891bbaf631c4682614fdf86c26aabad" id="r_a7891bbaf631c4682614fdf86c26aabad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7891bbaf631c4682614fdf86c26aabad">addLineStripMarker</a> (visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, double line_width, const std::string &amp;color_hex, double opacity, const std_msgs::msg::Header &amp;header, const std::vector&lt; geometry_msgs::msg::Point &gt; &amp;points)</td></tr>
 <tr class="memdesc:a7891bbaf631c4682614fdf86c26aabad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates and adds a LINE_STRIP marker to a marker array.  <br /></td></tr>
 <tr class="separator:a7891bbaf631c4682614fdf86c26aabad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03097267d2f98ea7bfce76120b830c73" id="r_a03097267d2f98ea7bfce76120b830c73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03097267d2f98ea7bfce76120b830c73">addMeshMarker</a> (visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, const std::string &amp;mesh_resource, const geometry_msgs::msg::Point &amp;position, double scale, double z_offset, double opacity, const std_msgs::msg::Header &amp;header, double yaw_ref_line, const geometry_msgs::msg::Point &amp;middle_point)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a150115bcad0f19436b667ffa25eb9b76" id="r_a150115bcad0f19436b667ffa25eb9b76"><td class="memItemLeft" align="right" valign="top">static geometry_msgs::msg::Point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a150115bcad0f19436b667ffa25eb9b76">toRos</a> (const Eigen::Vector3d &amp;point)</td></tr>
+<tr class="memdesc:a150115bcad0f19436b667ffa25eb9b76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an Eigen::Vector3d into a ROS geometry_msgs::msg::Point.  <br /></td></tr>
+<tr class="separator:a150115bcad0f19436b667ffa25eb9b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03097267d2f98ea7bfce76120b830c73" id="r_a03097267d2f98ea7bfce76120b830c73"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03097267d2f98ea7bfce76120b830c73">addMeshMarker</a> (visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, const std::string &amp;mesh_resource, const geometry_msgs::msg::Point &amp;position, double scale, double z_offset, double opacity, const std_msgs::msg::Header &amp;header, double yaw_ref_line, const geometry_msgs::msg::Point &amp;middle_point)</td></tr>
 <tr class="memdesc:a03097267d2f98ea7bfce76120b830c73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates and adds a MESH_RESOURCE marker for regulatory elements.  <br /></td></tr>
 <tr class="separator:a03097267d2f98ea7bfce76120b830c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a678a84706d8d322d5841f9d738f92ac0" id="r_a678a84706d8d322d5841f9d738f92ac0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::array&lt; geometry_msgs::msg::Point, 2 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678a84706d8d322d5841f9d738f92ac0">regulatoryElementReferenceLine</a> (const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</td></tr>
+<tr class="memitem:a678a84706d8d322d5841f9d738f92ac0" id="r_a678a84706d8d322d5841f9d738f92ac0"><td class="memItemLeft" align="right" valign="top">static std::optional&lt; std::array&lt; geometry_msgs::msg::Point, 2 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678a84706d8d322d5841f9d738f92ac0">regulatoryElementReferenceLine</a> (const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</td></tr>
 <tr class="memdesc:a678a84706d8d322d5841f9d738f92ac0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the reference/effect line of a regulatory element.  <br /></td></tr>
 <tr class="separator:a678a84706d8d322d5841f9d738f92ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bb19f2bfa47a04fbb541fbb340cba26" id="r_a8bb19f2bfa47a04fbb541fbb340cba26"><td class="memItemLeft" align="right" valign="top">std::vector&lt; geometry_msgs::msg::Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bb19f2bfa47a04fbb541fbb340cba26">regulatoryElementPositions</a> (const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</td></tr>
+<tr class="memitem:a8bb19f2bfa47a04fbb541fbb340cba26" id="r_a8bb19f2bfa47a04fbb541fbb340cba26"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; geometry_msgs::msg::Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bb19f2bfa47a04fbb541fbb340cba26">regulatoryElementPositions</a> (const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</td></tr>
 <tr class="memdesc:a8bb19f2bfa47a04fbb541fbb340cba26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the sign/signal positions of a regulatory element.  <br /></td></tr>
 <tr class="separator:a8bb19f2bfa47a04fbb541fbb340cba26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -309,31 +313,31 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   58</span> </div>
 <div class="line"><span class="lineno">   59</span>  this-&gt;<a class="code hl_function" href="#aa69d50499539a31435e7eedc29fb7441">setup</a>();</div>
 <div class="line"><span class="lineno">   60</span>}</div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a02b75d7af8a242c57f08cccffb7b98b0"><div class="ttname"><a href="#a02b75d7af8a242c57f08cccffb7b98b0">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_scale_</a></div><div class="ttdeci">double traffic_light_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00253">lanelet2_lichtblick_display.hpp:253</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a03bb962e60359e72b1b08df6d2216137"><div class="ttname"><a href="#a03bb962e60359e72b1b08df6d2216137">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_line_width_</a></div><div class="ttdeci">double left_bound_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00232">lanelet2_lichtblick_display.hpp:232</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a0535d2946a7d5c5fe80675a46ce7e845"><div class="ttname"><a href="#a0535d2946a7d5c5fe80675a46ce7e845">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_opacity_</a></div><div class="ttdeci">double yield_sign_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00260">lanelet2_lichtblick_display.hpp:260</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a05f19b6bae2fb1a8adbc0e14152eb559"><div class="ttname"><a href="#a05f19b6bae2fb1a8adbc0e14152eb559">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_color_hex_</a></div><div class="ttdeci">std::string centerline_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00241">lanelet2_lichtblick_display.hpp:241</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a14867502be8959c766d373e3c66598a2"><div class="ttname"><a href="#a14867502be8959c766d373e3c66598a2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_color_hex_</a></div><div class="ttdeci">std::string lanelet_text_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00245">lanelet2_lichtblick_display.hpp:245</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a369e896ca5e0cf3a39ae6519981dd001"><div class="ttname"><a href="#a369e896ca5e0cf3a39ae6519981dd001">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_mesh_resource_</a></div><div class="ttdeci">std::string yield_sign_mesh_resource_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00257">lanelet2_lichtblick_display.hpp:257</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a3dc1796497a127b3c862fa7c6224a966"><div class="ttname"><a href="#a3dc1796497a127b3c862fa7c6224a966">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_z_offset_</a></div><div class="ttdeci">double yield_sign_z_offset_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00259">lanelet2_lichtblick_display.hpp:259</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a59615c5d2f09adbb349a7c016975cc3e"><div class="ttname"><a href="#a59615c5d2f09adbb349a7c016975cc3e">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_width_</a></div><div class="ttdeci">double reference_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00248">lanelet2_lichtblick_display.hpp:248</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a5aa4d535c00785bd8d4511b118dcf384"><div class="ttname"><a href="#a5aa4d535c00785bd8d4511b118dcf384">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_opacity_</a></div><div class="ttdeci">double traffic_light_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00255">lanelet2_lichtblick_display.hpp:255</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a69b46f1851d90d8ed9ef38f8b76c1079"><div class="ttname"><a href="#a69b46f1851d90d8ed9ef38f8b76c1079">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_z_offset_</a></div><div class="ttdeci">double traffic_light_z_offset_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00254">lanelet2_lichtblick_display.hpp:254</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a89992be29066fc78785ec019e65c7b1f"><div class="ttname"><a href="#a89992be29066fc78785ec019e65c7b1f">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_color_hex_</a></div><div class="ttdeci">std::string left_bound_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00233">lanelet2_lichtblick_display.hpp:233</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a905c082d894f9c20e3dc9ff7ae10320b"><div class="ttname"><a href="#a905c082d894f9c20e3dc9ff7ae10320b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_line_width_</a></div><div class="ttdeci">double centerline_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00240">lanelet2_lichtblick_display.hpp:240</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a951406e08a31bea16e335050b164291e"><div class="ttname"><a href="#a951406e08a31bea16e335050b164291e">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_opacity_</a></div><div class="ttdeci">double reference_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00250">lanelet2_lichtblick_display.hpp:250</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a02b75d7af8a242c57f08cccffb7b98b0"><div class="ttname"><a href="#a02b75d7af8a242c57f08cccffb7b98b0">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_scale_</a></div><div class="ttdeci">double traffic_light_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00252">lanelet2_lichtblick_display.hpp:252</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a03bb962e60359e72b1b08df6d2216137"><div class="ttname"><a href="#a03bb962e60359e72b1b08df6d2216137">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_line_width_</a></div><div class="ttdeci">double left_bound_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00231">lanelet2_lichtblick_display.hpp:231</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a0535d2946a7d5c5fe80675a46ce7e845"><div class="ttname"><a href="#a0535d2946a7d5c5fe80675a46ce7e845">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_opacity_</a></div><div class="ttdeci">double yield_sign_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00259">lanelet2_lichtblick_display.hpp:259</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a05f19b6bae2fb1a8adbc0e14152eb559"><div class="ttname"><a href="#a05f19b6bae2fb1a8adbc0e14152eb559">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_color_hex_</a></div><div class="ttdeci">std::string centerline_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00240">lanelet2_lichtblick_display.hpp:240</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a14867502be8959c766d373e3c66598a2"><div class="ttname"><a href="#a14867502be8959c766d373e3c66598a2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_color_hex_</a></div><div class="ttdeci">std::string lanelet_text_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00244">lanelet2_lichtblick_display.hpp:244</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a369e896ca5e0cf3a39ae6519981dd001"><div class="ttname"><a href="#a369e896ca5e0cf3a39ae6519981dd001">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_mesh_resource_</a></div><div class="ttdeci">std::string yield_sign_mesh_resource_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00256">lanelet2_lichtblick_display.hpp:256</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a3dc1796497a127b3c862fa7c6224a966"><div class="ttname"><a href="#a3dc1796497a127b3c862fa7c6224a966">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_z_offset_</a></div><div class="ttdeci">double yield_sign_z_offset_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00258">lanelet2_lichtblick_display.hpp:258</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a59615c5d2f09adbb349a7c016975cc3e"><div class="ttname"><a href="#a59615c5d2f09adbb349a7c016975cc3e">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_width_</a></div><div class="ttdeci">double reference_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00247">lanelet2_lichtblick_display.hpp:247</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a5aa4d535c00785bd8d4511b118dcf384"><div class="ttname"><a href="#a5aa4d535c00785bd8d4511b118dcf384">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_opacity_</a></div><div class="ttdeci">double traffic_light_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00254">lanelet2_lichtblick_display.hpp:254</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a69b46f1851d90d8ed9ef38f8b76c1079"><div class="ttname"><a href="#a69b46f1851d90d8ed9ef38f8b76c1079">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_z_offset_</a></div><div class="ttdeci">double traffic_light_z_offset_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00253">lanelet2_lichtblick_display.hpp:253</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a89992be29066fc78785ec019e65c7b1f"><div class="ttname"><a href="#a89992be29066fc78785ec019e65c7b1f">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_color_hex_</a></div><div class="ttdeci">std::string left_bound_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00232">lanelet2_lichtblick_display.hpp:232</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a905c082d894f9c20e3dc9ff7ae10320b"><div class="ttname"><a href="#a905c082d894f9c20e3dc9ff7ae10320b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_line_width_</a></div><div class="ttdeci">double centerline_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00239">lanelet2_lichtblick_display.hpp:239</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a951406e08a31bea16e335050b164291e"><div class="ttname"><a href="#a951406e08a31bea16e335050b164291e">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_opacity_</a></div><div class="ttdeci">double reference_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00249">lanelet2_lichtblick_display.hpp:249</a></div></div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aa69d50499539a31435e7eedc29fb7441"><div class="ttname"><a href="#aa69d50499539a31435e7eedc29fb7441">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::setup</a></div><div class="ttdeci">void setup()</div><div class="ttdoc">Sets up subscribers, publishers, etc. to configure the node.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00154">lanelet2_lichtblick_display.cpp:154</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aa6ae17ff7a2265def0b38f7a41d7e12d"><div class="ttname"><a href="#aa6ae17ff7a2265def0b38f7a41d7e12d">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_opacity_</a></div><div class="ttdeci">double lanelet_text_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00246">lanelet2_lichtblick_display.hpp:246</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aa6ae17ff7a2265def0b38f7a41d7e12d"><div class="ttname"><a href="#aa6ae17ff7a2265def0b38f7a41d7e12d">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_opacity_</a></div><div class="ttdeci">double lanelet_text_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00245">lanelet2_lichtblick_display.hpp:245</a></div></div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aafbd84d2d5244c6e86cd57681c546c03"><div class="ttname"><a href="#aafbd84d2d5244c6e86cd57681c546c03">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::declareAndLoadParameter</a></div><div class="ttdeci">void declareAndLoadParameter(const std::string &amp;name, T &amp;param, const std::string &amp;description, const bool add_to_auto_reconfigurable_params=true, const bool is_required=false, const bool read_only=false, const std::optional&lt; double &gt; &amp;from_value=std::nullopt, const std::optional&lt; double &gt; &amp;to_value=std::nullopt, const std::optional&lt; double &gt; &amp;step_value=std::nullopt, const std::string &amp;additional_constraints=&quot;&quot;)</div><div class="ttdoc">Declares and loads a ROS parameter.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00063">lanelet2_lichtblick_display.cpp:63</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_abc6e1d782e5635fce16312d1ded3fca1"><div class="ttname"><a href="#abc6e1d782e5635fce16312d1ded3fca1">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_line_opacity_</a></div><div class="ttdeci">double right_bound_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00238">lanelet2_lichtblick_display.hpp:238</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ac4c317f7a4a4264ac9bc6ecdc7af147a"><div class="ttname"><a href="#ac4c317f7a4a4264ac9bc6ecdc7af147a">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_line_width_</a></div><div class="ttdeci">double right_bound_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00236">lanelet2_lichtblick_display.hpp:236</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aca246e72e2c65fb8e785057073482ca1"><div class="ttname"><a href="#aca246e72e2c65fb8e785057073482ca1">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_scale_</a></div><div class="ttdeci">double yield_sign_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00258">lanelet2_lichtblick_display.hpp:258</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_acfb290b95502cbd8ddd3a81e030b0b9f"><div class="ttname"><a href="#acfb290b95502cbd8ddd3a81e030b0b9f">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_color_hex_</a></div><div class="ttdeci">std::string reference_line_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00249">lanelet2_lichtblick_display.hpp:249</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ad2fb92dd6db5315541772ee58034ff7b"><div class="ttname"><a href="#ad2fb92dd6db5315541772ee58034ff7b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_mesh_resource_</a></div><div class="ttdeci">std::string traffic_light_mesh_resource_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00252">lanelet2_lichtblick_display.hpp:252</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_adef4cd71b5d68c8985cc8872b63da321"><div class="ttname"><a href="#adef4cd71b5d68c8985cc8872b63da321">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_color_hex_</a></div><div class="ttdeci">std::string right_bound_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00237">lanelet2_lichtblick_display.hpp:237</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae56a776ac9a65741ea562e0ac596ca20"><div class="ttname"><a href="#ae56a776ac9a65741ea562e0ac596ca20">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_line_opacity_</a></div><div class="ttdeci">double left_bound_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00234">lanelet2_lichtblick_display.hpp:234</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae88881e57005f315470260188f335a53"><div class="ttname"><a href="#ae88881e57005f315470260188f335a53">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_scale_</a></div><div class="ttdeci">double lanelet_text_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00244">lanelet2_lichtblick_display.hpp:244</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_af30724856c4d52ab230ff05368e83a82"><div class="ttname"><a href="#af30724856c4d52ab230ff05368e83a82">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_line_opacity_</a></div><div class="ttdeci">double centerline_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00242">lanelet2_lichtblick_display.hpp:242</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_abc6e1d782e5635fce16312d1ded3fca1"><div class="ttname"><a href="#abc6e1d782e5635fce16312d1ded3fca1">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_line_opacity_</a></div><div class="ttdeci">double right_bound_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00237">lanelet2_lichtblick_display.hpp:237</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ac4c317f7a4a4264ac9bc6ecdc7af147a"><div class="ttname"><a href="#ac4c317f7a4a4264ac9bc6ecdc7af147a">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_line_width_</a></div><div class="ttdeci">double right_bound_line_width_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00235">lanelet2_lichtblick_display.hpp:235</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_aca246e72e2c65fb8e785057073482ca1"><div class="ttname"><a href="#aca246e72e2c65fb8e785057073482ca1">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::yield_sign_scale_</a></div><div class="ttdeci">double yield_sign_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00257">lanelet2_lichtblick_display.hpp:257</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_acfb290b95502cbd8ddd3a81e030b0b9f"><div class="ttname"><a href="#acfb290b95502cbd8ddd3a81e030b0b9f">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::reference_line_color_hex_</a></div><div class="ttdeci">std::string reference_line_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00248">lanelet2_lichtblick_display.hpp:248</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ad2fb92dd6db5315541772ee58034ff7b"><div class="ttname"><a href="#ad2fb92dd6db5315541772ee58034ff7b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::traffic_light_mesh_resource_</a></div><div class="ttdeci">std::string traffic_light_mesh_resource_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00251">lanelet2_lichtblick_display.hpp:251</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_adef4cd71b5d68c8985cc8872b63da321"><div class="ttname"><a href="#adef4cd71b5d68c8985cc8872b63da321">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::right_bound_color_hex_</a></div><div class="ttdeci">std::string right_bound_color_hex_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00236">lanelet2_lichtblick_display.hpp:236</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae56a776ac9a65741ea562e0ac596ca20"><div class="ttname"><a href="#ae56a776ac9a65741ea562e0ac596ca20">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::left_bound_line_opacity_</a></div><div class="ttdeci">double left_bound_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00233">lanelet2_lichtblick_display.hpp:233</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae88881e57005f315470260188f335a53"><div class="ttname"><a href="#ae88881e57005f315470260188f335a53">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet_text_scale_</a></div><div class="ttdeci">double lanelet_text_scale_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00243">lanelet2_lichtblick_display.hpp:243</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_af30724856c4d52ab230ff05368e83a82"><div class="ttname"><a href="#af30724856c4d52ab230ff05368e83a82">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::centerline_line_opacity_</a></div><div class="ttdeci">double centerline_line_opacity_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00241">lanelet2_lichtblick_display.hpp:241</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -512,7 +516,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -636,10 +640,10 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  356</span>}</div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a2117710df4a41461d762a2aaf7bd28eb"><div class="ttname"><a href="#a2117710df4a41461d762a2aaf7bd28eb">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::clearAllMarkers</a></div><div class="ttdeci">void clearAllMarkers()</div><div class="ttdoc">Publishes a DELETEALL action to clear all markers from the topic.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00208">lanelet2_lichtblick_display.cpp:208</a></div></div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a2e74f3f33cfa8ae4f3dbb3063e7cdd94"><div class="ttname"><a href="#a2e74f3f33cfa8ae4f3dbb3063e7cdd94">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::publishMarker</a></div><div class="ttdeci">void publishMarker(const lanelet::LaneletMapConstPtr &amp;lanelet_map)</div><div class="ttdoc">Converts a Lanelet2 map into a MarkerArray and publishes it.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00358">lanelet2_lichtblick_display.cpp:358</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a6fc74a9556546a19c59ddffdd80839be"><div class="ttname"><a href="#a6fc74a9556546a19c59ddffdd80839be">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet2_map_interface_</a></div><div class="ttdeci">std::shared_ptr&lt; Lanelet2MapInterface &gt; lanelet2_map_interface_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00225">lanelet2_lichtblick_display.hpp:225</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a973a3123ed8ee9ca67f18241be56562b"><div class="ttname"><a href="#a973a3123ed8ee9ca67f18241be56562b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::need_republish_</a></div><div class="ttdeci">std::atomic&lt; bool &gt; need_republish_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00223">lanelet2_lichtblick_display.hpp:223</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a9aeb229f4d9d3742d8e9b143f11b0693"><div class="ttname"><a href="#a9aeb229f4d9d3742d8e9b143f11b0693">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::last_map_ptr_</a></div><div class="ttdeci">lanelet::LaneletMapConstPtr last_map_ptr_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00226">lanelet2_lichtblick_display.hpp:226</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae9aa133770959edddac76e9ce8b6f1f2"><div class="ttname"><a href="#ae9aa133770959edddac76e9ce8b6f1f2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::map_frame_id</a></div><div class="ttdeci">std::string map_frame_id</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00227">lanelet2_lichtblick_display.hpp:227</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a6fc74a9556546a19c59ddffdd80839be"><div class="ttname"><a href="#a6fc74a9556546a19c59ddffdd80839be">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::lanelet2_map_interface_</a></div><div class="ttdeci">std::shared_ptr&lt; Lanelet2MapInterface &gt; lanelet2_map_interface_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00224">lanelet2_lichtblick_display.hpp:224</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a973a3123ed8ee9ca67f18241be56562b"><div class="ttname"><a href="#a973a3123ed8ee9ca67f18241be56562b">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::need_republish_</a></div><div class="ttdeci">std::atomic&lt; bool &gt; need_republish_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00222">lanelet2_lichtblick_display.hpp:222</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a9aeb229f4d9d3742d8e9b143f11b0693"><div class="ttname"><a href="#a9aeb229f4d9d3742d8e9b143f11b0693">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::last_map_ptr_</a></div><div class="ttdeci">lanelet::LaneletMapConstPtr last_map_ptr_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00225">lanelet2_lichtblick_display.hpp:225</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ae9aa133770959edddac76e9ce8b6f1f2"><div class="ttname"><a href="#ae9aa133770959edddac76e9ce8b6f1f2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::map_frame_id</a></div><div class="ttdeci">std::string map_frame_id</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00226">lanelet2_lichtblick_display.hpp:226</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -683,7 +687,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  216</span>  marker_array_msg.markers.push_back(delete_marker);</div>
 <div class="line"><span class="lineno">  217</span>  <a class="code hl_variable" href="#accbd247b8404235302e5f5958cc65a67">marker_array_publisher_</a>-&gt;publish(marker_array_msg);</div>
 <div class="line"><span class="lineno">  218</span>}</div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_accbd247b8404235302e5f5958cc65a67"><div class="ttname"><a href="#accbd247b8404235302e5f5958cc65a67">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::marker_array_publisher_</a></div><div class="ttdeci">rclcpp::Publisher&lt; visualization_msgs::msg::MarkerArray &gt;::SharedPtr marker_array_publisher_</div><div class="ttdoc">Publisher Marker Array.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00219">lanelet2_lichtblick_display.hpp:219</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_accbd247b8404235302e5f5958cc65a67"><div class="ttname"><a href="#accbd247b8404235302e5f5958cc65a67">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::marker_array_publisher_</a></div><div class="ttdeci">rclcpp::Publisher&lt; visualization_msgs::msg::MarkerArray &gt;::SharedPtr marker_array_publisher_</div><div class="ttdoc">Publisher Marker Array.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00218">lanelet2_lichtblick_display.hpp:218</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -836,7 +840,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  131</span>    <a class="code hl_variable" href="#af3f05a6ae0cbeb6ea3156d321d3006ea">auto_reconfigurable_params_</a>.push_back(std::make_tuple(name, setter));</div>
 <div class="line"><span class="lineno">  132</span>  }</div>
 <div class="line"><span class="lineno">  133</span>}</div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_af3f05a6ae0cbeb6ea3156d321d3006ea"><div class="ttname"><a href="#af3f05a6ae0cbeb6ea3156d321d3006ea">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::auto_reconfigurable_params_</a></div><div class="ttdeci">std::vector&lt; std::tuple&lt; std::string, std::function&lt; void(const rclcpp::Parameter &amp;)&gt; &gt; &gt; auto_reconfigurable_params_</div><div class="ttdoc">Auto-reconfigurable parameters for dynamic reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00209">lanelet2_lichtblick_display.hpp:209</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_af3f05a6ae0cbeb6ea3156d321d3006ea"><div class="ttname"><a href="#af3f05a6ae0cbeb6ea3156d321d3006ea">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::auto_reconfigurable_params_</a></div><div class="ttdeci">std::vector&lt; std::tuple&lt; std::string, std::function&lt; void(const rclcpp::Parameter &amp;)&gt; &gt; &gt; auto_reconfigurable_params_</div><div class="ttdoc">Auto-reconfigurable parameters for dynamic reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00208">lanelet2_lichtblick_display.hpp:208</a></div></div>
 <div class="ttc" id="anamespacelanelet2__lichtblick__display_html_a96a8f7707e243503400f66d2b4c3f7f1"><div class="ttname"><a href="namespacelanelet2__lichtblick__display.html#a96a8f7707e243503400f66d2b4c3f7f1">lanelet2_lichtblick_display::is_vector_v</a></div><div class="ttdeci">constexpr bool is_vector_v</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00029">lanelet2_lichtblick_display.hpp:29</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -891,7 +895,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  176</span>  }</div>
 <div class="line"><span class="lineno">  177</span>  <span class="keywordflow">if</span> (clean_hex.length() != 6) {</div>
 <div class="line"><span class="lineno">  178</span>    RCLCPP_WARN(this-&gt;get_logger(), <span class="stringliteral">&quot;Invalid hex color string: %s. Defaulting to black.&quot;</span>, hex.c_str());</div>
-<div class="line"><span class="lineno">  179</span>    r = g = b = 0.0f;</div>
+<div class="line"><span class="lineno">  179</span>    r = g = b = 0.0F;</div>
 <div class="line"><span class="lineno">  180</span>    <span class="keywordflow">return</span>;</div>
 <div class="line"><span class="lineno">  181</span>  }</div>
 <div class="line"><span class="lineno">  182</span> </div>
@@ -901,15 +905,15 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  186</span> </div>
 <div class="line"><span class="lineno">  187</span>  std::istringstream rs(clean_hex.substr(0, 2));</div>
 <div class="line"><span class="lineno">  188</span>  rs &gt;&gt; std::hex &gt;&gt; r_int;</div>
-<div class="line"><span class="lineno">  189</span>  r = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(r_int) / 255.0f;</div>
+<div class="line"><span class="lineno">  189</span>  r = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(r_int) / 255.0F;</div>
 <div class="line"><span class="lineno">  190</span> </div>
 <div class="line"><span class="lineno">  191</span>  std::istringstream gs(clean_hex.substr(2, 2));</div>
 <div class="line"><span class="lineno">  192</span>  gs &gt;&gt; std::hex &gt;&gt; g_int;</div>
-<div class="line"><span class="lineno">  193</span>  g = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(g_int) / 255.0f;</div>
+<div class="line"><span class="lineno">  193</span>  g = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(g_int) / 255.0F;</div>
 <div class="line"><span class="lineno">  194</span> </div>
 <div class="line"><span class="lineno">  195</span>  std::istringstream bs(clean_hex.substr(4, 2));</div>
 <div class="line"><span class="lineno">  196</span>  bs &gt;&gt; std::hex &gt;&gt; b_int;</div>
-<div class="line"><span class="lineno">  197</span>  b = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(b_int) / 255.0f;</div>
+<div class="line"><span class="lineno">  197</span>  b = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(b_int) / 255.0F;</div>
 <div class="line"><span class="lineno">  198</span>}</div>
 </div><!-- fragment -->
 </div>
@@ -1106,12 +1110,12 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  461</span>  <span class="comment">// Publish the marker array</span></div>
 <div class="line"><span class="lineno">  462</span>  <a class="code hl_variable" href="#accbd247b8404235302e5f5958cc65a67">marker_array_publisher_</a>-&gt;publish(marker_array_msg);</div>
 <div class="line"><span class="lineno">  463</span>}</div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a03097267d2f98ea7bfce76120b830c73"><div class="ttname"><a href="#a03097267d2f98ea7bfce76120b830c73">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::addMeshMarker</a></div><div class="ttdeci">void addMeshMarker(visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, const std::string &amp;mesh_resource, const geometry_msgs::msg::Point &amp;position, double scale, double z_offset, double opacity, const std_msgs::msg::Header &amp;header, double yaw_ref_line, const geometry_msgs::msg::Point &amp;middle_point)</div><div class="ttdoc">Creates and adds a MESH_RESOURCE marker for regulatory elements.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00254">lanelet2_lichtblick_display.cpp:254</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a150115bcad0f19436b667ffa25eb9b76"><div class="ttname"><a href="#a150115bcad0f19436b667ffa25eb9b76">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::toRos</a></div><div class="ttdeci">geometry_msgs::msg::Point toRos(const Eigen::Vector3d &amp;point)</div><div class="ttdoc">Converts an Eigen::Vector3d into a ROS geometry_msgs::msg::Point.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00200">lanelet2_lichtblick_display.cpp:200</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a678a84706d8d322d5841f9d738f92ac0"><div class="ttname"><a href="#a678a84706d8d322d5841f9d738f92ac0">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::regulatoryElementReferenceLine</a></div><div class="ttdeci">std::optional&lt; std::array&lt; geometry_msgs::msg::Point, 2 &gt; &gt; regulatoryElementReferenceLine(const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</div><div class="ttdoc">Extracts the reference/effect line of a regulatory element.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00306">lanelet2_lichtblick_display.cpp:306</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a03097267d2f98ea7bfce76120b830c73"><div class="ttname"><a href="#a03097267d2f98ea7bfce76120b830c73">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::addMeshMarker</a></div><div class="ttdeci">static void addMeshMarker(visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, const std::string &amp;mesh_resource, const geometry_msgs::msg::Point &amp;position, double scale, double z_offset, double opacity, const std_msgs::msg::Header &amp;header, double yaw_ref_line, const geometry_msgs::msg::Point &amp;middle_point)</div><div class="ttdoc">Creates and adds a MESH_RESOURCE marker for regulatory elements.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00254">lanelet2_lichtblick_display.cpp:254</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a150115bcad0f19436b667ffa25eb9b76"><div class="ttname"><a href="#a150115bcad0f19436b667ffa25eb9b76">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::toRos</a></div><div class="ttdeci">static geometry_msgs::msg::Point toRos(const Eigen::Vector3d &amp;point)</div><div class="ttdoc">Converts an Eigen::Vector3d into a ROS geometry_msgs::msg::Point.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00200">lanelet2_lichtblick_display.cpp:200</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a678a84706d8d322d5841f9d738f92ac0"><div class="ttname"><a href="#a678a84706d8d322d5841f9d738f92ac0">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::regulatoryElementReferenceLine</a></div><div class="ttdeci">static std::optional&lt; std::array&lt; geometry_msgs::msg::Point, 2 &gt; &gt; regulatoryElementReferenceLine(const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</div><div class="ttdoc">Extracts the reference/effect line of a regulatory element.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00306">lanelet2_lichtblick_display.cpp:306</a></div></div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a7891bbaf631c4682614fdf86c26aabad"><div class="ttname"><a href="#a7891bbaf631c4682614fdf86c26aabad">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::addLineStripMarker</a></div><div class="ttdeci">void addLineStripMarker(visualization_msgs::msg::MarkerArray &amp;marker_array_msg, int &amp;current_marker_id, const std::string &amp;ns, double line_width, const std::string &amp;color_hex, double opacity, const std_msgs::msg::Header &amp;header, const std::vector&lt; geometry_msgs::msg::Point &gt; &amp;points)</div><div class="ttdoc">Creates and adds a LINE_STRIP marker to a marker array.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00220">lanelet2_lichtblick_display.cpp:220</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a8bb19f2bfa47a04fbb541fbb340cba26"><div class="ttname"><a href="#a8bb19f2bfa47a04fbb541fbb340cba26">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::regulatoryElementPositions</a></div><div class="ttdeci">std::vector&lt; geometry_msgs::msg::Point &gt; regulatoryElementPositions(const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</div><div class="ttdoc">Extracts the sign/signal positions of a regulatory element.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00321">lanelet2_lichtblick_display.cpp:321</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ad2e99edddee2aa1f15e1204eef0e55c9"><div class="ttname"><a href="#ad2e99edddee2aa1f15e1204eef0e55c9">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::current_timestamp</a></div><div class="ttdeci">rclcpp::Time current_timestamp</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00229">lanelet2_lichtblick_display.hpp:229</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a8bb19f2bfa47a04fbb541fbb340cba26"><div class="ttname"><a href="#a8bb19f2bfa47a04fbb541fbb340cba26">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::regulatoryElementPositions</a></div><div class="ttdeci">static std::vector&lt; geometry_msgs::msg::Point &gt; regulatoryElementPositions(const std::shared_ptr&lt; const lanelet::RegulatoryElement &gt; &amp;regulatory_element)</div><div class="ttdoc">Extracts the sign/signal positions of a regulatory element.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00321">lanelet2_lichtblick_display.cpp:321</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_ad2e99edddee2aa1f15e1204eef0e55c9"><div class="ttname"><a href="#ad2e99edddee2aa1f15e1204eef0e55c9">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::current_timestamp</a></div><div class="ttdeci">rclcpp::Time current_timestamp</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00228">lanelet2_lichtblick_display.hpp:228</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1133,7 +1137,7 @@ template&lt;typename T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1182,7 +1186,7 @@ template&lt;typename T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1256,8 +1260,8 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  167</span>  <a class="code hl_variable" href="#a896bc768877e6a264681c54f28d2b1af">timer_</a> = this-&gt;create_wall_timer(std::chrono::milliseconds(2000), std::bind(&amp;<a class="code hl_function" href="#a0f4d5522d67d29e525556adae53788b6">Lanelet2LichtblickDisplay::checkMapStatus</a>, <span class="keyword">this</span>));</div>
 <div class="line"><span class="lineno">  168</span>}</div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a0f4d5522d67d29e525556adae53788b6"><div class="ttname"><a href="#a0f4d5522d67d29e525556adae53788b6">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::checkMapStatus</a></div><div class="ttdeci">void checkMapStatus()</div><div class="ttdoc">Check for a new or changed Lanelet2 map and publish markers if present.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00335">lanelet2_lichtblick_display.cpp:335</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a71a37422e72e24a5ffd86d68432cfdf2"><div class="ttname"><a href="#a71a37422e72e24a5ffd86d68432cfdf2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::parameters_callback_</a></div><div class="ttdeci">OnSetParametersCallbackHandle::SharedPtr parameters_callback_</div><div class="ttdoc">Callback handle for dynamic parameter reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00214">lanelet2_lichtblick_display.hpp:214</a></div></div>
-<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a896bc768877e6a264681c54f28d2b1af"><div class="ttname"><a href="#a896bc768877e6a264681c54f28d2b1af">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00221">lanelet2_lichtblick_display.hpp:221</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a71a37422e72e24a5ffd86d68432cfdf2"><div class="ttname"><a href="#a71a37422e72e24a5ffd86d68432cfdf2">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::parameters_callback_</a></div><div class="ttdeci">OnSetParametersCallbackHandle::SharedPtr parameters_callback_</div><div class="ttdoc">Callback handle for dynamic parameter reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00213">lanelet2_lichtblick_display.hpp:213</a></div></div>
+<div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a896bc768877e6a264681c54f28d2b1af"><div class="ttname"><a href="#a896bc768877e6a264681c54f28d2b1af">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8hpp_source.html#l00220">lanelet2_lichtblick_display.hpp:220</a></div></div>
 <div class="ttc" id="aclasslanelet2__lichtblick__display_1_1Lanelet2LichtblickDisplay_html_a9dfe2a57f39f1a16670620d2147191c5"><div class="ttname"><a href="#a9dfe2a57f39f1a16670620d2147191c5">lanelet2_lichtblick_display::Lanelet2LichtblickDisplay::parametersCallback</a></div><div class="ttdeci">rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector&lt; rclcpp::Parameter &gt; &amp;parameters)</div><div class="ttdoc">Handles reconfiguration when a parameter value is changed.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__lichtblick__display_8cpp_source.html#l00135">lanelet2_lichtblick_display.cpp:135</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1280,7 +1284,7 @@ template&lt;typename T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1329,7 +1333,7 @@ template&lt;typename T &gt; </div>
 
 <p>Auto-reconfigurable parameters for dynamic reconfiguration. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00209">209</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00208">208</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1353,7 +1357,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00241">241</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00240">240</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1377,7 +1381,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00242">242</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00241">241</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1401,7 +1405,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00240">240</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00239">239</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1425,7 +1429,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00229">229</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00228">228</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1449,7 +1453,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00225">225</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00224">224</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1473,7 +1477,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00245">245</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00244">244</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1497,7 +1501,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00246">246</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00245">245</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1521,7 +1525,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00244">244</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00243">243</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1545,7 +1549,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00226">226</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00225">225</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1569,7 +1573,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00233">233</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00232">232</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1593,7 +1597,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00234">234</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00233">233</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1617,7 +1621,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00232">232</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00231">231</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1641,7 +1645,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00227">227</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00226">226</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1667,7 +1671,7 @@ template&lt;typename T &gt; </div>
 
 <p>Publisher Marker Array. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00219">219</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00218">218</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1691,8 +1695,8 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00223">223</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  223</span>{<span class="keyword">false</span>};</div>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00222">222</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  222</span>{<span class="keyword">false</span>};</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1718,7 +1722,7 @@ template&lt;typename T &gt; </div>
 
 <p>Callback handle for dynamic parameter reconfiguration. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00214">214</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00213">213</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1742,7 +1746,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00249">249</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00248">248</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1766,7 +1770,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00250">250</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00249">249</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1790,7 +1794,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00248">248</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00247">247</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1814,7 +1818,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00237">237</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00236">236</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1838,7 +1842,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00238">238</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00237">237</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1862,7 +1866,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00236">236</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00235">235</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1886,7 +1890,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00221">221</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00220">220</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1910,7 +1914,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00252">252</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00251">251</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1934,7 +1938,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00255">255</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00254">254</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1958,7 +1962,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00253">253</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00252">252</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -1982,7 +1986,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00254">254</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00253">253</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -2006,7 +2010,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00257">257</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00256">256</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -2030,7 +2034,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00260">260</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00259">259</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -2054,7 +2058,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00258">258</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00257">257</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>
@@ -2078,7 +2082,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00259">259</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html#l00258">258</a> of file <a class="el" href="lanelet2__lichtblick__display_8hpp_source.html">lanelet2_lichtblick_display.hpp</a>.</p>
 
 </div>
 </div>

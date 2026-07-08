@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.1</span>
+   <div id="projectname">lanelet2_map_server<span id="projectnumber">&#160;v1.2.2</span>
    </div>
   </td>
  </tr>
@@ -100,6 +100,7 @@ $(function(){initNavTree('classLanelet2MapServer.html',''); initResizable(true);
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classLanelet2MapServer-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Lanelet2MapServer Class Reference</div></div>
@@ -150,21 +151,24 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a5fc9830604df566b08e25d0698d41250" id="r_a5fc9830604df566b08e25d0698d41250"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fc9830604df566b08e25d0698d41250">deriveOriginFromMap</a> (const std::string &amp;map_filepath, double &amp;origin_lat, double &amp;origin_lon) const</td></tr>
 <tr class="memdesc:a5fc9830604df566b08e25d0698d41250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derives a south-west origin latitude and longitude from a <a class="el" href="classLanelet2.html" title="Displays a Lanelet2 Map.">Lanelet2</a> map file.  <br /></td></tr>
 <tr class="separator:a5fc9830604df566b08e25d0698d41250"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a263927183f1e796bc2839df59148a1c8" id="r_a263927183f1e796bc2839df59148a1c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a263927183f1e796bc2839df59148a1c8">map_sanity_check</a> (std::string map_filename, double origin_lat, double origin_lon) const</td></tr>
-<tr class="memdesc:a263927183f1e796bc2839df59148a1c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to load a map with the provided origin to verify that it is usable.  <br /></td></tr>
-<tr class="separator:a263927183f1e796bc2839df59148a1c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a583e35c500136f6b2e1d12e6569cdde3" id="r_a583e35c500136f6b2e1d12e6569cdde3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a583e35c500136f6b2e1d12e6569cdde3">map_sanity_check</a> (std::string map_filepath, double origin_lat, double origin_lon) const</td></tr>
+<tr class="memdesc:a583e35c500136f6b2e1d12e6569cdde3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to load a map with the provided origin to verify that it is usable.  <br /></td></tr>
+<tr class="separator:a583e35c500136f6b2e1d12e6569cdde3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e3c98ccd09bbb11cf0955d48b42aae5" id="r_a9e3c98ccd09bbb11cf0955d48b42aae5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e3c98ccd09bbb11cf0955d48b42aae5">pub_tf</a> () const</td></tr>
 <tr class="memdesc:a9e3c98ccd09bbb11cf0955d48b42aae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publishes the static transform from the derived UTM frame to the map frame.  <br /></td></tr>
 <tr class="separator:a9e3c98ccd09bbb11cf0955d48b42aae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4f7603491ffe51658febeb9d026bbaa" id="r_af4f7603491ffe51658febeb9d026bbaa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4f7603491ffe51658febeb9d026bbaa">derive_utm_zone</a> (const double latitude, const double longitude, int &amp;zone, bool &amp;northp) const</td></tr>
-<tr class="memdesc:af4f7603491ffe51658febeb9d026bbaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derives the UTM zone and hemisphere from a geographic position.  <br /></td></tr>
-<tr class="separator:af4f7603491ffe51658febeb9d026bbaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91cd2c7720bf495a93301a11340bfe46" id="r_a91cd2c7720bf495a93301a11340bfe46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91cd2c7720bf495a93301a11340bfe46">navSatFixCallback</a> (const sensor_msgs::msg::NavSatFix::SharedPtr msg)</td></tr>
 <tr class="memdesc:a91cd2c7720bf495a93301a11340bfe46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the latest GNSS fix for automatic map selection.  <br /></td></tr>
 <tr class="separator:a91cd2c7720bf495a93301a11340bfe46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43c2298b8663139e1dd5e0dbb522ca6c" id="r_a43c2298b8663139e1dd5e0dbb522ca6c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43c2298b8663139e1dd5e0dbb522ca6c">automaticMapUpdateTimerCallback</a> ()</td></tr>
 <tr class="memdesc:a43c2298b8663139e1dd5e0dbb522ca6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Periodically reevaluates the best map when automatic selection is enabled.  <br /></td></tr>
 <tr class="separator:a43c2298b8663139e1dd5e0dbb522ca6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a8aad583e3131608405ece3ef437ab987" id="r_a8aad583e3131608405ece3ef437ab987"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8aad583e3131608405ece3ef437ab987">derive_utm_zone</a> (const double latitude, const double longitude, int &amp;zone, bool &amp;northp)</td></tr>
+<tr class="memdesc:a8aad583e3131608405ece3ef437ab987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derives the UTM zone and hemisphere from a geographic position.  <br /></td></tr>
+<tr class="separator:a8aad583e3131608405ece3ef437ab987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -178,7 +182,7 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a137e6a750505fc8bf6bfe9031440659d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27e3177b975096dd952c87047fc11e22" id="r_a27e3177b975096dd952c87047fc11e22"><td class="memItemLeft" align="right" valign="top">rclcpp::TimerBase::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27e3177b975096dd952c87047fc11e22">automatic_map_timer_</a></td></tr>
 <tr class="separator:a27e3177b975096dd952c87047fc11e22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa100207517f0ebf2bc0faedc22c424bd" id="r_aa100207517f0ebf2bc0faedc22c424bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa100207517f0ebf2bc0faedc22c424bd">use_automatic_map_selection_</a> = true</td></tr>
+<tr class="memitem:aa100207517f0ebf2bc0faedc22c424bd" id="r_aa100207517f0ebf2bc0faedc22c424bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa100207517f0ebf2bc0faedc22c424bd">use_automatic_map_selection_</a> = false</td></tr>
 <tr class="separator:aa100207517f0ebf2bc0faedc22c424bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83dc694da8fd5724dfb68231ac6cf6f6" id="r_a83dc694da8fd5724dfb68231ac6cf6f6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83dc694da8fd5724dfb68231ac6cf6f6">map_directory_</a> = &quot;/data/maps/default-maps&quot;</td></tr>
 <tr class="separator:a83dc694da8fd5724dfb68231ac6cf6f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -252,15 +256,15 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   34</span>}</div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a2daa8d285efe3de5f4049c0be6c93f17"><div class="ttname"><a href="#a2daa8d285efe3de5f4049c0be6c93f17">Lanelet2MapServer::declareAndLoadParameter</a></div><div class="ttdeci">bool declareAndLoadParameter(const std::string &amp;name, T &amp;param, const std::string &amp;description, const bool add_to_auto_reconfigurable_params=true, const bool is_required=false, const bool read_only=false, const std::optional&lt; double &gt; &amp;from_value=std::nullopt, const std::optional&lt; double &gt; &amp;to_value=std::nullopt, const std::optional&lt; double &gt; &amp;step_value=std::nullopt, const std::string &amp;additional_constraints=&quot;&quot;)</div><div class="ttdoc">Declares and loads a ROS parameter.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00037">lanelet2_map_server.cpp:37</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a3e939dae673840bc93d0ca0778e25302"><div class="ttname"><a href="#a3e939dae673840bc93d0ca0778e25302">Lanelet2MapServer::setup</a></div><div class="ttdeci">void setup()</div><div class="ttdoc">Sets up timers, callbacks, publishers, and initial map loading.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00234">lanelet2_map_server.cpp:234</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a4928299219b7edf9115f7cf6fa2f2d7e"><div class="ttname"><a href="#a4928299219b7edf9115f7cf6fa2f2d7e">Lanelet2MapServer::origin_lon_set_</a></div><div class="ttdeci">bool origin_lon_set_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00189">lanelet2_map_server.hpp:189</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a4b2193b4aca9feaf1a8feaf03ba4feea"><div class="ttname"><a href="#a4b2193b4aca9feaf1a8feaf03ba4feea">Lanelet2MapServer::map_filepath_</a></div><div class="ttdeci">std::string map_filepath_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00183">lanelet2_map_server.hpp:183</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a6424f33d884fe24bf86d7c2d671112cc"><div class="ttname"><a href="#a6424f33d884fe24bf86d7c2d671112cc">Lanelet2MapServer::map_contents_</a></div><div class="ttdeci">std::string map_contents_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00185">lanelet2_map_server.hpp:185</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a83dc694da8fd5724dfb68231ac6cf6f6"><div class="ttname"><a href="#a83dc694da8fd5724dfb68231ac6cf6f6">Lanelet2MapServer::map_directory_</a></div><div class="ttdeci">std::string map_directory_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00181">lanelet2_map_server.hpp:181</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a895c227861d00b03a5606b36f7a5f44d"><div class="ttname"><a href="#a895c227861d00b03a5606b36f7a5f44d">Lanelet2MapServer::origin_lat_set_</a></div><div class="ttdeci">bool origin_lat_set_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00188">lanelet2_map_server.hpp:188</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_aa100207517f0ebf2bc0faedc22c424bd"><div class="ttname"><a href="#aa100207517f0ebf2bc0faedc22c424bd">Lanelet2MapServer::use_automatic_map_selection_</a></div><div class="ttdeci">bool use_automatic_map_selection_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00179">lanelet2_map_server.hpp:179</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_aeeb795433cb1a7798673cb37e52f134c"><div class="ttname"><a href="#aeeb795433cb1a7798673cb37e52f134c">Lanelet2MapServer::origin_lat_</a></div><div class="ttdeci">double origin_lat_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00186">lanelet2_map_server.hpp:186</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_af00e4f004a4c6774941c5ac2f1674469"><div class="ttname"><a href="#af00e4f004a4c6774941c5ac2f1674469">Lanelet2MapServer::map_frame_id_</a></div><div class="ttdeci">std::string map_frame_id_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00184">lanelet2_map_server.hpp:184</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_af6cf2c5337bb1ba792cca2a6af309928"><div class="ttname"><a href="#af6cf2c5337bb1ba792cca2a6af309928">Lanelet2MapServer::origin_lon_</a></div><div class="ttdeci">double origin_lon_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00187">lanelet2_map_server.hpp:187</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a4928299219b7edf9115f7cf6fa2f2d7e"><div class="ttname"><a href="#a4928299219b7edf9115f7cf6fa2f2d7e">Lanelet2MapServer::origin_lon_set_</a></div><div class="ttdeci">bool origin_lon_set_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00188">lanelet2_map_server.hpp:188</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a4b2193b4aca9feaf1a8feaf03ba4feea"><div class="ttname"><a href="#a4b2193b4aca9feaf1a8feaf03ba4feea">Lanelet2MapServer::map_filepath_</a></div><div class="ttdeci">std::string map_filepath_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00182">lanelet2_map_server.hpp:182</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a6424f33d884fe24bf86d7c2d671112cc"><div class="ttname"><a href="#a6424f33d884fe24bf86d7c2d671112cc">Lanelet2MapServer::map_contents_</a></div><div class="ttdeci">std::string map_contents_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00184">lanelet2_map_server.hpp:184</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a83dc694da8fd5724dfb68231ac6cf6f6"><div class="ttname"><a href="#a83dc694da8fd5724dfb68231ac6cf6f6">Lanelet2MapServer::map_directory_</a></div><div class="ttdeci">std::string map_directory_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00180">lanelet2_map_server.hpp:180</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a895c227861d00b03a5606b36f7a5f44d"><div class="ttname"><a href="#a895c227861d00b03a5606b36f7a5f44d">Lanelet2MapServer::origin_lat_set_</a></div><div class="ttdeci">bool origin_lat_set_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00187">lanelet2_map_server.hpp:187</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_aa100207517f0ebf2bc0faedc22c424bd"><div class="ttname"><a href="#aa100207517f0ebf2bc0faedc22c424bd">Lanelet2MapServer::use_automatic_map_selection_</a></div><div class="ttdeci">bool use_automatic_map_selection_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00178">lanelet2_map_server.hpp:178</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_aeeb795433cb1a7798673cb37e52f134c"><div class="ttname"><a href="#aeeb795433cb1a7798673cb37e52f134c">Lanelet2MapServer::origin_lat_</a></div><div class="ttdeci">double origin_lat_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00185">lanelet2_map_server.hpp:185</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_af00e4f004a4c6774941c5ac2f1674469"><div class="ttname"><a href="#af00e4f004a4c6774941c5ac2f1674469">Lanelet2MapServer::map_frame_id_</a></div><div class="ttdeci">std::string map_frame_id_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00183">lanelet2_map_server.hpp:183</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_af6cf2c5337bb1ba792cca2a6af309928"><div class="ttname"><a href="#af6cf2c5337bb1ba792cca2a6af309928">Lanelet2MapServer::origin_lon_</a></div><div class="ttdeci">double origin_lon_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00186">lanelet2_map_server.hpp:186</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -309,8 +313,8 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  404</span>        <a class="code hl_variable" href="#a0f5894a77d83da393a36729203494d9a">current_longitude_</a> &gt; map_meta.max_lon) {</div>
 <div class="line"><span class="lineno">  405</span>      <span class="keywordflow">continue</span>;</div>
 <div class="line"><span class="lineno">  406</span>    }</div>
-<div class="line"><span class="lineno">  407</span>    <span class="keywordflow">if</span> (!selected_map || map_meta.diagonal_length &lt; selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#ad2ab7363124413e6464cb0545733cbc6">diagonal_length</a>) {</div>
-<div class="line"><span class="lineno">  408</span>      <span class="keywordflow">if</span> (<a class="code hl_function" href="#a263927183f1e796bc2839df59148a1c8">map_sanity_check</a>(map_meta.map_path, map_meta.min_lat, map_meta.min_lon)) {</div>
+<div class="line"><span class="lineno">  407</span>    <span class="keywordflow">if</span> (selected_map == <span class="keyword">nullptr</span> || map_meta.diagonal_length &lt; selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#ad2ab7363124413e6464cb0545733cbc6">diagonal_length</a>) {</div>
+<div class="line"><span class="lineno">  408</span>      <span class="keywordflow">if</span> (<a class="code hl_function" href="#a583e35c500136f6b2e1d12e6569cdde3">map_sanity_check</a>(map_meta.map_path, map_meta.min_lat, map_meta.min_lon)) {</div>
 <div class="line"><span class="lineno">  409</span>        RCLCPP_DEBUG(this-&gt;get_logger(), <span class="stringliteral">&quot;Map sanity check passed for &#39;%s&#39;&quot;</span>, map_meta.map_path.c_str());</div>
 <div class="line"><span class="lineno">  410</span>        selected_map = &amp;map_meta;</div>
 <div class="line"><span class="lineno">  411</span>      } <span class="keywordflow">else</span> {</div>
@@ -320,7 +324,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  415</span>    }</div>
 <div class="line"><span class="lineno">  416</span>  }</div>
 <div class="line"><span class="lineno">  417</span> </div>
-<div class="line"><span class="lineno">  418</span>  <span class="keywordflow">if</span> (!selected_map) {</div>
+<div class="line"><span class="lineno">  418</span>  <span class="keywordflow">if</span> (selected_map == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><span class="lineno">  419</span>    RCLCPP_WARN(this-&gt;get_logger(), <span class="stringliteral">&quot;No suitable map found for current GPS location (lat=%.9f, lon=%.9f)&quot;</span>, <a class="code hl_variable" href="#a51b6890a904eba47b0388d5739359016">current_latitude_</a>,</div>
 <div class="line"><span class="lineno">  420</span>                <a class="code hl_variable" href="#a0f5894a77d83da393a36729203494d9a">current_longitude_</a>);</div>
 <div class="line"><span class="lineno">  421</span>    <a class="code hl_function" href="#a08679d497fb2d45dc780920022a33c81">unsetMapParameters</a>();</div>
@@ -330,26 +334,26 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="lineno">  425</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a> == selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a3a95048fc3ec6cb7212c4f0e0aa476b9">map_path</a>) {</div>
 <div class="line"><span class="lineno">  426</span>    RCLCPP_DEBUG(this-&gt;get_logger(), <span class="stringliteral">&quot;Currently loaded map &#39;%s&#39; is still valid&quot;</span>, <a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>.c_str());</div>
 <div class="line"><span class="lineno">  427</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  428</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  429</span>    <a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a3a95048fc3ec6cb7212c4f0e0aa476b9">map_path</a>;</div>
-<div class="line"><span class="lineno">  430</span>    <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a5dac8987d799655a716afcd139ae3adc">min_lat</a>;</div>
-<div class="line"><span class="lineno">  431</span>    <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a9dc7442eb27b7ed7ba1d72fa644414e9">min_lon</a>;</div>
-<div class="line"><span class="lineno">  432</span>    <a class="code hl_variable" href="#a895c227861d00b03a5606b36f7a5f44d">origin_lat_set_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  433</span>    <a class="code hl_variable" href="#a4928299219b7edf9115f7cf6fa2f2d7e">origin_lon_set_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  434</span>    this-&gt;<a class="code hl_function" href="#a6cd1a910ebfd0bc22d597e2748252c15">loadMapContents</a>();</div>
-<div class="line"><span class="lineno">  435</span>    this-&gt;<a class="code hl_function" href="#a09270aef60be7bb52c7b670202ad2f46">updateMapParameters</a>();</div>
-<div class="line"><span class="lineno">  436</span>    this-&gt;<a class="code hl_function" href="#a9e3c98ccd09bbb11cf0955d48b42aae5">pub_tf</a>();</div>
-<div class="line"><span class="lineno">  437</span>  }</div>
+<div class="line"><span class="lineno">  428</span>  }</div>
+<div class="line"><span class="lineno">  429</span> </div>
+<div class="line"><span class="lineno">  430</span>  <a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a3a95048fc3ec6cb7212c4f0e0aa476b9">map_path</a>;</div>
+<div class="line"><span class="lineno">  431</span>  <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a5dac8987d799655a716afcd139ae3adc">min_lat</a>;</div>
+<div class="line"><span class="lineno">  432</span>  <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a> = selected_map-&gt;<a class="code hl_variable" href="structLanelet2MapMeta.html#a9dc7442eb27b7ed7ba1d72fa644414e9">min_lon</a>;</div>
+<div class="line"><span class="lineno">  433</span>  <a class="code hl_variable" href="#a895c227861d00b03a5606b36f7a5f44d">origin_lat_set_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  434</span>  <a class="code hl_variable" href="#a4928299219b7edf9115f7cf6fa2f2d7e">origin_lon_set_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  435</span>  this-&gt;<a class="code hl_function" href="#a6cd1a910ebfd0bc22d597e2748252c15">loadMapContents</a>();</div>
+<div class="line"><span class="lineno">  436</span>  this-&gt;<a class="code hl_function" href="#a09270aef60be7bb52c7b670202ad2f46">updateMapParameters</a>();</div>
+<div class="line"><span class="lineno">  437</span>  this-&gt;<a class="code hl_function" href="#a9e3c98ccd09bbb11cf0955d48b42aae5">pub_tf</a>();</div>
 <div class="line"><span class="lineno">  438</span>}</div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a08679d497fb2d45dc780920022a33c81"><div class="ttname"><a href="#a08679d497fb2d45dc780920022a33c81">Lanelet2MapServer::unsetMapParameters</a></div><div class="ttdeci">void unsetMapParameters()</div><div class="ttdoc">Clears map-specific parameters after an invalid or unloaded map state.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00457">lanelet2_map_server.cpp:457</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a08c84e2a5bf48e84151f7268a410c2cf"><div class="ttname"><a href="#a08c84e2a5bf48e84151f7268a410c2cf">Lanelet2MapServer::available_maps_</a></div><div class="ttdeci">std::vector&lt; Lanelet2MapMeta &gt; available_maps_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00182">lanelet2_map_server.hpp:182</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a08c84e2a5bf48e84151f7268a410c2cf"><div class="ttname"><a href="#a08c84e2a5bf48e84151f7268a410c2cf">Lanelet2MapServer::available_maps_</a></div><div class="ttdeci">std::vector&lt; Lanelet2MapMeta &gt; available_maps_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00181">lanelet2_map_server.hpp:181</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a09270aef60be7bb52c7b670202ad2f46"><div class="ttname"><a href="#a09270aef60be7bb52c7b670202ad2f46">Lanelet2MapServer::updateMapParameters</a></div><div class="ttdeci">void updateMapParameters()</div><div class="ttdoc">Writes the current map state into this node's exported ROS parameters.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00450">lanelet2_map_server.cpp:450</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a0f5894a77d83da393a36729203494d9a"><div class="ttname"><a href="#a0f5894a77d83da393a36729203494d9a">Lanelet2MapServer::current_longitude_</a></div><div class="ttdeci">double current_longitude_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00194">lanelet2_map_server.hpp:194</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a263927183f1e796bc2839df59148a1c8"><div class="ttname"><a href="#a263927183f1e796bc2839df59148a1c8">Lanelet2MapServer::map_sanity_check</a></div><div class="ttdeci">bool map_sanity_check(std::string map_filename, double origin_lat, double origin_lon) const</div><div class="ttdoc">Tries to load a map with the provided origin to verify that it is usable.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00467">lanelet2_map_server.cpp:467</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a51b6890a904eba47b0388d5739359016"><div class="ttname"><a href="#a51b6890a904eba47b0388d5739359016">Lanelet2MapServer::current_latitude_</a></div><div class="ttdeci">double current_latitude_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00193">lanelet2_map_server.hpp:193</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a0f5894a77d83da393a36729203494d9a"><div class="ttname"><a href="#a0f5894a77d83da393a36729203494d9a">Lanelet2MapServer::current_longitude_</a></div><div class="ttdeci">double current_longitude_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00193">lanelet2_map_server.hpp:193</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a51b6890a904eba47b0388d5739359016"><div class="ttname"><a href="#a51b6890a904eba47b0388d5739359016">Lanelet2MapServer::current_latitude_</a></div><div class="ttdeci">double current_latitude_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00192">lanelet2_map_server.hpp:192</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a583e35c500136f6b2e1d12e6569cdde3"><div class="ttname"><a href="#a583e35c500136f6b2e1d12e6569cdde3">Lanelet2MapServer::map_sanity_check</a></div><div class="ttdeci">bool map_sanity_check(std::string map_filepath, double origin_lat, double origin_lon) const</div><div class="ttdoc">Tries to load a map with the provided origin to verify that it is usable.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00467">lanelet2_map_server.cpp:467</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a6cd1a910ebfd0bc22d597e2748252c15"><div class="ttname"><a href="#a6cd1a910ebfd0bc22d597e2748252c15">Lanelet2MapServer::loadMapContents</a></div><div class="ttdeci">void loadMapContents()</div><div class="ttdoc">Loads the configured map file and caches its serialized contents.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00440">lanelet2_map_server.cpp:440</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a9e3c98ccd09bbb11cf0955d48b42aae5"><div class="ttname"><a href="#a9e3c98ccd09bbb11cf0955d48b42aae5">Lanelet2MapServer::pub_tf</a></div><div class="ttdeci">void pub_tf() const</div><div class="ttdoc">Publishes the static transform from the derived UTM frame to the map frame.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00489">lanelet2_map_server.cpp:489</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_aedb4a413201fc9e59e98099ebc7b2118"><div class="ttname"><a href="#aedb4a413201fc9e59e98099ebc7b2118">Lanelet2MapServer::gps_fix_received_</a></div><div class="ttdeci">bool gps_fix_received_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00195">lanelet2_map_server.hpp:195</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a9e3c98ccd09bbb11cf0955d48b42aae5"><div class="ttname"><a href="#a9e3c98ccd09bbb11cf0955d48b42aae5">Lanelet2MapServer::pub_tf</a></div><div class="ttdeci">void pub_tf() const</div><div class="ttdoc">Publishes the static transform from the derived UTM frame to the map frame.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00484">lanelet2_map_server.cpp:484</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_aedb4a413201fc9e59e98099ebc7b2118"><div class="ttname"><a href="#aedb4a413201fc9e59e98099ebc7b2118">Lanelet2MapServer::gps_fix_received_</a></div><div class="ttdeci">bool gps_fix_received_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00194">lanelet2_map_server.hpp:194</a></div></div>
 <div class="ttc" id="astructLanelet2MapMeta_html"><div class="ttname"><a href="structLanelet2MapMeta.html">Lanelet2MapMeta</a></div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00024">lanelet2_map_server.hpp:24</a></div></div>
 <div class="ttc" id="astructLanelet2MapMeta_html_a3a95048fc3ec6cb7212c4f0e0aa476b9"><div class="ttname"><a href="structLanelet2MapMeta.html#a3a95048fc3ec6cb7212c4f0e0aa476b9">Lanelet2MapMeta::map_path</a></div><div class="ttdeci">std::string map_path</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00025">lanelet2_map_server.hpp:25</a></div></div>
 <div class="ttc" id="astructLanelet2MapMeta_html_a5dac8987d799655a716afcd139ae3adc"><div class="ttname"><a href="structLanelet2MapMeta.html#a5dac8987d799655a716afcd139ae3adc">Lanelet2MapMeta::min_lat</a></div><div class="ttdeci">double min_lat</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00026">lanelet2_map_server.hpp:26</a></div></div>
@@ -512,7 +516,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  109</span> </div>
 <div class="line"><span class="lineno">  110</span>  <span class="keywordflow">return</span> initial_set;</div>
 <div class="line"><span class="lineno">  111</span>}</div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a9400c7dd66a94e4636f6b1203de7cf83"><div class="ttname"><a href="#a9400c7dd66a94e4636f6b1203de7cf83">Lanelet2MapServer::auto_reconfigurable_params_</a></div><div class="ttdeci">std::vector&lt; std::tuple&lt; std::string, std::function&lt; void(const rclcpp::Parameter &amp;)&gt; &gt; &gt; auto_reconfigurable_params_</div><div class="ttdoc">Auto-reconfigurable parameters for dynamic reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00169">lanelet2_map_server.hpp:169</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a9400c7dd66a94e4636f6b1203de7cf83"><div class="ttname"><a href="#a9400c7dd66a94e4636f6b1203de7cf83">Lanelet2MapServer::auto_reconfigurable_params_</a></div><div class="ttdeci">std::vector&lt; std::tuple&lt; std::string, std::function&lt; void(const rclcpp::Parameter &amp;)&gt; &gt; &gt; auto_reconfigurable_params_</div><div class="ttdoc">Auto-reconfigurable parameters for dynamic reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00168">lanelet2_map_server.hpp:168</a></div></div>
 <div class="ttc" id="alanelet2__map__server_8hpp_html_a4fbf025a5168661ab4054b8acf9221e9"><div class="ttname"><a href="lanelet2__map__server_8hpp.html#a4fbf025a5168661ab4054b8acf9221e9">is_vector_v</a></div><div class="ttdeci">constexpr bool is_vector_v</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00038">lanelet2_map_server.hpp:38</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -608,8 +612,8 @@ template&lt;typename T &gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="af4f7603491ffe51658febeb9d026bbaa" name="af4f7603491ffe51658febeb9d026bbaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4f7603491ffe51658febeb9d026bbaa">&#9670;&#160;</a></span>derive_utm_zone()</h2>
+<a id="a8aad583e3131608405ece3ef437ab987" name="a8aad583e3131608405ece3ef437ab987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8aad583e3131608405ece3ef437ab987">&#9670;&#160;</a></span>derive_utm_zone()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -635,12 +639,12 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool &amp;</td>          <td class="paramname"><span class="paramname"><em>northp</em></span>&#160;) const</td>
+          <td class="paramtype">bool &amp;</td>          <td class="paramname"><span class="paramname"><em>northp</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -657,15 +661,10 @@ template&lt;typename T &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8cpp_source.html#l00479">479</a> of file <a class="el" href="lanelet2__map__server_8cpp_source.html">lanelet2_map_server.cpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  479</span>                                                                                                                    {</div>
-<div class="line"><span class="lineno">  480</span>  <span class="keywordflow">if</span> (latitude &gt;= 0.0) {</div>
-<div class="line"><span class="lineno">  481</span>    northp = <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  482</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  483</span>    northp = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  484</span>  }</div>
-<div class="line"><span class="lineno">  485</span> </div>
-<div class="line"><span class="lineno">  486</span>  zone = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(std::floor((longitude + 180.0) / 6.0)) + 1;</div>
-<div class="line"><span class="lineno">  487</span>}</div>
+<div class="fragment"><div class="line"><span class="lineno">  479</span>                                                                                                              {</div>
+<div class="line"><span class="lineno">  480</span>  northp = latitude &gt;= 0.0;</div>
+<div class="line"><span class="lineno">  481</span>  zone = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(std::floor((longitude + 180.0) / 6.0)) + 1;</div>
+<div class="line"><span class="lineno">  482</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -838,8 +837,8 @@ template&lt;typename T &gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a263927183f1e796bc2839df59148a1c8" name="a263927183f1e796bc2839df59148a1c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a263927183f1e796bc2839df59148a1c8">&#9670;&#160;</a></span>map_sanity_check()</h2>
+<a id="a583e35c500136f6b2e1d12e6569cdde3" name="a583e35c500136f6b2e1d12e6569cdde3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a583e35c500136f6b2e1d12e6569cdde3">&#9670;&#160;</a></span>map_sanity_check()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -850,7 +849,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">bool Lanelet2MapServer::map_sanity_check </td>
           <td>(</td>
-          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>map_filename</em></span>, </td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>map_filepath</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -873,7 +872,7 @@ template&lt;typename T &gt; </div>
 <p>Tries to load a map with the provided origin to verify that it is usable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">map_filename</td><td>path to the map file </td></tr>
+    <tr><td class="paramname">map_filepath</td><td>path to the map file </td></tr>
     <tr><td class="paramname">origin_lat</td><td>latitude used for projection </td></tr>
     <tr><td class="paramname">origin_lon</td><td>longitude used for projection </td></tr>
   </table>
@@ -1060,7 +1059,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  201</span> </div>
 <div class="line"><span class="lineno">  202</span>    <span class="comment">// load map if not unbalanced origin parameters are provided (both or none)</span></div>
 <div class="line"><span class="lineno">  203</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a895c227861d00b03a5606b36f7a5f44d">origin_lat_set_</a> == <a class="code hl_variable" href="#a4928299219b7edf9115f7cf6fa2f2d7e">origin_lon_set_</a>) {</div>
-<div class="line"><span class="lineno">  204</span>      <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="#a263927183f1e796bc2839df59148a1c8">map_sanity_check</a>(<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>, <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>)) {</div>
+<div class="line"><span class="lineno">  204</span>      <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="#a583e35c500136f6b2e1d12e6569cdde3">map_sanity_check</a>(<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>, <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>)) {</div>
 <div class="line"><span class="lineno">  205</span>        <span class="comment">// reload parameters in timer callback since parameters cannot be updated in this callback</span></div>
 <div class="line"><span class="lineno">  206</span>        <a class="code hl_variable" href="#a137e6a750505fc8bf6bfe9031440659d">one_shot_timer_</a> = this-&gt;create_wall_timer(std::chrono::milliseconds(1), [<span class="keyword">this</span>]() {</div>
 <div class="line"><span class="lineno">  207</span>          this-&gt;<a class="code hl_variable" href="#a137e6a750505fc8bf6bfe9031440659d">one_shot_timer_</a>-&gt;cancel();</div>
@@ -1089,7 +1088,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  230</span>  result.successful = <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">  231</span>  <span class="keywordflow">return</span> result;</div>
 <div class="line"><span class="lineno">  232</span>}</div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a137e6a750505fc8bf6bfe9031440659d"><div class="ttname"><a href="#a137e6a750505fc8bf6bfe9031440659d">Lanelet2MapServer::one_shot_timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr one_shot_timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00176">lanelet2_map_server.hpp:176</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a137e6a750505fc8bf6bfe9031440659d"><div class="ttname"><a href="#a137e6a750505fc8bf6bfe9031440659d">Lanelet2MapServer::one_shot_timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr one_shot_timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00175">lanelet2_map_server.hpp:175</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a5fc9830604df566b08e25d0698d41250"><div class="ttname"><a href="#a5fc9830604df566b08e25d0698d41250">Lanelet2MapServer::deriveOriginFromMap</a></div><div class="ttdeci">bool deriveOriginFromMap(const std::string &amp;map_filepath, double &amp;origin_lat, double &amp;origin_lon) const</div><div class="ttdoc">Derives a south-west origin latitude and longitude from a Lanelet2 map file.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00283">lanelet2_map_server.cpp:283</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a97e705e995502033aa325c810c798ca5"><div class="ttname"><a href="#a97e705e995502033aa325c810c798ca5">Lanelet2MapServer::find_available_maps</a></div><div class="ttdeci">void find_available_maps(const std::string &amp;directory, std::vector&lt; Lanelet2MapMeta &gt; &amp;maps) const</div><div class="ttdoc">Recursively scans a directory for available Lanelet2 map files.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00301">lanelet2_map_server.cpp:301</a></div></div>
 </div><!-- fragment -->
@@ -1120,47 +1119,47 @@ template&lt;typename T &gt; </div>
 
 <p>Publishes the static transform from the derived UTM frame to the map frame. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8cpp_source.html#l00489">489</a> of file <a class="el" href="lanelet2__map__server_8cpp_source.html">lanelet2_map_server.cpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  489</span>                                     {</div>
-<div class="line"><span class="lineno">  490</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>.empty()) {</div>
-<div class="line"><span class="lineno">  491</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  492</span>  }</div>
-<div class="line"><span class="lineno">  493</span>  geometry_msgs::msg::TransformStamped t;</div>
-<div class="line"><span class="lineno">  494</span> </div>
-<div class="line"><span class="lineno">  495</span>  <span class="comment">// Create Projector without offset</span></div>
-<div class="line"><span class="lineno">  496</span>  lanelet::projection::UtmProjector proj_utm(lanelet::Origin({<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>}), <span class="keyword">false</span>);</div>
-<div class="line"><span class="lineno">  497</span>  lanelet::BasicPoint3d origin_utm = proj_utm.forward(lanelet::GPSPoint({<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>, 0.0}));</div>
-<div class="line"><span class="lineno">  498</span> </div>
-<div class="line"><span class="lineno">  499</span>  t.transform.translation.x = origin_utm.x();</div>
-<div class="line"><span class="lineno">  500</span>  t.transform.translation.y = origin_utm.y();</div>
-<div class="line"><span class="lineno">  501</span>  t.transform.translation.z = origin_utm.z();</div>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8cpp_source.html#l00484">484</a> of file <a class="el" href="lanelet2__map__server_8cpp_source.html">lanelet2_map_server.cpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  484</span>                                     {</div>
+<div class="line"><span class="lineno">  485</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>.empty()) {</div>
+<div class="line"><span class="lineno">  486</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  487</span>  }</div>
+<div class="line"><span class="lineno">  488</span>  geometry_msgs::msg::TransformStamped t;</div>
+<div class="line"><span class="lineno">  489</span> </div>
+<div class="line"><span class="lineno">  490</span>  <span class="comment">// Create Projector without offset</span></div>
+<div class="line"><span class="lineno">  491</span>  lanelet::projection::UtmProjector proj_utm(lanelet::Origin({<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>}), <span class="keyword">false</span>);</div>
+<div class="line"><span class="lineno">  492</span>  lanelet::BasicPoint3d origin_utm = proj_utm.forward(lanelet::GPSPoint({<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>, 0.0}));</div>
+<div class="line"><span class="lineno">  493</span> </div>
+<div class="line"><span class="lineno">  494</span>  t.transform.translation.x = origin_utm.x();</div>
+<div class="line"><span class="lineno">  495</span>  t.transform.translation.y = origin_utm.y();</div>
+<div class="line"><span class="lineno">  496</span>  t.transform.translation.z = origin_utm.z();</div>
+<div class="line"><span class="lineno">  497</span> </div>
+<div class="line"><span class="lineno">  498</span>  t.transform.rotation.x = 0;</div>
+<div class="line"><span class="lineno">  499</span>  t.transform.rotation.y = 0;</div>
+<div class="line"><span class="lineno">  500</span>  t.transform.rotation.z = 0;</div>
+<div class="line"><span class="lineno">  501</span>  t.transform.rotation.w = 1;</div>
 <div class="line"><span class="lineno">  502</span> </div>
-<div class="line"><span class="lineno">  503</span>  t.transform.rotation.x = 0;</div>
-<div class="line"><span class="lineno">  504</span>  t.transform.rotation.y = 0;</div>
-<div class="line"><span class="lineno">  505</span>  t.transform.rotation.z = 0;</div>
-<div class="line"><span class="lineno">  506</span>  t.transform.rotation.w = 1;</div>
-<div class="line"><span class="lineno">  507</span> </div>
-<div class="line"><span class="lineno">  508</span>  <span class="keywordtype">bool</span> northp = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  509</span>  <span class="keywordtype">int</span> zone = 0;</div>
-<div class="line"><span class="lineno">  510</span>  <a class="code hl_function" href="#af4f7603491ffe51658febeb9d026bbaa">derive_utm_zone</a>(<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>, zone, northp);</div>
-<div class="line"><span class="lineno">  511</span> </div>
-<div class="line"><span class="lineno">  512</span>  std::string hemisphere;</div>
-<div class="line"><span class="lineno">  513</span>  <span class="keywordflow">if</span> (northp) {</div>
-<div class="line"><span class="lineno">  514</span>    hemisphere = <span class="stringliteral">&quot;N&quot;</span>;</div>
-<div class="line"><span class="lineno">  515</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  516</span>    hemisphere = <span class="stringliteral">&quot;S&quot;</span>;</div>
-<div class="line"><span class="lineno">  517</span>  }</div>
-<div class="line"><span class="lineno">  518</span> </div>
-<div class="line"><span class="lineno">  519</span>  t.header.frame_id = <span class="stringliteral">&quot;utm_&quot;</span> + std::to_string(zone) + hemisphere;</div>
-<div class="line"><span class="lineno">  520</span>  t.child_frame_id = <a class="code hl_variable" href="#af00e4f004a4c6774941c5ac2f1674469">map_frame_id_</a>;</div>
-<div class="line"><span class="lineno">  521</span>  t.header.stamp = now();</div>
-<div class="line"><span class="lineno">  522</span> </div>
-<div class="line"><span class="lineno">  523</span>  <span class="comment">// Send the transformation</span></div>
-<div class="line"><span class="lineno">  524</span>  <a class="code hl_variable" href="#a4448d3d566842ebd9def7dc1f525ef3d">tf_static_broadcaster_</a>-&gt;sendTransform(t);</div>
-<div class="line"><span class="lineno">  525</span>  RCLCPP_INFO(get_logger(), <span class="stringliteral">&quot;Broadcast static transform from &#39;%s&#39; to &#39;%s&#39;&quot;</span>, t.header.frame_id.c_str(), t.child_frame_id.c_str());</div>
-<div class="line"><span class="lineno">  526</span>}</div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a4448d3d566842ebd9def7dc1f525ef3d"><div class="ttname"><a href="#a4448d3d566842ebd9def7dc1f525ef3d">Lanelet2MapServer::tf_static_broadcaster_</a></div><div class="ttdeci">std::shared_ptr&lt; tf2_ros::StaticTransformBroadcaster &gt; tf_static_broadcaster_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00191">lanelet2_map_server.hpp:191</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_af4f7603491ffe51658febeb9d026bbaa"><div class="ttname"><a href="#af4f7603491ffe51658febeb9d026bbaa">Lanelet2MapServer::derive_utm_zone</a></div><div class="ttdeci">void derive_utm_zone(const double latitude, const double longitude, int &amp;zone, bool &amp;northp) const</div><div class="ttdoc">Derives the UTM zone and hemisphere from a geographic position.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00479">lanelet2_map_server.cpp:479</a></div></div>
+<div class="line"><span class="lineno">  503</span>  <span class="keywordtype">bool</span> northp = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  504</span>  <span class="keywordtype">int</span> zone = 0;</div>
+<div class="line"><span class="lineno">  505</span>  <a class="code hl_function" href="#a8aad583e3131608405ece3ef437ab987">derive_utm_zone</a>(<a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>, zone, northp);</div>
+<div class="line"><span class="lineno">  506</span> </div>
+<div class="line"><span class="lineno">  507</span>  std::string hemisphere;</div>
+<div class="line"><span class="lineno">  508</span>  <span class="keywordflow">if</span> (northp) {</div>
+<div class="line"><span class="lineno">  509</span>    hemisphere = <span class="stringliteral">&quot;N&quot;</span>;</div>
+<div class="line"><span class="lineno">  510</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  511</span>    hemisphere = <span class="stringliteral">&quot;S&quot;</span>;</div>
+<div class="line"><span class="lineno">  512</span>  }</div>
+<div class="line"><span class="lineno">  513</span> </div>
+<div class="line"><span class="lineno">  514</span>  t.header.frame_id = <span class="stringliteral">&quot;utm_&quot;</span> + std::to_string(zone) + hemisphere;</div>
+<div class="line"><span class="lineno">  515</span>  t.child_frame_id = <a class="code hl_variable" href="#af00e4f004a4c6774941c5ac2f1674469">map_frame_id_</a>;</div>
+<div class="line"><span class="lineno">  516</span>  t.header.stamp = now();</div>
+<div class="line"><span class="lineno">  517</span> </div>
+<div class="line"><span class="lineno">  518</span>  <span class="comment">// Send the transformation</span></div>
+<div class="line"><span class="lineno">  519</span>  <a class="code hl_variable" href="#a4448d3d566842ebd9def7dc1f525ef3d">tf_static_broadcaster_</a>-&gt;sendTransform(t);</div>
+<div class="line"><span class="lineno">  520</span>  RCLCPP_INFO(get_logger(), <span class="stringliteral">&quot;Broadcast static transform from &#39;%s&#39; to &#39;%s&#39;&quot;</span>, t.header.frame_id.c_str(), t.child_frame_id.c_str());</div>
+<div class="line"><span class="lineno">  521</span>}</div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a4448d3d566842ebd9def7dc1f525ef3d"><div class="ttname"><a href="#a4448d3d566842ebd9def7dc1f525ef3d">Lanelet2MapServer::tf_static_broadcaster_</a></div><div class="ttdeci">std::shared_ptr&lt; tf2_ros::StaticTransformBroadcaster &gt; tf_static_broadcaster_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00190">lanelet2_map_server.hpp:190</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a8aad583e3131608405ece3ef437ab987"><div class="ttname"><a href="#a8aad583e3131608405ece3ef437ab987">Lanelet2MapServer::derive_utm_zone</a></div><div class="ttdeci">static void derive_utm_zone(const double latitude, const double longitude, int &amp;zone, bool &amp;northp)</div><div class="ttdoc">Derives the UTM zone and hemisphere from a geographic position.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00479">lanelet2_map_server.cpp:479</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1227,7 +1226,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  268</span>      <span class="keywordflow">return</span>;</div>
 <div class="line"><span class="lineno">  269</span>    }</div>
 <div class="line"><span class="lineno">  270</span> </div>
-<div class="line"><span class="lineno">  271</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="#a263927183f1e796bc2839df59148a1c8">map_sanity_check</a>(<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>, <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>)) {</div>
+<div class="line"><span class="lineno">  271</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="#a583e35c500136f6b2e1d12e6569cdde3">map_sanity_check</a>(<a class="code hl_variable" href="#a4b2193b4aca9feaf1a8feaf03ba4feea">map_filepath_</a>, <a class="code hl_variable" href="#aeeb795433cb1a7798673cb37e52f134c">origin_lat_</a>, <a class="code hl_variable" href="#af6cf2c5337bb1ba792cca2a6af309928">origin_lon_</a>)) {</div>
 <div class="line"><span class="lineno">  272</span>      this-&gt;<a class="code hl_function" href="#a6cd1a910ebfd0bc22d597e2748252c15">loadMapContents</a>();</div>
 <div class="line"><span class="lineno">  273</span>      this-&gt;<a class="code hl_function" href="#a09270aef60be7bb52c7b670202ad2f46">updateMapParameters</a>();</div>
 <div class="line"><span class="lineno">  274</span>      this-&gt;<a class="code hl_function" href="#a9e3c98ccd09bbb11cf0955d48b42aae5">pub_tf</a>();</div>
@@ -1238,12 +1237,12 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="lineno">  279</span>    }</div>
 <div class="line"><span class="lineno">  280</span>  }</div>
 <div class="line"><span class="lineno">  281</span>}</div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a27e3177b975096dd952c87047fc11e22"><div class="ttname"><a href="#a27e3177b975096dd952c87047fc11e22">Lanelet2MapServer::automatic_map_timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr automatic_map_timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00177">lanelet2_map_server.hpp:177</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_a3a81eea0941d6cbb6828b43e87ab49b9"><div class="ttname"><a href="#a3a81eea0941d6cbb6828b43e87ab49b9">Lanelet2MapServer::parameters_callback_</a></div><div class="ttdeci">OnSetParametersCallbackHandle::SharedPtr parameters_callback_</div><div class="ttdoc">Callback handle for dynamic parameter reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00174">lanelet2_map_server.hpp:174</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a27e3177b975096dd952c87047fc11e22"><div class="ttname"><a href="#a27e3177b975096dd952c87047fc11e22">Lanelet2MapServer::automatic_map_timer_</a></div><div class="ttdeci">rclcpp::TimerBase::SharedPtr automatic_map_timer_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00176">lanelet2_map_server.hpp:176</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_a3a81eea0941d6cbb6828b43e87ab49b9"><div class="ttname"><a href="#a3a81eea0941d6cbb6828b43e87ab49b9">Lanelet2MapServer::parameters_callback_</a></div><div class="ttdeci">OnSetParametersCallbackHandle::SharedPtr parameters_callback_</div><div class="ttdoc">Callback handle for dynamic parameter reconfiguration.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00173">lanelet2_map_server.hpp:173</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a43c2298b8663139e1dd5e0dbb522ca6c"><div class="ttname"><a href="#a43c2298b8663139e1dd5e0dbb522ca6c">Lanelet2MapServer::automaticMapUpdateTimerCallback</a></div><div class="ttdeci">void automaticMapUpdateTimerCallback()</div><div class="ttdoc">Periodically reevaluates the best map when automatic selection is enabled.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00389">lanelet2_map_server.cpp:389</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a69c99887a6bdbe40394ff4e0db08ade3"><div class="ttname"><a href="#a69c99887a6bdbe40394ff4e0db08ade3">Lanelet2MapServer::parametersCallback</a></div><div class="ttdeci">rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector&lt; rclcpp::Parameter &gt; &amp;parameters)</div><div class="ttdoc">Handles reconfiguration when a parameter value is changed.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00113">lanelet2_map_server.cpp:113</a></div></div>
 <div class="ttc" id="aclassLanelet2MapServer_html_a91cd2c7720bf495a93301a11340bfe46"><div class="ttname"><a href="#a91cd2c7720bf495a93301a11340bfe46">Lanelet2MapServer::navSatFixCallback</a></div><div class="ttdeci">void navSatFixCallback(const sensor_msgs::msg::NavSatFix::SharedPtr msg)</div><div class="ttdoc">Stores the latest GNSS fix for automatic map selection.</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8cpp_source.html#l00383">lanelet2_map_server.cpp:383</a></div></div>
-<div class="ttc" id="aclassLanelet2MapServer_html_add9933cdfc1e9e2cfa85861840d484ba"><div class="ttname"><a href="#add9933cdfc1e9e2cfa85861840d484ba">Lanelet2MapServer::navsat_subscription_</a></div><div class="ttdeci">rclcpp::Subscription&lt; sensor_msgs::msg::NavSatFix &gt;::SharedPtr navsat_subscription_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00192">lanelet2_map_server.hpp:192</a></div></div>
+<div class="ttc" id="aclassLanelet2MapServer_html_add9933cdfc1e9e2cfa85861840d484ba"><div class="ttname"><a href="#add9933cdfc1e9e2cfa85861840d484ba">Lanelet2MapServer::navsat_subscription_</a></div><div class="ttdeci">rclcpp::Subscription&lt; sensor_msgs::msg::NavSatFix &gt;::SharedPtr navsat_subscription_</div><div class="ttdef"><b>Definition</b> <a href="lanelet2__map__server_8hpp_source.html#l00191">lanelet2_map_server.hpp:191</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1343,7 +1342,7 @@ template&lt;typename T &gt; </div>
 
 <p>Auto-reconfigurable parameters for dynamic reconfiguration. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00169">169</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00168">168</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1366,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00177">177</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00176">176</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1391,7 +1390,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00182">182</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00181">181</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1415,7 +1414,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00193">193</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00192">192</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1439,7 +1438,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00194">194</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00193">193</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1463,7 +1462,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00195">195</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00194">194</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1487,7 +1486,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00185">185</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00184">184</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1511,7 +1510,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00181">181</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00180">180</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1535,7 +1534,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00183">183</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00182">182</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1559,7 +1558,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00184">184</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00183">183</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1583,7 +1582,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00192">192</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00191">191</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1607,7 +1606,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00176">176</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00175">175</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1631,7 +1630,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00186">186</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00185">185</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1655,7 +1654,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00188">188</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00187">187</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1679,7 +1678,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00187">187</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00186">186</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1703,7 +1702,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00189">189</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00188">188</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1729,7 +1728,7 @@ template&lt;typename T &gt; </div>
 
 <p>Callback handle for dynamic parameter reconfiguration. </p>
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00174">174</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00173">173</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1753,7 +1752,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00191">191</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00190">190</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -1767,7 +1766,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Lanelet2MapServer::use_automatic_map_selection_ = true</td>
+          <td class="memname">bool Lanelet2MapServer::use_automatic_map_selection_ = false</td>
         </tr>
       </table>
   </td>
@@ -1777,7 +1776,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00179">179</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lanelet2__map__server_8hpp_source.html#l00178">178</a> of file <a class="el" href="lanelet2__map__server_8hpp_source.html">lanelet2_map_server.hpp</a>.</p>
 
 </div>
 </div>
