@@ -12,9 +12,6 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-info}
       USE_SIM_TIME: ${USE_SIM_TIME:-false}
       PARAMS: ${PARAMS:-/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml}
-      MAP_FILEPATH: ${MAP_FILEPATH:-}
-      ORIGIN_LAT: ${ORIGIN_LAT:-}
-      ORIGIN_LON: ${ORIGIN_LON:-}
     command:
       - /bin/bash
       - -ic
@@ -25,9 +22,6 @@ services:
           log_level:=$${LOG_LEVEL} \
           use_sim_time:=$${USE_SIM_TIME} \
           params:=$${PARAMS} \
-          $${MAP_FILEPATH:+map_filepath:=$${MAP_FILEPATH}} \
-          $${ORIGIN_LAT:+origin_lat:=$${ORIGIN_LAT}} \
-          $${ORIGIN_LON:+origin_lon:=$${ORIGIN_LON}} \
           nav_sat_fix_topic:=$${NAV_SAT_FIX_TOPIC}
     # volumes:
     #   - ./params.yml:/docker-ros/ws/install/lanelet2_map_server/share/lanelet2_map_server/config/params.yml
