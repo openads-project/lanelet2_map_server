@@ -24,7 +24,7 @@ flowchart LR
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `map_frame_id` | `string` | `"map"` | Frame ID of Lanelet2 map |
-| `use_automatic_map_selection` | `bool` | `true` | Automatic map selection |
+| `use_automatic_map_selection` | `bool` | `false` | Automatic map selection |
 | `map_directory` | `string` | `"/data/maps/default-maps"` | Directory containing Lanelet2 maps |
 | `map_filepath` | `string` | - | Path to Lanelet2 map |
 | `origin_lat` | `float` | - | Latitude of origin of Lanelet2 map |
