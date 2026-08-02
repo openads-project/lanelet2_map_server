@@ -1,4 +1,4 @@
-name: compose-oci
+name: helm-oci
 
 on:
   push:
@@ -12,6 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  compose-oci:
-    uses: openads-project/openads-dev-environment/.github/workflows/compose-oci.yml@main
+  helm-oci:
+    uses: openads-project/openads-dev-environment/.github/workflows/helm-oci.yml@main
     secrets: inherit
