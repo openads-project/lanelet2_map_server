@@ -1,13 +1,14 @@
 # lanelet2_map_server
 
 <p align="center">
-  <a href="https://openads-project.github.io"><img src="https://img.shields.io/badge/OpenADS-f5ff01"/></a>
+  <a href="https://openads-project.github.io"><img src="https://img.shields.io/badge/OpenADS-45ccc6"/></a>
   <a href="https://www.ros.org"><img src="https://img.shields.io/badge/ROS 2-jazzy-22314e"/></a>
   <a href="https://github.com/openads-project/lanelet2_map_server/releases/latest"><img src="https://img.shields.io/github/v/release/openads-project/lanelet2_map_server"/></a>
   <a href="https://github.com/openads-project/lanelet2_map_server/blob/main/LICENSE"><img src="https://img.shields.io/github/license/openads-project/lanelet2_map_server"/></a>
   <br>
   <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docker-ros.yml/badge.svg"/></a>
   <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/compose-oci.yml/badge.svg"/></a>
+  <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/helm-oci.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/helm-oci.yml/badge.svg"/></a>
   <a href="https://openads-project.github.io/lanelet2_map_server"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/docs.yml/badge.svg"/></a>
   <a href="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml"><img src="https://github.com/openads-project/lanelet2_map_server/actions/workflows/consistency.yml/badge.svg"/></a>
 </p>
