@@ -1,6 +1,6 @@
 openadservice:
   name: lanelet2-map-server
-  image: ghcr.io/openads-project/lanelet2_map_server:v1.2.3
+  image: ghcr.io/openads-project/lanelet2_map_server:v1.2.4
   env:
     # --- name ------
     NAMESPACE: /
